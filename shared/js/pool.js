@@ -40,6 +40,7 @@ export function startPool(canvas, sceneName = "shallow") {
   let w = 0;
   let h = 0;
   let top = 0; // 위쪽 띠 높이
+  let laneTop = 0; // 레인 부표 줄을 그리기 시작하는 물 높이 (아래에서 scene.lanes 줄만)
   let image = null;
   let phase = null; // 지금 시간대 (daylight.js)
   let art = null; // 물 그림 (읽기 전에는 파랑 단색)
@@ -50,6 +51,8 @@ export function startPool(canvas, sceneName = "shallow") {
     w = Math.max(1, Math.ceil(canvas.clientWidth / px));
     h = Math.max(1, Math.ceil(canvas.clientHeight / px));
     top = scene.top ? Math.round(h * TOP_RATIO[scene.top]) : 0;
+    const lowestLane = Math.floor((h - top - 3 - LANE_GAP / 2) / LANE_GAP) * LANE_GAP + LANE_GAP / 2;
+    laneTop = lowestLane - LANE_GAP * ((scene.lanes ?? 0) - 1) - 1;
     canvas.width = w;
     canvas.height = h;
     image = ctx.createImageData(w, h);
@@ -71,8 +74,8 @@ export function startPool(canvas, sceneName = "shallow") {
     if (y < top) return bandColor(x, y);
     const wy = y - top;
 
-    // 레인 부표 줄 (두 칸 두께, 빨강·하양 번갈아)
-    if (scene.lanes) {
+    // 레인 부표 줄 (두 칸 두께, 빨강·하양 번갈아). 위의 내용과 겹치지 않게 바닥 쪽에만
+    if (scene.lanes && wy >= laneTop) {
       const sway = Math.round(Math.sin(x * 0.15 + t) * 1);
       const row = (wy + sway) % LANE_GAP;
       if (row === LANE_GAP / 2 || row === LANE_GAP / 2 + 1) {
