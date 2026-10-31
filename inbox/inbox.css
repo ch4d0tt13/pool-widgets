@@ -75,6 +75,23 @@
   gap: var(--space-2);
 }
 
+/* 삭제: 빨간 글자, 한 번 누르면 빨간 바탕으로 「정말 삭제?」 */
+.inbox__delete {
+  margin-left: auto;
+  color: var(--lane-1);
+  background: var(--white);
+}
+
+.inbox__delete.is-armed {
+  color: var(--white);
+  background: var(--lane-1);
+}
+
+@media (hover: hover) {
+  .inbox__delete:not(:disabled):not(.is-armed):hover { background: var(--water-1); }
+  .inbox__delete.is-armed:not(:disabled):hover { background: var(--lane-1); }
+}
+
 .inbox__picker {
   display: grid;
   gap: var(--space-1);

@@ -1,4 +1,4 @@
-// 인박스 정리: 프로젝트·영역·자원 연결이 모두 비고 보관 안 한 자료를 보여 주고, 영역·자원 연결과 보관을 바꾼다
+// 인박스 정리: 프로젝트·영역·자원 연결이 모두 비고 보관 안 한 자료를 보여 주고, 영역·자원 연결·보관·삭제를 한다
 import { notion, httpError, plainText, blockText } from "./notion.js";
 
 const INBOX_MAX = 10; // 한 번에 보여 줄 자료 수
@@ -78,5 +78,12 @@ export async function linkArea(env, pageId, body) {
 export async function archive(env, pageId) {
   await inboxPage(env, pageId);
   await notion(env, `/pages/${pageId}`, { properties: { 보관: { checkbox: true } } }, "PATCH");
+  return { ok: true };
+}
+
+// 삭제: 노션 휴지통으로 보낸다 (API는 완전 삭제를 지원하지 않고, 휴지통에서 되살릴 수 있다)
+export async function trash(env, pageId) {
+  await inboxPage(env, pageId);
+  await notion(env, `/pages/${pageId}`, { in_trash: true }, "PATCH");
   return { ok: true };
 }

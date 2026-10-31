@@ -1,6 +1,7 @@
 // 빠른 메모: 내용만 적으면 「빠른 메모 - @작성시간」 제목으로 자료함에 저장한다
 import { $, pad, showText } from "../shared/js/dom.js";
 import { api, hasKey } from "../shared/js/api.js";
+import { announce } from "../shared/js/live.js";
 
 export function startMemo() {
   const form = $("[data-form]");
@@ -24,6 +25,7 @@ export function startMemo() {
     setStatus("저장하는 중…");
     try {
       await api("/memo", { text });
+      announce("memo-saved"); // 인박스 위젯이 바로 새로 고친다
       const now = new Date();
       input.value = "";
       setStatus(`저장했어요 · ${pad(now.getHours())}:${pad(now.getMinutes())}`);
