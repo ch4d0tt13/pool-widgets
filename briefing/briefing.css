@@ -1,8 +1,12 @@
-/* 물 위에 둥실 떠 있는 종이 쪽지 */
+/* 데크 위에 놓인 종이 쪽지, 아래 물에는 고양이가 헤엄친다 */
+.briefing { justify-content: flex-start; }
+
+/* 쪽지는 데크 왼쪽에 놓고, 넓은 창에서는 오른쪽에 데크와 물이 보이게 폭을 줄인다 */
 .note {
   display: grid;
+  align-self: flex-start;
   gap: var(--space-1);
-  width: 100%;
+  width: min(100%, calc(var(--px) * 150));
   max-height: 100%;
   padding: var(--space-2) var(--space-3);
   overflow: hidden;
@@ -10,7 +14,6 @@
   text-decoration: none;
   background: var(--paper);
   box-shadow: var(--pixel-border), 0 var(--space-2) 0 var(--px) rgba(13, 69, 102, 0.25);
-  animation: float var(--float) steps(2) infinite alternate;
 }
 
 .note .caption { justify-self: start; }
@@ -56,12 +59,4 @@
 
 @media (hover: hover) {
   .note:hover { background: var(--white); }
-}
-
-@keyframes float {
-  to { transform: translateY(calc(var(--px) * -1)); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .note { animation: none; }
 }
