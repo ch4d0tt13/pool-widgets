@@ -1,13 +1,13 @@
 /* 모든 위젯이 같이 쓰는 바탕·숫자·스티커·버튼 */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* 창이 임베드 칸을 가장자리까지 채운다.
-   (노션은 임베드 뒤에 흰 바탕을 깔기 때문에 바깥 여백·투명 모서리를 두지 않는다) */
+/* 창이 임베드 칸을 채우고, 깎인 모서리 바깥은 투명하게 비운다
+   (투명하게 보이려면 tokens.css의 color-scheme이 필요하다) */
 html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: var(--line);
+  background: transparent;
 }
 
 body {

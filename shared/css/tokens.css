@@ -1,5 +1,9 @@
 /* 디자인 토큰: 색·글꼴·간격·모서리·그림자는 여기서만 정한다 */
 :root {
+  /* 노션 임베드의 색 모드(라이트/다크)를 따라간다.
+     모드가 다르면 브라우저가 위젯 뒤에 흰 바탕을 칠해서 투명한 모서리가 하얗게 보인다 */
+  color-scheme: light dark;
+
   /* 기본 색 */
   --navy: #0d4566;
   --line: #1f6f99;
@@ -77,8 +81,14 @@
   --space-3: calc(var(--px) * 4);
   --space-4: calc(var(--px) * 6);
 
-  /* 모서리: 2칸 계단식 픽셀 둥글림 (창 틀 안쪽에 쓴다) */
-  --corner: polygon(
+  /* 모서리: 계단식 픽셀 둥글림. 바깥 틀은 3칸, 틀 안쪽은 2칸 */
+  --corner-outer: polygon(
+    0 calc(var(--px) * 3), var(--px) calc(var(--px) * 3), var(--px) calc(var(--px) * 2), var(--px) var(--px), calc(var(--px) * 3) var(--px), calc(var(--px) * 3) 0,
+    calc(100% - var(--px) * 3) 0, calc(100% - var(--px) * 3) var(--px), calc(100% - var(--px)) var(--px), calc(100% - var(--px)) calc(var(--px) * 2), calc(100% - var(--px)) calc(var(--px) * 3), 100% calc(var(--px) * 3),
+    100% calc(100% - var(--px) * 3), calc(100% - var(--px)) calc(100% - var(--px) * 3), calc(100% - var(--px)) calc(100% - var(--px) * 2), calc(100% - var(--px)) calc(100% - var(--px)), calc(100% - var(--px) * 3) calc(100% - var(--px)), calc(100% - var(--px) * 3) 100%,
+    calc(var(--px) * 3) 100%, calc(var(--px) * 3) calc(100% - var(--px)), var(--px) calc(100% - var(--px)), var(--px) calc(100% - var(--px) * 2), var(--px) calc(100% - var(--px) * 3), 0 calc(100% - var(--px) * 3)
+  );
+  --corner-inner: polygon(
     0 calc(var(--px) * 2), var(--px) calc(var(--px) * 2), var(--px) var(--px), calc(var(--px) * 2) var(--px), calc(var(--px) * 2) 0,
     calc(100% - var(--px) * 2) 0, calc(100% - var(--px) * 2) var(--px), calc(100% - var(--px)) var(--px), calc(100% - var(--px)) calc(var(--px) * 2), 100% calc(var(--px) * 2),
     100% calc(100% - var(--px) * 2), calc(100% - var(--px)) calc(100% - var(--px) * 2), calc(100% - var(--px)) calc(100% - var(--px)), calc(100% - var(--px) * 2) calc(100% - var(--px)), calc(100% - var(--px) * 2) 100%,

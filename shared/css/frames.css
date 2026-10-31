@@ -1,4 +1,4 @@
-/* 창 틀: 모든 위젯이 공유한다 (틀 안쪽 계단식 둥근 모서리 · 제목 표시줄 · 물 장면 본문).
+/* 창 틀: 모든 위젯이 공유한다 (계단식 둥근 모서리 · 제목 표시줄 · 물 장면 본문).
    변주는 제목 표시줄 무늬(--bar)로만 준다. 창 안 배치는 위젯마다 따로 짠다 */
 .window {
   --bar: repeating-linear-gradient(var(--water-2) 0 var(--px), var(--water-1) var(--px) calc(var(--px) * 2));
@@ -7,6 +7,7 @@
   min-height: 0;
   padding: var(--px);
   background: var(--line);
+  clip-path: var(--corner-outer);
 }
 
 .window__inner {
@@ -15,7 +16,7 @@
   flex-direction: column;
   gap: var(--px);
   min-width: 0;
-  clip-path: var(--corner);
+  clip-path: var(--corner-inner);
 }
 
 .window__bar {
