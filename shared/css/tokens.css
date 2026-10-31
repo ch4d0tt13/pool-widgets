@@ -201,14 +201,14 @@
 }
 
 .pool[data-phase="night"] {
-  --art-1: #4a76a2;
-  --art-1-shade: #3b6290;
-  --art-2: #5585ad;
-  --art-2-shade: #456f9a;
-  --art-3: #6194b6;
-  --art-3-shade: #4f7ea2;
-  --art-rim: #7d86c8;
-  --art-light: #bfe2f0;
+  --art-1: #1f4a78;
+  --art-1-shade: #183a63;
+  --art-2: #275a86;
+  --art-2-shade: #1e4870;
+  --art-3: #2f6a90;
+  --art-3-shade: #24557a;
+  --art-rim: #4f62a8;
+  --art-light: #a6d8ec;
   --deep-1: #1a466e;
   --deep-2: #14385b;
   --deep-3: #102c49;
