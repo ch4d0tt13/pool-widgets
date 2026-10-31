@@ -25,7 +25,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-2); /* 버튼 테두리가 바깥으로 1칸 나와서, 위아래 2칸이어야 틀과 1칸 띄워진다 */
   background: var(--bar);
 }
 
