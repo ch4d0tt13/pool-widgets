@@ -105,7 +105,7 @@
 }
 
 .window--mosaic {
-  --bar: repeating-conic-gradient(var(--water-2) 0 25%, var(--white) 0 50%) 0 0 / var(--space-2) var(--space-2);
+  --bar: repeating-conic-gradient(var(--frame-violet-soft) 0 25%, var(--white) 0 50%) 0 0 / var(--space-2) var(--space-2);
 }
 
 .window--ring {
@@ -117,9 +117,9 @@
 }
 
 .window--chart {
-  --bar: repeating-linear-gradient(90deg, var(--water-4) 0 var(--px), var(--white) var(--px) var(--space-2));
+  --bar: repeating-linear-gradient(90deg, var(--frame-teal) 0 var(--px), var(--frame-teal-soft) var(--px) var(--space-2));
 }
 
 .window--buoy {
-  --bar: repeating-linear-gradient(90deg, var(--sun) 0 var(--space-2), var(--navy) var(--space-2) var(--space-3));
+  --bar: repeating-linear-gradient(90deg, var(--sun) 0 var(--space-2), var(--frame-orange-soft) var(--space-2) var(--space-3));
 }

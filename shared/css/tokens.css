@@ -68,6 +68,14 @@
   --cloud-shade: #b9d9ea;
 
   /* 창 틀 */
+  --frame-violet: #6b5bb5;
+  --frame-violet-soft: #ddd6f7;
+  --frame-berry: #c0507a;
+  --frame-teal: #23857b;
+  --frame-teal-soft: #c6eee8;
+  --frame-orange: #c8701e;
+  --frame-orange-soft: #ffe2bf;
+  --frame-wood: #8a5a32;
   --paper: #fffaf3;
   --gingham: #ffd3e1;
   --night-bg: #12476a;
@@ -121,12 +129,7 @@
     calc(var(--px) * 2) 100%, calc(var(--px) * 2) calc(100% - var(--px)), var(--px) calc(100% - var(--px)), var(--px) calc(100% - var(--px) * 2), 0 calc(100% - var(--px) * 2)
   );
 
-  /* 테두리·그림자 */
-  --pixel-border:
-    0 calc(var(--px) * -1) 0 0 var(--line),
-    0 var(--px) 0 0 var(--line),
-    calc(var(--px) * -1) 0 0 0 var(--line),
-    var(--px) 0 0 0 var(--line);
+  /* 그림자 (테두리 --pixel-border는 아래 body에서: 위젯별 틀 색을 따라가게) */
   --shadow-text: var(--px) var(--px) 0 var(--water-1);
 
   /* 움직임 */
@@ -253,7 +256,22 @@
   --shadow-text: var(--px) var(--px) 0 var(--deep-4);
 }
 
-/* 위젯별 포인트 색과 글자색 */
+/* 상자 테두리: 틀 색(--line)을 위젯마다 바꿀 수 있게 body에서 정한다
+   (:root에서 정하면 그때의 --line으로 굳어서 위젯별로 바꾼 틀 색을 따라가지 않는다) */
+body {
+  --pixel-border:
+    0 calc(var(--px) * -1) 0 0 var(--line),
+    0 var(--px) 0 0 var(--line),
+    calc(var(--px) * -1) 0 0 0 var(--line),
+    var(--px) 0 0 0 var(--line);
+}
+
+/* 위젯별 포인트 색과 글자색. 틀 색(--line)은 마감·인박스·시계·날씨·집중은 기본 남색, 나머지는 위젯마다 다르게 */
+[data-widget="calendar"] { --line: var(--frame-violet); --accent: var(--frame-violet); }
+[data-widget="cat"] { --line: var(--frame-berry); --accent: var(--ring); }
+[data-widget="stats"] { --line: var(--frame-teal); }
+[data-widget="projects"] { --line: var(--frame-orange); --accent: var(--sun-deep); }
+[data-widget="briefing"] { --line: var(--frame-wood); }
 [data-widget="pomodoro"] { --accent: var(--lane-1); }
 [data-widget="weather"] { --accent: var(--sun-deep); }
 [data-widget="dday"] {
