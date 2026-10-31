@@ -1,7 +1,6 @@
 /* 위에 상태 스티커, 가운데 둥실 떠 있는 큰 고양이, 아래 버튼 */
-/* 고양이 그림 한 칸 크기 (공통 픽셀 단위의 1.5배) */
 .pet {
-  --pet-pixel: calc(var(--px) * 1.5);
+  --pet-pixel: calc(var(--px) * 2); /* 고양이는 도트 2칸이 그림 1칸 (정수 배율이라 고르게 찍힌다) */
   justify-content: space-between;
 }
 
