@@ -1,22 +1,21 @@
 /* 모든 위젯이 같이 쓰는 바탕·숫자·스티커·버튼 */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* 바깥은 투명: 창만 보이게 한다 */
+/* 창이 임베드 칸을 가장자리까지 채운다.
+   (노션은 임베드 뒤에 흰 바탕을 깔기 때문에 바깥 여백·투명 모서리를 두지 않는다) */
 html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: transparent;
+  background: var(--line);
 }
 
 body {
   display: grid;
-  padding: var(--space-1) var(--space-1) var(--space-2);
   font-family: var(--font-text);
   color: var(--ink-strong);
   word-break: keep-all;
   -webkit-font-smoothing: none;
-  filter: drop-shadow(var(--shadow-window));
 }
 
 /* 물 장면 (저해상도 캔버스를 늘려서 픽셀로 보이게). 창 본문을 가득 채운다 */

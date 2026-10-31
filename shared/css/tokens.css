@@ -77,18 +77,12 @@
   --space-3: calc(var(--px) * 4);
   --space-4: calc(var(--px) * 6);
 
-  /* 모서리: 계단식 픽셀 둥글림 (바깥 2칸 · 안쪽 1칸) */
-  --corner-outer: polygon(
+  /* 모서리: 2칸 계단식 픽셀 둥글림 (창 틀 안쪽에 쓴다) */
+  --corner: polygon(
     0 calc(var(--px) * 2), var(--px) calc(var(--px) * 2), var(--px) var(--px), calc(var(--px) * 2) var(--px), calc(var(--px) * 2) 0,
     calc(100% - var(--px) * 2) 0, calc(100% - var(--px) * 2) var(--px), calc(100% - var(--px)) var(--px), calc(100% - var(--px)) calc(var(--px) * 2), 100% calc(var(--px) * 2),
     100% calc(100% - var(--px) * 2), calc(100% - var(--px)) calc(100% - var(--px) * 2), calc(100% - var(--px)) calc(100% - var(--px)), calc(100% - var(--px) * 2) calc(100% - var(--px)), calc(100% - var(--px) * 2) 100%,
     calc(var(--px) * 2) 100%, calc(var(--px) * 2) calc(100% - var(--px)), var(--px) calc(100% - var(--px)), var(--px) calc(100% - var(--px) * 2), 0 calc(100% - var(--px) * 2)
-  );
-  --corner-inner: polygon(
-    0 var(--px), var(--px) var(--px), var(--px) 0,
-    calc(100% - var(--px)) 0, calc(100% - var(--px)) var(--px), 100% var(--px),
-    100% calc(100% - var(--px)), calc(100% - var(--px)) calc(100% - var(--px)), calc(100% - var(--px)) 100%,
-    var(--px) 100%, var(--px) calc(100% - var(--px)), 0 calc(100% - var(--px))
   );
 
   /* 테두리·그림자 */
@@ -98,7 +92,6 @@
     calc(var(--px) * -1) 0 0 0 var(--line),
     var(--px) 0 0 0 var(--line);
   --shadow-text: var(--px) var(--px) 0 var(--water-1);
-  --shadow-window: 0 var(--space-1) 0 rgba(13, 69, 102, 0.35);
 
   /* 움직임 */
   --blink: 1s;
