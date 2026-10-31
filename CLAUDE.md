@@ -17,15 +17,17 @@
   - `js/sprite.js`·`js/icons.js` 픽셀 그림 (글자 하나 = 한 칸, 색은 토큰)
   - `js/api.js` 중계 서버 호출, `js/dom.js` 작은 도우미 (`$`·`pad`·`el`·`showText`)
   - `js/live.js` 위젯끼리 바로 알리기(`announce`·`onAnnounce`)와 보이는 동안만 새로 고치기(`refreshWhileVisible`)
+  - `js/dates.js` 마감일 계산 (`daysUntil`·`ddayLabel`·`shortDate`)
   - `js/records.js` 이 기기에 남기는 기록: 날마다 집중(`focus`)·정리(`tidy`) 횟수와 고양이 간식. 바뀌면 `records-changed`를 알린다
-- 위젯 폴더: `clock/` `weather/` `pomodoro/` `dday/` `memo/` `briefing/` `calendar/` `cat/` `inbox/` `stats/` (각각 `index.html` + 위젯 전용 js·css)
+- 위젯 폴더: `clock/` `weather/` `pomodoro/` `dday/` `memo/` `briefing/` `calendar/` `cat/` `inbox/` `stats/` `projects/` (각각 `index.html` + 위젯 전용 js·css)
   - `pomodoro/water-sound.js` 파일 없이 만드는 물소리 (타이머가 도는 동안만). 집중을 끝까지 마치면 기록하고 고양이 간식을 하나 쌓는다
   - `cat/` 고양이 키우기: 서버·열쇠 없이 기록을 각 기기 브라우저(localStorage)에만 저장. 「간식 주기」는 뽀모도로로 쌓은 간식을 쓴다
   - `stats/` 이번 주 기록: 월~일 집중·정리 막대 (records.js, 기기별)
+  - `projects/` 프로젝트 카드: 보관 안 한 프로젝트를 마감일 순 갤러리로, 누르면 노션 페이지 새 탭. 카드에서 마감일을 정하거나 지우면 `deadlines-changed`를 알려 D-day·달력이 바로 다시 본다
   - `inbox/` 인박스 정리: 프로젝트·영역·자원 연결이 모두 비고 보관 안 한 자료를 카드로 보여 주고 영역·자원 연결·보관·삭제(두 번 눌러야 하고 노션 휴지통으로). 30초마다·화면을 다시 볼 때 새로 고치고, 빠른 메모 저장 신호(`memo-saved`)를 받으면 바로 다시 본다
 - `tools/stamp.mjs` 배포용 복사본에 버전 붙이기 (Actions가 실행)
-- `worker/` 노션 키를 숨기는 중계 서버 (`GET /dday`, `GET /calendar?month=YYYY-MM`, `POST /memo`, `GET /briefing`, `GET /inbox`, `GET /areas`, `POST /inbox/<id>/area`·`/archive`·`/trash`)
-  - `src/routes.js` 마감일·메모·브리핑, `src/inbox.js` 인박스, `src/notion.js` 노션 호출·글자 도우미
+- `worker/` 노션 키를 숨기는 중계 서버 (`GET /dday`, `GET /calendar?month=YYYY-MM`, `POST /memo`, `GET /briefing`, `GET /inbox`, `GET /areas`, `POST /inbox/<id>/area`·`/archive`·`/trash`, `GET /projects`, `POST /projects/<id>/deadline`)
+  - `src/routes.js` 마감일·메모·브리핑, `src/inbox.js` 인박스, `src/projects.js` 프로젝트·마감일 정하기, `src/notion.js` 노션 호출·글자 도우미·소속 확인(`pageInSource`)
 
 ## 디자인 규칙
 - 물과 픽셀 테마를 벗어나지 않는다. 글꼴은 Galmuri(숫자는 GalmuriMono11).
@@ -45,7 +47,7 @@
 ## 노션 연결
 - 노션 통합 「솔티 위젯」에 프로젝트 목록·자료함·브리핑·영역·자원 DB 접근 권한이 있어야 한다. 기능은 콘텐츠 읽기·삽입·업데이트.
 - D-day: 프로젝트 목록의 「마감일」(보관 안 함만). 메모: 자료함에 「빠른 메모 - @작성시간」으로 저장. 브리핑: 최근 1건의 첫 섹션 3줄 + 마지막 집계 줄만 보낸다(메일 등 나머지 섹션은 보내지 않는다).
-- 인박스 연결·보관·삭제는 바꾸기 전에 그 페이지가 자료함 소속인지 서버가 확인한다. 삭제는 휴지통으로 보내기만 한다(API에 완전 삭제가 없다).
+- 인박스 연결·보관·삭제, 프로젝트 마감일 정하기는 바꾸기 전에 그 페이지가 해당 DB 소속인지 서버가 확인한다. 삭제는 휴지통으로 보내기만 한다(API에 완전 삭제가 없다).
 - 기존 DB 구조는 사용자 허락 없이 바꾸지 않는다.
 
 ## 로컬 확인

@@ -17,6 +17,7 @@ export const SCENES = {
   play: { depth: WATER_DEEPER, caustic: 2.4, tiles: true, foam: true, ripples: 0.05 },
   inlet: { depth: WATER, caustic: 2.8, tiles: true, tile: 16, foam: true, ripples: 0.03 },
   shimmer: { depth: WATER_DEEPER, caustic: 1.6, foam: true },
+  pebble: { depth: WATER_DEEPER, caustic: 2.3, tiles: true, tile: 8, bubbles: true },
   lane: { depth: WATER_DEEPER, caustic: 2.5, tiles: true, lanes: true, cat: "lane" },
   rest: { depth: WATER, caustic: 2.2, tiles: true, lanes: true, cat: "lane" },
   deck: { top: "deck", depth: WATER, caustic: 2.3, tiles: true, foam: true, cat: "drift" },

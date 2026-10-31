@@ -1,6 +1,7 @@
 // 미니 달력: 이번 달을 그리고 오늘을 강조, 프로젝트 마감일에는 픽셀 점(마우스를 올리면 이름)
 import { $, pad, el, showText } from "../shared/js/dom.js";
 import { api, hasKey } from "../shared/js/api.js";
+import { onAnnounce } from "../shared/js/live.js";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 const REFRESH_MS = 30 * 60 * 1000;
@@ -62,4 +63,6 @@ export function startCalendar() {
   }
   update();
   setInterval(update, REFRESH_MS);
+  // 프로젝트 위젯에서 마감일을 바꾸면 바로 다시 본다
+  onAnnounce("deadlines-changed", update);
 }

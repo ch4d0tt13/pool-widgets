@@ -1,5 +1,5 @@
 // D-day·달력 읽기·빠른 메모 쓰기·최근 브리핑 읽기
-import { notion, httpError, plainText, blockText } from "./notion.js";
+import { notion, httpError, plainText, blockText, notArchived } from "./notion.js";
 
 const BRIEFING_LINES = 3; // 첫 섹션에서 보여 줄 줄 수
 const FOOTER_MAX = 40; // 맨 끝 집계 줄로 볼 최대 길이
@@ -21,7 +21,7 @@ async function queryDeadlines(env, dateFilters, pageSize) {
     filter: {
       and: [
         ...dateFilters.map((date) => ({ property: "마감일", date })),
-        { property: "보관", checkbox: { equals: false } },
+        notArchived,
       ],
     },
     sorts: [{ property: "마감일", direction: "ascending" }],

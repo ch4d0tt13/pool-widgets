@@ -1,15 +1,12 @@
 // 인박스 정리: 프로젝트·영역·자원 연결이 모두 비고 보관 안 한 자료를 보여 주고, 영역·자원 연결·보관·삭제를 한다
-import { notion, httpError, plainText, blockText } from "./notion.js";
+import { notion, httpError, plainText, blockText, notArchived, isId, pageInSource } from "./notion.js";
 
 const INBOX_MAX = 10; // 한 번에 보여 줄 자료 수
 const PREVIEW_LINES = 2; // 카드에 보일 내용 줄 수
 const PREVIEW_BLOCKS = 10; // 미리보기를 찾을 앞쪽 블록 수
 const AREA_MAX = 100;
-const ID = /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i;
 
 const isEmpty = (property) => ({ property, relation: { is_empty: true } });
-const notArchived = { property: "보관", checkbox: { equals: false } };
-const sameId = (a, b) => a.replaceAll("-", "") === b.replaceAll("-", "");
 
 // 제목의 글 부분만 (「빠른 메모 - @작성시간」이면 「빠른 메모」)
 const titleText = (title) =>
@@ -58,18 +55,11 @@ export async function listAreas(env) {
 }
 
 // 바꾸기 전에 자료함 소속인지 확인한다 (다른 DB 페이지를 바꾸지 않게)
-async function inboxPage(env, pageId) {
-  if (!ID.test(pageId)) throw httpError(400, "bad id");
-  const page = await notion(env, `/pages/${pageId}`);
-  if (page.parent?.type !== "data_source_id" || !sameId(page.parent.data_source_id, env.MEMO_SOURCE_ID)) {
-    throw httpError(403, "not an inbox page");
-  }
-  return page;
-}
+const inboxPage = (env, pageId) => pageInSource(env, pageId, env.MEMO_SOURCE_ID);
 
 export async function linkArea(env, pageId, body) {
   const areaId = String(body?.areaId ?? "");
-  if (!ID.test(areaId)) throw httpError(400, "bad areaId");
+  if (!isId(areaId)) throw httpError(400, "bad areaId");
   await inboxPage(env, pageId);
   await notion(env, `/pages/${pageId}`, { properties: { "영역·자원 연결": { relation: [{ id: areaId }] } } }, "PATCH");
   return { ok: true };

@@ -1,0 +1,127 @@
+/* 공기방울 오르는 물 위에 프로젝트 쪽지 카드를 갤러리처럼 (좁으면 1열) */
+.projects {
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.projects > .caption { align-self: flex-start; }
+
+.projects__grid {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--px) * 38), 1fr));
+  align-content: start;
+  gap: var(--space-2);
+  min-height: 0;
+  padding: var(--px) var(--space-1) var(--px) var(--px);
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+.proj {
+  position: relative;
+  display: grid;
+  align-content: space-between;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-2);
+  color: var(--navy);
+  background: var(--paper);
+  box-shadow: var(--pixel-border);
+}
+
+.proj.is-none { background: var(--water-1); }
+
+/* 이름 링크가 카드 전체를 덮어서 어디를 눌러도 노션 페이지가 열린다 */
+.proj__link {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: var(--size-caption);
+  line-height: 1.35;
+  color: var(--navy);
+  text-decoration: none;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.proj__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+/* 링크 위로 올라와야 누를 수 있는 부분 */
+.proj__due,
+.proj__editor {
+  position: relative;
+  z-index: 1;
+}
+
+.proj__due {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+
+/* 마감까지 남은 날 알약: 가까울수록 진하게 */
+.proj__pill {
+  padding: 0 var(--space-1);
+  font-family: var(--font-digit);
+  font-size: var(--size-small);
+  line-height: 1.5;
+  color: var(--navy);
+  background: var(--gingham);
+  box-shadow: var(--pixel-border);
+}
+
+.proj__pill.is-near { background: var(--sun); }
+.proj__pill.is-soon { color: var(--white); background: var(--sun-deep); }
+.proj__pill.is-today,
+.proj__pill.is-over { color: var(--white); background: var(--lane-1); }
+
+.proj__pill.is-none {
+  font-family: var(--font-text);
+  color: var(--ink-soft);
+  background: var(--white);
+}
+
+.proj__date {
+  font-family: var(--font-digit);
+  font-size: var(--size-small);
+  color: var(--ink-soft);
+}
+
+.proj__edit { margin-left: auto; }
+
+.proj__editor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+
+.proj__input {
+  min-width: 0;
+  padding: 0 var(--space-1);
+  font: inherit;
+  font-size: var(--size-small);
+  line-height: 1.6;
+  color: var(--navy);
+  background: var(--white);
+  border: 0;
+  box-shadow: var(--pixel-border);
+  color-scheme: light; /* 다크 모드에서도 달력 아이콘이 보이게 */
+}
+
+.proj__link:focus-visible,
+.proj__input:focus-visible {
+  outline: var(--px) solid var(--accent);
+  outline-offset: var(--px);
+}
+
+@media (hover: hover) {
+  .proj:hover { background: var(--white); }
+}
