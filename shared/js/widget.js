@@ -1,6 +1,7 @@
-// 위젯 공통 시작: 창 제목 표시줄을 붙이고, 본문에 물 장면을 깔고, 픽셀 아이콘을 그린다
+// 위젯 공통 시작: 창 제목 표시줄을 붙이고, 본문에 물 장면을 깔고, 픽셀 아이콘을 그리고, 툴팁을 켠다
 import { startPool } from "./pool.js";
 import { paintIcons } from "./icons.js";
+import { startTooltips } from "./tooltip.js";
 
 // <main class="window" data-title="..."><div class="window__body">…</div></main>
 // → 제목 표시줄 + 안쪽 둥근 틀로 감싼다
@@ -27,5 +28,6 @@ export function startWidget(scene) {
   win.querySelector(".window__body").prepend(canvas);
 
   paintIcons();
+  startTooltips();
   return startPool(canvas, scene);
 }

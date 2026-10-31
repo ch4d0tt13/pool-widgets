@@ -94,6 +94,7 @@
   --size-caption: round(down, clamp(12px, min(4vw, 6.5vh), 24px), 12px);
   --size-small: round(down, clamp(10px, min(3.2vw, 5.2vh), 20px), 10px);
   --size-bar: 12px; /* 창 제목 표시줄은 창 크기와 상관없이 고정 */
+  --size-tip: 10px; /* 툴팁도 고정 (9 계열) */
 
   /* 픽셀 단위와 간격 */
   --px: 3px;
