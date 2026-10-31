@@ -88,10 +88,6 @@
   --bar: repeating-linear-gradient(var(--sun) 0 var(--px), var(--white) var(--px) calc(var(--px) * 2));
 }
 
-.window--gingham {
-  --bar: repeating-conic-gradient(var(--gingham) 0 25%, var(--paper) 0 50%) 0 0 / var(--space-2) var(--space-2);
-}
-
 .window--night {
   --bar: repeating-linear-gradient(var(--deep-3) 0 var(--px), var(--deep-4) var(--px) calc(var(--px) * 2));
 }

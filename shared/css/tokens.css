@@ -28,6 +28,16 @@
   --art-rim: #f6d6fa;
   --art-light: #fffef6;
 
+  /* 분홍 물 (고양이 위젯): 창 왼쪽 → 오른쪽 조각 색과 그늘, 테두리, 빛 */
+  --rose-1: #f2a6c4;
+  --rose-1-shade: #e386ad;
+  --rose-2: #f7b9d0;
+  --rose-2-shade: #ea98ba;
+  --rose-3: #fbcde0;
+  --rose-3-shade: #f0abc8;
+  --rose-rim: #fff0f6;
+  --rose-light: #fffafc;
+
   /* 장면별 물·하늘 색 */
   --deep-1: #3a9fd0;
   --deep-2: #2a86bb;
@@ -147,6 +157,14 @@
 
 /* 시간대 색: pool.js가 문서에 data-phase를 붙이면 물 장면 색을 통째로 바꾼다 (창 틀·상자 안 글자는 그대로) */
 :root[data-phase="dawn"] .pool {
+  --rose-1: #e7a9d6;
+  --rose-1-shade: #d58dc4;
+  --rose-2: #edbbe0;
+  --rose-2-shade: #de9fd0;
+  --rose-3: #f3cde9;
+  --rose-3-shade: #e5b2db;
+  --rose-rim: #ffe0f0;
+  --rose-light: #fff6fb;
   --art-1: #9aaee8;
   --art-1-shade: #7d8fd6;
   --art-2: #adbfee;
@@ -183,6 +201,14 @@
 }
 
 :root[data-phase="sunset"] .pool {
+  --rose-1: #e98fa4;
+  --rose-1-shade: #d6738d;
+  --rose-2: #f0a5b3;
+  --rose-2-shade: #e08a9d;
+  --rose-3: #f6bcc2;
+  --rose-3-shade: #e8a0ac;
+  --rose-rim: #ffc9a8;
+  --rose-light: #ffe9d6;
   --art-1: #6f8fd0;
   --art-1-shade: #5872b8;
   --art-2: #8a9fd2;
@@ -219,6 +245,14 @@
 }
 
 :root[data-phase="night"] .pool {
+  --rose-1: #6a3f6e;
+  --rose-1-shade: #55305b;
+  --rose-2: #7a4b7c;
+  --rose-2-shade: #633a68;
+  --rose-3: #8a588a;
+  --rose-3-shade: #714675;
+  --rose-rim: #9a6fb0;
+  --rose-light: #e8c6e6;
   --art-1: #1f4a78;
   --art-1-shade: #183a63;
   --art-2: #275a86;

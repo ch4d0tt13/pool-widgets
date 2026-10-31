@@ -96,6 +96,8 @@ export function startPool(canvas, sceneName = "shallow") {
     // 그 아래 물 조각: 조각이 창 왼쪽에 있을수록 어두운 하늘, 오른쪽일수록 밝은 하늘. 조각 하나는 한 색이다
     const center = cellCenter(art, x, ay) - artX;
     const tone = tones[Math.min(tones.length - 1, Math.max(0, Math.floor((center / w) * tones.length)))];
+    // 타일 바닥 장면: 일정 간격의 줄눈은 그늘 색 (빛 그물 아래에 깔린다)
+    if (scene.tiles && (x % scene.tiles === 0 || ay % scene.tiles === 0)) return tone[1];
     // 바닥의 그늘: 빛 그물과 같은 무늬를 비켜서 따로 일렁인다
     const shadow = swayed(SWAY.shadow, x + SHADOW_OFFSET[0], ay + SHADOW_OFFSET[1], t) === 255;
     return tone[shadow ? 1 : 0];
