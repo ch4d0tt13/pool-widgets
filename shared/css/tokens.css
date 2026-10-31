@@ -92,7 +92,7 @@
   --size-small: clamp(10px, min(3.2vw, 5.2vh), 18px);
 
   /* 픽셀 단위와 간격 */
-  --px: 4px;
+  --px: 3px;
   --space-1: calc(var(--px) * 1);
   --space-2: calc(var(--px) * 2);
   --space-3: calc(var(--px) * 4);
