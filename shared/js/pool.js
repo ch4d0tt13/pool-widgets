@@ -17,6 +17,7 @@ const SWAY = {
 const SHADOW_OFFSET = [4, 5]; // 그늘은 빛 그물과 같은 무늬를 이만큼 비켜 바닥에 드리운다 (빛은 왼쪽 위에서)
 const SPARKLE_AREA = 300; // 이 넓이(칸)마다 반짝임 하나 (장면의 sparkle로 곱한다)
 const LANE_GAP = 20; // 레인 줄 간격
+const LANE_BAND = CAT.length + 4; // 맨 아래 레인 띠: 부표 줄(2) + 1칸 + 헤엄치는 고양이 + 바닥 1칸
 const TOP_RATIO = { sky: 0.5, deck: 0.35 }; // 위쪽 띠가 차지하는 비율
 const DECK_TILE = 8;
 const PHASE_CHECK_MS = 60 * 1000; // 시간대는 1분마다 다시 본다
@@ -40,7 +41,8 @@ export function startPool(canvas, sceneName = "shallow") {
   let w = 0;
   let h = 0;
   let top = 0; // 위쪽 띠 높이
-  let laneTop = 0; // 레인 부표 줄을 그리기 시작하는 물 높이 (아래에서 scene.lanes 줄만)
+  let lowestLane = 0; // 맨 아래 부표 줄의 물 높이 (그 아래에서 고양이가 헤엄친다)
+  let laneTop = 0; // 레인 부표 줄을 그리기 시작하는 물 높이 (scene.lanes가 수면 전체면 0)
   let image = null;
   let phase = null; // 지금 시간대 (daylight.js)
   let art = null; // 물 그림 (읽기 전에는 파랑 단색)
@@ -51,8 +53,8 @@ export function startPool(canvas, sceneName = "shallow") {
     w = Math.max(1, Math.ceil(canvas.clientWidth / px));
     h = Math.max(1, Math.ceil(canvas.clientHeight / px));
     top = scene.top ? Math.round(h * TOP_RATIO[scene.top]) : 0;
-    const lowestLane = Math.floor((h - top - 3 - LANE_GAP / 2) / LANE_GAP) * LANE_GAP + LANE_GAP / 2;
-    laneTop = lowestLane - LANE_GAP * ((scene.lanes ?? 0) - 1) - 1;
+    lowestLane = h - top - LANE_BAND;
+    laneTop = scene.lanes === true ? 0 : lowestLane - LANE_GAP * ((scene.lanes ?? 0) - 1) - 1;
     canvas.width = w;
     canvas.height = h;
     image = ctx.createImageData(w, h);
@@ -74,11 +76,11 @@ export function startPool(canvas, sceneName = "shallow") {
     if (y < top) return bandColor(x, y);
     const wy = y - top;
 
-    // 레인 부표 줄 (두 칸 두께, 빨강·하양 번갈아). 위의 내용과 겹치지 않게 바닥 쪽에만
+    // 레인 부표 줄 (두 칸 두께, 빨강·하양 번갈아). 맨 아래 줄부터 위로 일정 간격
     if (scene.lanes && wy >= laneTop) {
       const sway = Math.round(Math.sin(x * 0.15 + t) * 1);
-      const row = (wy + sway) % LANE_GAP;
-      if (row === LANE_GAP / 2 || row === LANE_GAP / 2 + 1) {
+      const row = (((wy + sway - lowestLane) % LANE_GAP) + LANE_GAP) % LANE_GAP;
+      if (row === 0 || row === 1) {
         return Math.floor(x / 3) % 4 < 2 ? C.lane1 : C.lane2;
       }
     }
@@ -197,13 +199,12 @@ export function startPool(canvas, sceneName = "shallow") {
     }
   }
 
-  // 튜브 고양이: 떠다니거나(drift) 맨 아래 레인을 진행만큼 헤엄쳐 간다(lane)
+  // 튜브 고양이: 떠다니거나(drift) 맨 아래 부표 줄 밑을 진행만큼 헤엄쳐 간다(lane)
   function drawCat(t) {
     const cw = CAT[0].length;
     const bob = Math.round(Math.sin(t * 2));
     if (scene.cat === "lane") {
-      const laneCenter = top + Math.max(LANE_GAP, Math.floor((h - top - 6) / LANE_GAP) * LANE_GAP);
-      stamp(CAT, Math.round(catProgress * (w - cw)), laneCenter - 7 + bob);
+      stamp(CAT, Math.round(catProgress * (w - cw)), top + lowestLane + 3 + bob);
       return;
     }
     const x0 = Math.floor((t * 3) % (w + cw)) - cw;

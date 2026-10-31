@@ -1,7 +1,7 @@
-/* 위에 시간과 버튼, 맨 아래 레인은 비워 두어 고양이가 헤엄치게 한다 */
+/* 맨 아래 레인 띠(부표 줄 + 헤엄치는 고양이, pool.js의 LANE_BAND 15칸)는 비워 두고, 시간과 버튼은 그 위 공간의 가운데에 */
 .pomodoro {
-  justify-content: flex-start;
-  padding-bottom: calc(var(--px) * 10);
+  justify-content: center;
+  padding-bottom: calc(var(--px) * 15);
 }
 
 /* 단계 스티커는 숫자 위에: 숫자가 창 가운데에 온다 */
