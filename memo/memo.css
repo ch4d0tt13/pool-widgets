@@ -1,7 +1,9 @@
-/* 데크 위에 한 줄 쪽지와 저장 버튼, 아래 물가엔 고양이 */
+/* 창 틀·배경 없이 입력칸과 저장 버튼 한 줄만. 바깥 여백은 테두리와 초점 표시가 잘리지 않을 만큼 */
 .memo {
-  align-items: stretch;
-  justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: calc(var(--px) * 3);
 }
 
 /* 입력칸과 저장 버튼을 한 줄에, 높이를 맞춰서 */

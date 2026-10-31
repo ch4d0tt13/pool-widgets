@@ -8,25 +8,24 @@
   <link rel="stylesheet" href="memo.css">
 </head>
 <body data-widget="memo">
-  <main class="window window--deck" data-title="빠른메모.txt">
-    <form class="window__body memo" data-form>
-      <label class="sr-only" for="memo-text">메모 내용</label>
-      <div class="memo__row">
-        <input class="memo__input" id="memo-text" type="text" maxlength="2000" enterkeyhint="send"
-          autocomplete="off" placeholder="떠오른 걸 적어 두세요">
-        <button class="btn" type="submit" data-save>
-          <canvas class="icon icon--small" data-icon="heart-small"></canvas><span data-save-label>저장</span>
-        </button>
-      </div>
-      <p class="sr-only" data-status role="status"></p>
-    </form>
-  </main>
+  <form class="memo" data-form>
+    <label class="sr-only" for="memo-text">메모 내용</label>
+    <div class="memo__row">
+      <input class="memo__input" id="memo-text" type="text" maxlength="2000" enterkeyhint="send"
+        autocomplete="off" placeholder="떠오른 걸 적어 두세요">
+      <button class="btn" type="submit" data-save>
+        <canvas class="icon icon--small" data-icon="heart-small"></canvas><span data-save-label>저장</span>
+      </button>
+    </div>
+    <p class="sr-only" data-status role="status"></p>
+  </form>
 
   <script type="module">
-    import { startWidget } from "../shared/js/widget.js";
+    import { paintIcons } from "../shared/js/icons.js";
     import { startMemo } from "./memo.js";
 
-    startWidget("deck");
+    // 창 틀·물 장면 없이 입력칸과 버튼만 (노션 바탕 위에 바로 놓인다)
+    paintIcons();
     startMemo();
   </script>
 </body>
