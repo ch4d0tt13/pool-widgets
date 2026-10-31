@@ -12,9 +12,6 @@ export function startMemo() {
   // 상태 스티커는 글이 있을 때만 보인다
   const setStatus = (text) => showText(status, text);
 
-  // 키보드 단축키 안내는 마우스를 쓰는 기기에서만 (휴대폰에는 Ctrl 키가 없다)
-  if (matchMedia("(hover: hover)").matches) input.placeholder += " (Ctrl+Enter로 저장)";
-
   if (!hasKey) {
     setStatus("연결 정보가 없어요");
     input.disabled = save.disabled = true;
@@ -40,12 +37,9 @@ export function startMemo() {
     }
   }
 
+  // 한 줄 입력칸이라 Enter를 누르면 폼이 제출된다
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     submit();
-  });
-
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) submit();
   });
 }

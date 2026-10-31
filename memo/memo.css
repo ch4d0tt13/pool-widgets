@@ -1,12 +1,20 @@
-/* 데크 위에 종이 한 장, 아래 물가엔 고양이 */
+/* 데크 위에 한 줄 쪽지와 저장 버튼, 아래 물가엔 고양이 */
 .memo {
   align-items: stretch;
   justify-content: flex-start;
 }
 
+/* 입력칸과 저장 버튼을 한 줄에, 높이를 맞춰서 */
+.memo__row {
+  display: flex;
+  align-items: stretch;
+  gap: var(--gap-box);
+}
+
 .memo__input {
-  width: 100%;
-  padding: var(--space-2);
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-1) var(--space-2);
   font: inherit;
   font-size: var(--size-caption);
   line-height: 1.5;
@@ -14,7 +22,6 @@
   background: var(--paper);
   border: 0;
   box-shadow: var(--pixel-border);
-  resize: none;
 }
 
 .memo__input::placeholder { color: var(--ink-soft); }
@@ -24,11 +31,4 @@
   outline-offset: var(--space-1);
 }
 
-.memo__foot {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-3);
-}
-
-.memo__status { margin-right: auto; }
+.memo__status { align-self: flex-start; }
