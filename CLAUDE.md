@@ -27,7 +27,7 @@
   - `projects/` 프로젝트 카드: 보관 안 한 프로젝트를 마감일 순 갤러리로, 누르면 노션 페이지 새 탭. 카드에서 마감일을 정하거나 지우면 `deadlines-changed`를 알려 D-day·달력이 바로 다시 본다
   - `inbox/` 인박스 정리: 프로젝트·영역·자원 연결이 모두 비고 보관 안 한 자료를 카드로 보여 주고 영역·자원 연결·보관·삭제(두 번 눌러야 하고 노션 휴지통으로). 30초마다·화면을 다시 볼 때 새로 고치고, 빠른 메모 저장 신호(`memo-saved`)를 받으면 바로 다시 본다
 - `tools/stamp.mjs` 배포용 복사본에 버전 붙이기 (Actions가 실행)
-- `tools/pixelate.py` 물 그림 원본 → `shared/img/water.png` (가로 180칸). 원본 그림은 저장소에 올리지 않는다
+- `tools/pixelate.py` 물 그림 원본 → `shared/img/water.png` (180칸으로 줄여 겹별로 다시 그리고, 끝과 처음이 이어지게 잘라 붙여 150×46). 원본 그림은 저장소에 올리지 않는다. 그림은 뒤집어 잇지 않는다(데칼코마니처럼 보여서 사용자가 싫어함)
 - `worker/` 노션 키를 숨기는 중계 서버 (`GET /dday`, `GET /calendar?month=YYYY-MM`, `POST /memo`, `GET /briefing`, `GET /inbox`, `GET /areas`, `POST /inbox/<id>/area`·`/archive`·`/trash`, `GET /projects`, `POST /projects/<id>/deadline`)
   - `src/routes.js` 마감일·메모·브리핑, `src/inbox.js` 인박스, `src/projects.js` 프로젝트·마감일 정하기, `src/notion.js` 노션 호출·글자 도우미·소속 확인(`pageInSource`)
 

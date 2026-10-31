@@ -1,4 +1,4 @@
-// 직접 그린 물 그림을 겹(레이어)별로 담은 도트 그림(shared/img/water.png, 180×60)을 읽는다
+// 직접 그린 물 그림을 겹(레이어)별로 담은 도트 그림(shared/img/water.png, 150×46)을 읽는다
 // 원본 그림은 저장소에 없고, tools/pixelate.py 로 만든 결과만 있다. 채널마다 한 겹이다
 export const LAYER = { net: 0, shadow: 1, hue: 2 }; // R 빛 그물 · G 그늘 · B 물 색
 const ART_URL = new URL(`../img/water.png${new URL(import.meta.url).search}`, import.meta.url);
@@ -19,13 +19,10 @@ export function loadWaterArt() {
   });
 }
 
-// 그림을 좌우·위아래로 뒤집어 이어 붙인 것처럼 읽는다 (창이 그림보다 커도 이음새가 없게)
-const mirror = (v, n) => {
-  const p = ((v % (2 * n)) + 2 * n) % (2 * n);
-  return p < n ? p : 2 * n - 1 - p;
-};
+// 그림은 끝과 처음이 이어지게 만들어 두었다 (pixelate.py). 창이 그림보다 크면 뒤집지 않고 그대로 이어 붙인다
+const wrap = (v, n) => ((v % n) + n) % n;
 
 // 한 겹의 값 (0 · 128 · 255)
 export function layerAt(art, layer, x, y) {
-  return art.data[(mirror(y, art.h) * art.w + mirror(x, art.w)) * 4 + layer];
+  return art.data[(wrap(y, art.h) * art.w + wrap(x, art.w)) * 4 + layer];
 }

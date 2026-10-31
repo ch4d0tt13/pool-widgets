@@ -1,6 +1,7 @@
 // 물 장면: 바탕은 모두 직접 그린 물 그림(water-art.js)이고, 위젯마다 색과 소품을 다르게 준다
 // water: 물 그림을 칠할 토큰 [파랑, 파랑 그늘, 민트, 민트 그늘, 테두리, 빛] (그림을 읽기 전엔 파랑 단색)
 // at: 물 그림의 어느 부분을 보여 줄지 (0 왼쪽 파랑 → 1 오른쪽 민트) / sparkle: 반짝임 양 (기본 1) / top: 위쪽 띠 ("sky" 하늘 · "deck" 데크)
+// squash: 물 그림을 위아래로 누르는 배율 (하늘 아래 물은 멀리서 본 물결처럼 납작하게)
 // cat: "drift" 떠다님 · "lane" 레인 따라 헤엄 / ripples: 프레임마다 파문이 생길 확률
 const ART = ["--art-blue", "--art-blue-shade", "--art-mint", "--art-mint-shade", "--art-rim", "--art-light"];
 const DEEP = ["--deep-2", "--deep-3", "--deep-1", "--deep-2", "--water-5", "--water-3"];
@@ -20,7 +21,7 @@ export const SCENES = {
   lane: { at: 0.15, water: ART, lanes: true, cat: "lane" },
   rest: { at: 0.7, water: ART, lanes: true, cat: "lane" },
   deck: { at: 0.55, top: "deck", water: ART, cat: "drift" },
-  sunny: { at: 0.3, top: "sky", sky: SKY, water: ART, sparkle: 2, clouds: true },
-  cloudy: { at: 0.3, top: "sky", sky: SKY_GRAY, water: CLOUDY, sparkle: 0.3, clouds: true },
-  rainy: { at: 0.3, top: "sky", sky: SKY_GRAY, water: CLOUDY, sparkle: 0, clouds: true, rain: true, ripples: 0.6 },
+  sunny: { at: 0.9, squash: 2, top: "sky", sky: SKY, water: ART, sparkle: 2, clouds: true },
+  cloudy: { at: 0.9, squash: 2, top: "sky", sky: SKY_GRAY, water: CLOUDY, sparkle: 0.3, clouds: true },
+  rainy: { at: 0.9, squash: 2, top: "sky", sky: SKY_GRAY, water: CLOUDY, sparkle: 0, clouds: true, rain: true, ripples: 0.6 },
 };

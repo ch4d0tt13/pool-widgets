@@ -93,14 +93,15 @@ export function startPool(canvas, sceneName = "shallow") {
 
     if (!art) return palette[0];
     x += artX;
+    const ay = wy * (scene.squash ?? 1); // 하늘 장면은 위아래로 눌러 멀리 보이는 물결처럼
     // 빛 그물(하얀 선·분홍 테두리)이 맨 위
-    const net = swayed(LAYER.net, SWAY.net, x, wy, t);
+    const net = swayed(LAYER.net, SWAY.net, x, ay, t);
     if (net === 255) return palette[5];
     if (net === 128) return palette[4];
     // 그 아래 물 조각: 파랑·민트(섞이는 곳은 체크무늬)에 그늘을 얹는다
-    const hue = layerAt(art, LAYER.hue, x, wy);
+    const hue = layerAt(art, LAYER.hue, x, ay);
     const mint = hue === 255 || (hue === 128 && (x + wy) % 2 === 0);
-    const shadow = swayed(LAYER.shadow, SWAY.shadow, x, wy, t) === 255;
+    const shadow = swayed(LAYER.shadow, SWAY.shadow, x, ay, t) === 255;
     return palette[(mint ? 2 : 0) + (shadow ? 1 : 0)];
   }
 
