@@ -2,6 +2,7 @@
 // 진행은 레인 고양이가 헤엄쳐 간 거리로 보여 주고, 물소리를 켜 두면 도는 동안만 들린다
 import { $, pad } from "../shared/js/dom.js";
 import { setIcon } from "../shared/js/icons.js";
+import { record, addSnack } from "../shared/js/records.js";
 import { createWaterSound } from "./water-sound.js";
 
 const MODES = {
@@ -53,6 +54,11 @@ export function startPomodoro(pool) {
   function tick() {
     if (render() > 0) return;
     chime();
+    // 집중을 끝까지 마치면 기록하고 고양이 간식을 하나 쌓는다
+    if (mode === "focus") {
+      record("focus");
+      addSnack();
+    }
     setMode(MODES[mode].next);
   }
 

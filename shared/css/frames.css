@@ -107,3 +107,7 @@
 .window--stream {
   --bar: repeating-linear-gradient(-45deg, var(--water-4) 0 var(--space-1), var(--white) var(--space-1) var(--space-2));
 }
+
+.window--chart {
+  --bar: repeating-linear-gradient(90deg, var(--water-4) 0 var(--px), var(--white) var(--px) var(--space-2));
+}

@@ -23,6 +23,14 @@
   height: calc(var(--px) * 3);
 }
 
+/* 쌓아 둔 간식 개수 */
+.pet__snacks { gap: var(--space-1); }
+
+.pet__snacks .icon {
+  width: calc(var(--px) * 4);
+  height: calc(var(--px) * 4);
+}
+
 .pet__stage {
   position: relative;
   display: grid;

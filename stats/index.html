@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>수영장 이번 주 기록</title>
+  <link rel="stylesheet" href="../shared/css/index.css">
+  <link rel="stylesheet" href="stats.css">
+</head>
+<body data-widget="stats">
+  <main class="window window--chart" data-title="기록.txt">
+    <div class="window__body stats">
+      <div class="stats__totals">
+        <p class="caption stats__total is-focus"><span>집중 <span data-total-focus>0</span>회</span></p>
+        <p class="caption stats__total is-tidy"><span>정리 <span data-total-tidy>0</span>개</span></p>
+      </div>
+      <div class="stats__chart" data-chart role="img"></div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { startWidget } from "../shared/js/widget.js";
+    import { startStats } from "./stats.js";
+
+    startWidget("shimmer");
+    startStats();
+  </script>
+</body>
+</html>

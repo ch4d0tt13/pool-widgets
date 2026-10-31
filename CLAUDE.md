@@ -4,7 +4,7 @@
 
 ## 배포 구분
 - 사용자가 직접 운영하는 개인 사이트다. 확인이 끝나면 묻지 않고 커밋·푸시·배포한다.
-- 위젯: GitHub Pages (`https://ch4d0tt13.github.io/pool-widgets/<위젯>/`). `main`에 푸시하면 1분쯤 뒤 반영되고, 브라우저 캐시 때문에 노션에는 최대 10분 늦게 보인다.
+- 위젯: GitHub Pages (`https://ch4d0tt13.github.io/pool-widgets/<위젯>/`). `main`에 푸시하면 GitHub Actions(`.github/workflows/pages.yml`)가 `tools/stamp.mjs`로 모든 상대 주소(.js·.css)에 `?v=커밋번호`를 붙인 복사본을 배포한다. 노션이 예전 파일을 기억해도 섞여 깨지지 않는다(새 버전은 최대 10분 뒤 보인다). 소스에는 버전을 쓰지 않는다.
 - 중계 서버: Cloudflare Worker `pool-widgets-api`. `worker/`에서 `npx wrangler deploy`.
 
 ## 구조
@@ -17,10 +17,13 @@
   - `js/sprite.js`·`js/icons.js` 픽셀 그림 (글자 하나 = 한 칸, 색은 토큰)
   - `js/api.js` 중계 서버 호출, `js/dom.js` 작은 도우미 (`$`·`pad`·`el`·`showText`)
   - `js/live.js` 위젯끼리 바로 알리기(`announce`·`onAnnounce`)와 보이는 동안만 새로 고치기(`refreshWhileVisible`)
-- 위젯 폴더: `clock/` `weather/` `pomodoro/` `dday/` `memo/` `briefing/` `calendar/` `cat/` `inbox/` (각각 `index.html` + 위젯 전용 js·css)
-  - `pomodoro/water-sound.js` 파일 없이 만드는 물소리 (타이머가 도는 동안만)
-  - `cat/` 고양이 키우기: 서버·열쇠 없이 기록을 각 기기 브라우저(localStorage)에만 저장 (지금은 노션에 안 넣음)
+  - `js/records.js` 이 기기에 남기는 기록: 날마다 집중(`focus`)·정리(`tidy`) 횟수와 고양이 간식. 바뀌면 `records-changed`를 알린다
+- 위젯 폴더: `clock/` `weather/` `pomodoro/` `dday/` `memo/` `briefing/` `calendar/` `cat/` `inbox/` `stats/` (각각 `index.html` + 위젯 전용 js·css)
+  - `pomodoro/water-sound.js` 파일 없이 만드는 물소리 (타이머가 도는 동안만). 집중을 끝까지 마치면 기록하고 고양이 간식을 하나 쌓는다
+  - `cat/` 고양이 키우기: 서버·열쇠 없이 기록을 각 기기 브라우저(localStorage)에만 저장. 「간식 주기」는 뽀모도로로 쌓은 간식을 쓴다
+  - `stats/` 이번 주 기록: 월~일 집중·정리 막대 (records.js, 기기별)
   - `inbox/` 인박스 정리: 프로젝트·영역·자원 연결이 모두 비고 보관 안 한 자료를 카드로 보여 주고 영역·자원 연결·보관·삭제(두 번 눌러야 하고 노션 휴지통으로). 30초마다·화면을 다시 볼 때 새로 고치고, 빠른 메모 저장 신호(`memo-saved`)를 받으면 바로 다시 본다
+- `tools/stamp.mjs` 배포용 복사본에 버전 붙이기 (Actions가 실행)
 - `worker/` 노션 키를 숨기는 중계 서버 (`GET /dday`, `GET /calendar?month=YYYY-MM`, `POST /memo`, `GET /briefing`, `GET /inbox`, `GET /areas`, `POST /inbox/<id>/area`·`/archive`·`/trash`)
   - `src/routes.js` 마감일·메모·브리핑, `src/inbox.js` 인박스, `src/notion.js` 노션 호출·글자 도우미
 

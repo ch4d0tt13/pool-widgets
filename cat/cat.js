@@ -1,8 +1,11 @@
 // 고양이 키우기: 간식·쓰다듬기·물장구로 배부름과 기분을 채운다. 시간이 지나면 조금씩 줄어든다
+// 간식은 뽀모도로에서 집중을 끝낼 때마다 하나씩 생긴다 (records.js)
 // 기록은 이 기기의 브라우저에만 저장된다 (기기마다 따로)
 import { $, el, showText } from "../shared/js/dom.js";
 import { drawSprite } from "../shared/js/sprite.js";
 import { CAT, CAT_HAPPY, setIcon } from "../shared/js/icons.js";
+import { snacks, useSnack } from "../shared/js/records.js";
+import { onAnnounce } from "../shared/js/live.js";
 
 const STORE_KEY = "pool-widgets:cat";
 const MAX = 3;
@@ -52,6 +55,7 @@ export function startCat(pool) {
   const say = $("[data-say]");
   const fx = $("[data-fx]");
   const hearts = { full: $("[data-full]"), mood: $("[data-mood]") };
+  const snackCount = $("[data-snacks]");
   const state = decay(load());
   let reactUntil = 0;
   let sayTimer = null;
@@ -67,6 +71,7 @@ export function startCat(pool) {
   function render() {
     renderHearts("full");
     renderHearts("mood");
+    snackCount.textContent = snacks();
     const happy = Date.now() < reactUntil || (state.full > 0 && state.mood >= 2);
     drawSprite(catCanvas, happy ? CAT_HAPPY : CAT);
     if (state.full === 0 && Date.now() >= reactUntil) showText(say, "배고파요…");
@@ -97,6 +102,11 @@ export function startCat(pool) {
     const { stat, say: line, saidFull } = ACTIONS[name];
     decay(state);
     const wasFull = state[stat] === MAX;
+    // 간식은 쌓아 둔 것만 줄 수 있다 (배부르면 아끼고)
+    if (name === "feed" && !wasFull && !useSnack()) {
+      speak("간식이 없어요");
+      return;
+    }
     state[stat] = Math.min(MAX, state[stat] + 1);
     state[`${stat}At`] = Date.now();
     save(state);
@@ -117,6 +127,7 @@ export function startCat(pool) {
     render();
   }, TICK_MS);
 
+  onAnnounce("records-changed", render);
   save(state);
   render();
 }

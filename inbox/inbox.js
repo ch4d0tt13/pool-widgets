@@ -2,6 +2,7 @@
 import { $, el, showText } from "../shared/js/dom.js";
 import { api, hasKey } from "../shared/js/api.js";
 import { onAnnounce, refreshWhileVisible } from "../shared/js/live.js";
+import { record } from "../shared/js/records.js";
 
 const REFRESH_MS = 30 * 1000; // 노션에서 직접 고친 것도 30초 안에 보이게 (화면이 보일 때만)
 const MEMO_RECHECK_MS = [1500, 5000]; // 메모 저장 알림 뒤 다시 보는 시점 (노션 검색 반영이 조금 늦다)
@@ -51,6 +52,7 @@ export function startInbox() {
     try {
       await api(path, body);
       gone.add(card.dataset.id);
+      record("tidy");
       notify(done);
       card.classList.add("is-leaving");
       setTimeout(() => {

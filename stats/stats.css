@@ -1,0 +1,62 @@
+/* 하얀 판 위에 월~일 7칸, 칸마다 집중(빨강)·정리(파랑) 픽셀 막대 */
+.stats { gap: var(--space-2); }
+
+.stats__totals {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+/* 합계 스티커 앞 물방울을 막대 색으로 */
+.stats__total.is-focus::before { background: var(--lane-1); }
+.stats__total.is-tidy::before { background: var(--water-5); }
+
+.stats__chart {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-1);
+  width: 100%;
+  min-height: 0;
+  padding: var(--space-2) var(--space-2) var(--space-1);
+  background: var(--white);
+  box-shadow: var(--pixel-border);
+}
+
+.stats__day {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: var(--space-1);
+  min-height: 0;
+}
+
+.stats__bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--px);
+  min-height: 0;
+  border-bottom: var(--px) solid var(--water-2);
+}
+
+.stats__bar {
+  width: calc(var(--px) * 2);
+  min-height: var(--px);
+}
+
+.stats__bar.is-focus { background: var(--lane-1); }
+.stats__bar.is-tidy { background: var(--water-5); }
+.stats__bar.is-empty { opacity: 0.25; }
+
+.stats__label {
+  font-size: var(--size-small);
+  line-height: 1.2;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.stats__day.is-today .stats__label {
+  color: var(--white);
+  background: var(--accent);
+}
