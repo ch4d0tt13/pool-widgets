@@ -2,13 +2,16 @@
 import { SCENES } from "./scenes.js";
 import { spriteColors } from "./sprite.js";
 import { CAT, CLOUD } from "./icons.js";
+import { currentPhase } from "./daylight.js";
 
 const FPS = 12;
-const TILE = 12; // 바닥 타일 한 칸 (논리 픽셀)
+const TILE = 12; // 바닥 타일 한 칸 (논리 픽셀, 장면의 tile로 바꿀 수 있다)
+const SPLASH_RINGS = 5; // 물장구 한 번에 생기는 파문 수
 const WAVE_GAP = 16; // 물결 줄 간격
 const LANE_GAP = 20; // 레인 줄 간격
 const TOP_RATIO = { sky: 0.5, deck: 0.35 }; // 위쪽 띠가 차지하는 비율
 const DECK_TILE = 8;
+const PHASE_CHECK_MS = 60 * 1000; // 시간대는 1분마다 다시 본다
 
 const hexToRgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
 
@@ -28,6 +31,7 @@ export function startPool(canvas, sceneName = "shallow") {
     coping: color("--coping"),
     bubble: color("--bubble"),
     rain: color("--ink-soft"),
+    star: color("--star"),
   };
   const spriteRgb = Object.fromEntries(Object.entries(spriteColors(canvas)).map(([ch, hex]) => [ch, hexToRgb(hex)]));
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -41,6 +45,8 @@ export function startPool(canvas, sceneName = "shallow") {
   let h = 0;
   let top = 0; // 위쪽 띠 높이
   let image = null;
+  let phase = null; // 지금 시간대 (daylight.js)
+  let tint = null; // 시간대 물들이기 색
 
   function layout() {
     // 창이 막 열릴 때는 크기가 0일 수 있다
@@ -84,8 +90,9 @@ export function startPool(canvas, sceneName = "shallow") {
 
     // 바닥 타일 줄 (물에 굴절되어 살짝 흔들림)
     if (scene.tiles) {
+      const size = scene.tile ?? TILE;
       const bend = Math.round(Math.sin(wy * 0.3 + t) * 1);
-      if ((x + bend) % TILE === 0 || (wy + bend) % TILE === 0) return C.tile;
+      if ((x + bend) % size === 0 || (wy + bend) % size === 0) return C.tile;
     }
 
     // 깊이에 따라 단계별 물 색
@@ -156,6 +163,10 @@ export function startPool(canvas, sceneName = "shallow") {
     }
     particles = particles.filter((p) => p.age <= 4);
     for (const p of particles) {
+      if (p.age < 0) {
+        p.age += 1;
+        continue;
+      }
       if (p.age === 0) setPixel(p.x, p.y, C.foam);
       else {
         for (let a = 0; a < Math.PI * 2; a += Math.PI / (p.age * 3)) {
@@ -196,7 +207,34 @@ export function startPool(canvas, sceneName = "shallow") {
     if (!still && scene.bubbles) drawBubbles();
     if (!still && scene.ripples) drawRipples();
     if (scene.cat) drawCat(still ? w / 3 : t);
+    if (phase) applyTint();
+    if (phase?.night && scene.top === "sky") drawStars(t);
     ctx.putImageData(image, 0, 0);
+  }
+
+  // 시간대 색을 한 겹 입힌다 (새벽 분홍 · 노을 주황 · 밤 남색)
+  function applyTint() {
+    const data = image.data;
+    const a = phase.amount;
+    for (let i = 0; i < data.length; i += 4) {
+      data[i] += (tint[0] - data[i]) * a;
+      data[i + 1] += (tint[1] - data[i + 1]) * a;
+      data[i + 2] += (tint[2] - data[i + 2]) * a;
+    }
+  }
+
+  // 밤하늘의 별: 자리는 고정, 번갈아 깜빡인다
+  function drawStars(t) {
+    const count = Math.ceil(w / 8);
+    for (let k = 0; k < count; k++) {
+      if (!still && Math.sin(t * 1.5 + k * 2.1) < -0.3) continue;
+      setPixel((k * 29 + 3) % w, 1 + ((k * 13) % Math.max(1, top - 4)), C.star);
+    }
+  }
+
+  function updatePhase() {
+    phase = currentPhase();
+    tint = phase && color(phase.tint);
   }
 
   const now = () => performance.now() / 1000;
@@ -213,6 +251,18 @@ export function startPool(canvas, sceneName = "shallow") {
     catProgress = Math.min(1, Math.max(0, value));
   }
 
+  // 물장구: 창 아래쪽 가운데에 파문을 한꺼번에 일으킨다 (파문이 있는 장면에서만)
+  function splash() {
+    if (!scene.ripples) return;
+    for (let k = 0; k < SPLASH_RINGS; k++) {
+      particles.push({
+        x: Math.round(w / 2 + (Math.random() - 0.5) * w * 0.4),
+        y: Math.round(top + (h - top) * (0.6 + Math.random() * 0.3)),
+        age: -k, // 차례로 퍼지게 조금씩 늦춘다
+      });
+    }
+  }
+
   let last = 0;
   function loop(ms) {
     if (ms - last >= 1000 / FPS) {
@@ -222,6 +272,8 @@ export function startPool(canvas, sceneName = "shallow") {
     requestAnimationFrame(loop);
   }
 
+  updatePhase();
+  setInterval(updatePhase, PHASE_CHECK_MS);
   setScene(sceneName);
   new ResizeObserver(() => {
     layout();
@@ -229,5 +281,5 @@ export function startPool(canvas, sceneName = "shallow") {
   }).observe(canvas);
   if (!still) requestAnimationFrame(loop);
 
-  return { setScene, setCatProgress };
+  return { setScene, setCatProgress, splash };
 }

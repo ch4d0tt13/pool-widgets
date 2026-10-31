@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>수영장 달력</title>
+  <link rel="stylesheet" href="../shared/css/index.css">
+  <link rel="stylesheet" href="calendar.css">
+</head>
+<body data-widget="calendar">
+  <main class="window window--mosaic" data-title="달력.txt">
+    <div class="window__body calendar">
+      <p class="caption" data-month></p>
+      <div class="calendar__board" data-grid aria-label="이번 달 달력"></div>
+      <p class="caption caption--plain" data-status hidden></p>
+    </div>
+  </main>
+
+  <script type="module">
+    import { startWidget } from "../shared/js/widget.js";
+    import { startCalendar } from "./calendar.js";
+
+    startWidget("mosaic");
+    startCalendar();
+  </script>
+</body>
+</html>

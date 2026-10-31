@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>수영장 고양이</title>
+  <link rel="stylesheet" href="../shared/css/index.css">
+  <link rel="stylesheet" href="cat.css">
+</head>
+<body data-widget="cat">
+  <main class="window window--ring" data-title="고양이.exe">
+    <div class="window__body pet">
+      <div class="pet__stats">
+        <p class="caption caption--plain">배부름 <span class="pet__hearts" data-full></span></p>
+        <p class="caption caption--plain">기분 <span class="pet__hearts" data-mood></span></p>
+      </div>
+      <div class="pet__stage">
+        <p class="caption caption--plain pet__say" data-say role="status" hidden></p>
+        <canvas class="pet__cat" data-cat role="img" aria-label="튜브 고양이"></canvas>
+        <div class="pet__fx" data-fx aria-hidden="true"></div>
+      </div>
+      <div class="pet__actions">
+        <button class="icon-btn" type="button" data-act="feed" aria-label="간식 주기" title="간식 주기">
+          <canvas class="icon" data-icon="fish"></canvas>
+        </button>
+        <button class="icon-btn" type="button" data-act="pet" aria-label="쓰다듬기" title="쓰다듬기">
+          <canvas class="icon" data-icon="heart"></canvas>
+        </button>
+        <button class="icon-btn" type="button" data-act="splash" aria-label="물장구" title="물장구">
+          <canvas class="icon" data-icon="drop"></canvas>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { startWidget } from "../shared/js/widget.js";
+    import { startCat } from "./cat.js";
+
+    startCat(startWidget("play"));
+  </script>
+</body>
+</html>

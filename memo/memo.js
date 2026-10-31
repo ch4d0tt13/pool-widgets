@@ -1,5 +1,5 @@
 // 빠른 메모: 내용만 적으면 「빠른 메모 - @작성시간」 제목으로 자료함에 저장한다
-import { $, pad } from "../shared/js/dom.js";
+import { $, pad, showText } from "../shared/js/dom.js";
 import { api, hasKey } from "../shared/js/api.js";
 
 export function startMemo() {
@@ -9,10 +9,7 @@ export function startMemo() {
   const save = $("[data-save]");
 
   // 상태 스티커는 글이 있을 때만 보인다
-  const setStatus = (text) => {
-    status.textContent = text;
-    status.hidden = !text;
-  };
+  const setStatus = (text) => showText(status, text);
 
   if (!hasKey) {
     setStatus("연결 정보가 없어요");

@@ -1,7 +1,11 @@
 // 날씨: Open-Meteo(키 없음)에서 현재 기온과 오늘 최고·최저를 30분마다 받아온다
 import { $ } from "../shared/js/dom.js";
 import { drawSprite } from "../shared/js/sprite.js";
+import { currentPhase } from "../shared/js/daylight.js";
 import { SPRITES } from "./sprites.js";
+
+// 밤에는 해 대신 달
+const NIGHT_SPRITE = { sun: "moon", partly: "moon" };
 
 // 공개 코드라 도시 단위 좌표만 쓴다
 const PLACE = { name: "울산", lat: 35.54, lon: 129.31 };
@@ -49,7 +53,8 @@ export function startWeather(pool) {
       desc.textContent = text;
       max.textContent = Math.round(daily.temperature_2m_max[0]);
       min.textContent = Math.round(daily.temperature_2m_min[0]);
-      drawSprite(icon, SPRITES[sprite]);
+      const night = currentPhase()?.night;
+      drawSprite(icon, SPRITES[(night && NIGHT_SPRITE[sprite]) || sprite]);
       pool.setScene(scene);
     } catch {
       // 지난 값은 그대로 두고 상태만 알린다

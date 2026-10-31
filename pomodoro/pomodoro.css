@@ -1,12 +1,12 @@
 /* 위에 시간과 버튼, 맨 아래 레인은 비워 두어 고양이가 헤엄치게 한다 */
 .pomodoro {
   justify-content: flex-start;
-  padding-bottom: calc(var(--px) * 18);
+  padding-bottom: calc(var(--px) * 10);
 }
 
+/* 단계 스티커는 숫자 옆에 두어 높이를 아낀다 */
 .pomodoro__head {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: var(--space-2);
 }

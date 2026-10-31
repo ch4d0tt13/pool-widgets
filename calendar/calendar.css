@@ -1,0 +1,47 @@
+/* 모자이크 바닥 위에 놓인 하얀 달력판 */
+.calendar {
+  justify-content: flex-start;
+  gap: var(--space-2);
+}
+
+.calendar__board {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-digit);
+  font-size: var(--size-small);
+  line-height: 1.35;
+  text-align: center;
+  color: var(--navy);
+  background: var(--white);
+  box-shadow: var(--pixel-border);
+}
+
+.calendar__weekday {
+  font-family: var(--font-text);
+  color: var(--ink-soft);
+}
+
+.calendar__weekday.is-sun { color: var(--lane-1); }
+
+.calendar__day { position: relative; }
+
+.calendar__day.is-today {
+  color: var(--white);
+  background: var(--accent);
+}
+
+/* 마감일: 숫자 아래 픽셀 점 */
+.calendar__day.has-deadline::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: var(--px);
+  height: var(--px);
+  background: var(--lane-1);
+  transform: translateX(-50%);
+}
+
+.calendar__day.is-today.has-deadline::after { background: var(--white); }

@@ -45,6 +45,12 @@
   --cat: #2b2d42;
   --ring: #ff8fb1;
 
+  /* 시간대 물들이기 (daylight.js) · 밤하늘 별 */
+  --tint-dawn: #ffb3c7;
+  --tint-sunset: #ff9a5a;
+  --tint-night: #0b1d3a;
+  --star: #fff4c2;
+
   /* 날씨 아이콘 */
   --sun: #ffd23f;
   --sun-deep: #ff9f1c;
@@ -73,6 +79,7 @@
   --size-display: clamp(28px, min(16vw, 26vh), 120px);
   --size-display-sub: calc(var(--size-display) * 0.36);
   --size-caption: clamp(12px, min(4vw, 6.5vh), 24px);
+  --size-small: clamp(10px, min(3.2vw, 5.2vh), 18px);
 
   /* 픽셀 단위와 간격 */
   --px: 4px;

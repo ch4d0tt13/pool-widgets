@@ -38,6 +38,51 @@ export const ICONS = {
     "..rrr..",
     "...r...",
   ],
+  "heart-empty": [
+    ".......",
+    ".rr.rr.",
+    "r..r..r",
+    "r.....r",
+    ".r...r.",
+    "..r.r..",
+    "...r...",
+  ],
+  "sound-on": [
+    "..i....",
+    ".ii..i.",
+    "iii...i",
+    "iii.i.i",
+    "iii...i",
+    ".ii..i.",
+    "..i....",
+  ],
+  "sound-off": [
+    "..i....",
+    ".ii....",
+    "iii.i.i",
+    "iii..i.",
+    "iii.i.i",
+    ".ii....",
+    "..i....",
+  ],
+  fish: [
+    ".......",
+    ".iiii.i",
+    "iiiiiii",
+    "i.iiii.",
+    "iiiiiii",
+    ".iiii.i",
+    ".......",
+  ],
+  drop: [
+    "...i...",
+    "..iii..",
+    ".iiiii.",
+    ".iiiii.",
+    "iiiiiii",
+    "iiiiiii",
+    ".iiiii.",
+  ],
 };
 
 // 분홍 튜브를 낀 검은 고양이 (물 배경 소품)
@@ -47,6 +92,20 @@ export const CAT = [
   "...kkkkkkk...",
   "...kwkkkwk...",
   "...kkkrkkk...",
+  "...kkkkkkk...",
+  ".ggwwggwwggg.",
+  "gggwwggwwgggg",
+  "gggwwggwwgggg",
+  ".ggwwggwwggg.",
+];
+
+// 기분 좋은 튜브 고양이 (눈웃음 + 발그레, 고양이 키우기 위젯)
+export const CAT_HAPPY = [
+  "...k.....k...",
+  "...kk...kk...",
+  "...kwkkkwk...",
+  "...kkkkkkk...",
+  "...pkkrkkp...",
   "...kkkkkkk...",
   ".ggwwggwwggg.",
   "gggwwggwwgggg",

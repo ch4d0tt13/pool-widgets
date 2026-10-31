@@ -1,7 +1,8 @@
 // 뽀모도로: 집중 25분 → 휴식 5분. 끝나면 짧게 울리고 다음 단계에서 멈춰 기다린다
-// 진행은 레인 고양이가 헤엄쳐 간 거리로 보여 준다
+// 진행은 레인 고양이가 헤엄쳐 간 거리로 보여 주고, 물소리를 켜 두면 도는 동안만 들린다
 import { $, pad } from "../shared/js/dom.js";
 import { setIcon } from "../shared/js/icons.js";
+import { createWaterSound } from "./water-sound.js";
 
 const MODES = {
   focus: { label: "집중", seconds: 25 * 60, next: "rest", scene: "lane" },
@@ -14,14 +15,25 @@ export function startPomodoro(pool) {
   const toggleBtn = $("[data-toggle]");
   const toggleIcon = $("[data-toggle-icon]");
   const resetBtn = $("[data-reset]");
+  const soundBtn = $("[data-sound]");
+  const soundIcon = $("[data-sound-icon]");
 
   let mode = "focus";
   let leftMs = MODES[mode].seconds * 1000;
   let endAt = null; // 돌아가는 중일 때만 끝나는 시각
   let timer = null;
   let audio = null;
+  let soundOn = false;
 
+  // 소리는 버튼을 누른 뒤에만 낼 수 있어서, 처음 누를 때 만든다
+  const getAudio = () => (audio ??= new AudioContext());
+  const water = createWaterSound(getAudio);
   const running = () => endAt !== null;
+
+  function syncSound() {
+    if (soundOn && running()) water.start();
+    else water.stop();
+  }
 
   function render() {
     const total = MODES[mode].seconds * 1000;
@@ -50,10 +62,11 @@ export function startPomodoro(pool) {
     mode = next;
     leftMs = MODES[mode].seconds * 1000;
     pool.setScene(MODES[mode].scene);
+    syncSound();
     render();
   }
 
-  // 8비트 느낌의 두 음 알림 (버튼을 누른 뒤에만 소리를 낼 수 있다)
+  // 8비트 느낌의 두 음 알림
   function chime() {
     if (!audio) return;
     [880, 1320].forEach((freq, i) => {
@@ -71,7 +84,7 @@ export function startPomodoro(pool) {
   }
 
   toggleBtn.addEventListener("click", () => {
-    audio ??= new AudioContext();
+    getAudio();
     if (running()) {
       leftMs = Math.max(0, endAt - Date.now());
       endAt = null;
@@ -80,7 +93,17 @@ export function startPomodoro(pool) {
       endAt = Date.now() + leftMs;
       timer = setInterval(tick, 250);
     }
+    syncSound();
     render();
+  });
+
+  soundBtn.addEventListener("click", () => {
+    getAudio();
+    soundOn = !soundOn;
+    soundBtn.setAttribute("aria-pressed", String(soundOn));
+    soundBtn.title = soundOn ? "물소리 끄기" : "물소리 켜기";
+    setIcon(soundIcon, soundOn ? "sound-on" : "sound-off");
+    syncSound();
   });
 
   resetBtn.addEventListener("click", () => setMode("focus"));

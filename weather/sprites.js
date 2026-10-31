@@ -10,6 +10,20 @@ const CLOUD_TOP = [
 ];
 
 export const SPRITES = {
+  moon: [
+    "....yyyy....",
+    "..yyyyy.....",
+    ".yyyy....y..",
+    ".yyy........",
+    "yyy.........",
+    "yyy.....y...",
+    "yyy.........",
+    "yyy.........",
+    ".yyy........",
+    ".yyyy.......",
+    "..yyyyy.....",
+    "....yyyy....",
+  ],
   sun: [
     ".....yy.....",
     ".y...yy...y.",

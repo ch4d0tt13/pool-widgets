@@ -1,4 +1,4 @@
-// D-day 읽기·빠른 메모 쓰기·최근 브리핑 읽기
+// D-day·달력 읽기·빠른 메모 쓰기·최근 브리핑 읽기
 import { notion, httpError } from "./notion.js";
 
 const BRIEFING_LINES = 3; // 첫 섹션에서 보여 줄 줄 수
@@ -6,6 +6,7 @@ const FOOTER_MAX = 40; // 맨 끝 집계 줄로 볼 최대 길이
 const MEMO_MAX = 2000;
 const MEMO_MAX_LINES = 100; // 노션 한 번 요청의 블록 수 한도
 const DEADLINE_COUNT = 4; // 가장 가까운 1개 + 그다음 3개
+const MONTH_MAX = 100; // 한 달 치 마감일 최대 개수 (노션 한 번 조회 한도)
 const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
 
 // 한국 시간 기준 오늘 날짜와 지금 시각
@@ -16,22 +17,33 @@ function kstNow() {
 
 const plainText = (richText) => richText.map((t) => t.plain_text).join("");
 
-export async function listDeadlines(env) {
+// 보관 안 한 프로젝트의 마감일을 날짜순으로 (이름·날짜만 보낸다)
+async function queryDeadlines(env, dateFilters, pageSize) {
   const { results } = await notion(env, `/data_sources/${env.PROJECT_SOURCE_ID}/query`, {
     filter: {
       and: [
-        { property: "마감일", date: { on_or_after: kstNow().date } },
+        ...dateFilters.map((date) => ({ property: "마감일", date })),
         { property: "보관", checkbox: { equals: false } },
       ],
     },
     sorts: [{ property: "마감일", direction: "ascending" }],
-    page_size: DEADLINE_COUNT,
+    page_size: pageSize,
   });
 
   return results.map((page) => ({
     name: plainText(page.properties["이름"].title) || "제목 없음",
     date: page.properties["마감일"].date.start.slice(0, 10),
   }));
+}
+
+export const listDeadlines = (env) => queryDeadlines(env, [{ on_or_after: kstNow().date }], DEADLINE_COUNT);
+
+// 한 달 치 마감일 (month = "YYYY-MM")
+export function monthDeadlines(env, month) {
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month ?? "")) throw httpError(400, "month must be YYYY-MM");
+  const [y, m] = month.split("-").map(Number);
+  const next = m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, "0")}`;
+  return queryDeadlines(env, [{ on_or_after: `${month}-01` }, { before: `${next}-01` }], MONTH_MAX);
 }
 
 export async function createMemo(env, body) {

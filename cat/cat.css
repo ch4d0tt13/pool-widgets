@@ -1,0 +1,83 @@
+/* 위에 상태 스티커, 가운데 둥실 떠 있는 큰 고양이, 아래 버튼 */
+/* 고양이 그림 한 칸 크기 (공통 픽셀 단위의 1.5배) */
+.pet {
+  --pet-pixel: calc(var(--px) * 1.5);
+  justify-content: space-between;
+}
+
+.pet__stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.pet__hearts {
+  display: inline-flex;
+  gap: var(--px);
+  vertical-align: middle;
+}
+
+.pet__hearts .icon {
+  width: calc(var(--px) * 3);
+  height: calc(var(--px) * 3);
+}
+
+.pet__stage {
+  position: relative;
+  display: grid;
+  justify-items: center;
+}
+
+.pet__cat {
+  width: calc(var(--pet-pixel) * 13);
+  height: calc(var(--pet-pixel) * 10);
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  animation: bob var(--float) steps(2) infinite alternate;
+}
+
+/* 고양이 옆 말풍선 스티커 */
+.pet__say {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: var(--space-2);
+  white-space: nowrap;
+}
+
+/* 하트가 위로 떠오르며 사라진다 */
+.pet__fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.pet__fx .icon {
+  position: absolute;
+  bottom: 50%;
+  width: calc(var(--px) * 4);
+  height: calc(var(--px) * 4);
+  animation: rise 0.9s steps(6) forwards;
+}
+
+.pet__actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+@keyframes bob {
+  to { transform: translateY(calc(var(--px) * -1)); }
+}
+
+@keyframes rise {
+  to {
+    opacity: 0;
+    transform: translateY(calc(var(--px) * -10));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pet__cat,
+  .pet__fx .icon { animation: none; }
+}

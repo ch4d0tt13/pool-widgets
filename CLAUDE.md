@@ -13,11 +13,13 @@
   - `css/tokens.css` 색·글꼴·간격·모서리·그림자 토큰. 값은 여기서만 정한다
   - `css/frames.css` 창 틀과 제목 표시줄 무늬 변주
   - `js/widget.js` `startWidget(장면)`: 창 제목 표시줄·물 장면·아이콘을 붙인다
-  - `js/pool.js` 픽셀 물 장면 그리기, `js/scenes.js` 장면 목록
+  - `js/pool.js` 픽셀 물 장면 그리기, `js/scenes.js` 장면 목록, `js/daylight.js` 시간대(새벽·노을·밤) 물들이기
   - `js/sprite.js`·`js/icons.js` 픽셀 그림 (글자 하나 = 한 칸, 색은 토큰)
-  - `js/api.js` 중계 서버 호출, `js/dom.js` 작은 도우미
-- 위젯 폴더: `clock/` `weather/` `pomodoro/` `dday/` `memo/` `briefing/` (각각 `index.html` + 위젯 전용 js·css)
-- `worker/` 노션 키를 숨기는 중계 서버 (`GET /dday`, `POST /memo`, `GET /briefing`)
+  - `js/api.js` 중계 서버 호출, `js/dom.js` 작은 도우미 (`$`·`pad`·`el`·`showText`)
+- 위젯 폴더: `clock/` `weather/` `pomodoro/` `dday/` `memo/` `briefing/` `calendar/` `cat/` (각각 `index.html` + 위젯 전용 js·css)
+  - `pomodoro/water-sound.js` 파일 없이 만드는 물소리 (타이머가 도는 동안만)
+  - `cat/` 고양이 키우기: 서버·열쇠 없이 기록을 각 기기 브라우저(localStorage)에만 저장
+- `worker/` 노션 키를 숨기는 중계 서버 (`GET /dday`, `GET /calendar?month=YYYY-MM`, `POST /memo`, `GET /briefing`)
 
 ## 디자인 규칙
 - 물과 픽셀 테마를 벗어나지 않는다. 글꼴은 Galmuri(숫자는 GalmuriMono11).
@@ -42,4 +44,6 @@
 ## 로컬 확인
 - 저장소 루트에서 `npx http-server@14.1.1 . -p 5174 -c-1`. 5174 포트는 Worker의 `ALLOWED_ORIGINS`에 들어 있다.
 - 노션 크기 기준: 왼쪽 좁은 칸 약 330×220, 가로형(메모·브리핑) 약 640×220.
+- 시간대 물들이기는 주소에 `?hour=6`(새벽)·`?hour=18`(노을)·`?hour=22`(밤)을 붙여 확인한다.
+- 아이콘 캔버스는 화면에 붙인 뒤에 그린다(붙기 전에는 토큰 색을 읽지 못해 빈칸이 된다).
 - 윈도우 셸에서 curl로 한글을 보내면 깨진다. 한글이 든 쓰기 확인은 브라우저 위젯으로 한다.

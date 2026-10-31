@@ -1,5 +1,5 @@
-// 노션 중계 서버: 위젯이 노션 키 없이 D-day를 읽고 빠른 메모를 쓰게 한다
-import { listDeadlines, createMemo, latestBriefing } from "./routes.js";
+// 노션 중계 서버: 위젯이 노션 키 없이 마감일·브리핑을 읽고 빠른 메모를 쓰게 한다
+import { listDeadlines, monthDeadlines, createMemo, latestBriefing } from "./routes.js";
 
 function corsHeaders(request, env) {
   const origin = request.headers.get("Origin") ?? "";
@@ -27,9 +27,11 @@ export default {
       return json({ error: "unauthorized" }, 401, cors);
     }
 
-    const route = `${request.method} ${new URL(request.url).pathname}`;
+    const url = new URL(request.url);
+    const route = `${request.method} ${url.pathname}`;
     try {
       if (route === "GET /dday") return json(await listDeadlines(env), 200, cors);
+      if (route === "GET /calendar") return json(await monthDeadlines(env, url.searchParams.get("month")), 200, cors);
       if (route === "GET /briefing") return json(await latestBriefing(env), 200, cors);
       if (route === "POST /memo") return json(await createMemo(env, await request.json()), 201, cors);
       return json({ error: "not found" }, 404, cors);
