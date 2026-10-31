@@ -15,10 +15,10 @@
         <input class="memo__input" id="memo-text" type="text" maxlength="2000" enterkeyhint="send"
           autocomplete="off" placeholder="떠오른 걸 적어 두세요">
         <button class="btn" type="submit" data-save>
-          <canvas class="icon icon--small" data-icon="heart-small"></canvas>저장
+          <canvas class="icon icon--small" data-icon="heart-small"></canvas><span data-save-label>저장</span>
         </button>
       </div>
-      <p class="caption caption--plain memo__status" data-status role="status" hidden></p>
+      <p class="sr-only" data-status role="status"></p>
     </form>
   </main>
 

@@ -30,5 +30,3 @@
   outline: var(--px) solid var(--accent);
   outline-offset: var(--space-1);
 }
-
-.memo__status { align-self: flex-start; }
