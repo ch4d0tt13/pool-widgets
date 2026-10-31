@@ -87,6 +87,7 @@
   --space-2: calc(var(--px) * 2);
   --space-3: calc(var(--px) * 4);
   --space-4: calc(var(--px) * 6);
+  --embed-menu: calc(var(--px) * 10); /* 휴대폰 노션이 임베드 오른쪽 위에 띄우는 「…」 버튼 자리 */
 
   /* 모서리: 계단식 픽셀 둥글림. 바깥 틀은 3칸, 틀 안쪽은 2칸 */
   --corner-outer: polygon(
