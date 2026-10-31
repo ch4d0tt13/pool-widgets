@@ -1,0 +1,124 @@
+/* 물 위로 떠내려오는 쪽지 카드들을 1열로 쌓고, 넘치면 목록만 스크롤 */
+.inbox {
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.inbox > .caption { align-self: flex-start; }
+
+.inbox__list {
+  display: grid;
+  flex: 1;
+  align-content: start;
+  gap: var(--space-2);
+  min-height: 0;
+  padding: var(--px) var(--space-1) var(--px) var(--px);
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+.inbox__card {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  padding: var(--space-2);
+  color: var(--navy);
+  background: var(--paper);
+  box-shadow: var(--pixel-border);
+  transition: opacity 0.3s steps(3), transform 0.3s steps(3);
+}
+
+/* 정리된 카드는 옆으로 흘러가며 사라진다 */
+.inbox__card.is-leaving {
+  opacity: 0;
+  transform: translateX(var(--space-4));
+}
+
+.inbox__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.inbox__title {
+  overflow: hidden;
+  font-size: var(--size-caption);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--navy);
+  text-decoration: none;
+}
+
+.inbox__date {
+  flex: none;
+  font-family: var(--font-digit);
+  font-size: var(--size-small);
+  color: var(--ink-soft);
+}
+
+.inbox__lines p {
+  overflow: hidden;
+  font-size: var(--size-small);
+  line-height: 1.5;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--ink-soft);
+}
+
+.inbox__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.inbox__picker {
+  display: grid;
+  gap: var(--space-1);
+  padding-top: var(--space-1);
+}
+
+.inbox__group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+
+.inbox__kind {
+  font-size: var(--size-small);
+  color: var(--ink-soft);
+}
+
+/* 영역·자원 이름표 */
+.tag {
+  padding: 0 var(--space-1);
+  font: inherit;
+  font-size: var(--size-small);
+  line-height: 1.5;
+  color: var(--navy);
+  background: var(--white);
+  border: 0;
+  box-shadow: var(--pixel-border);
+  cursor: pointer;
+}
+
+.tag:disabled { opacity: 0.5; cursor: default; }
+
+.inbox__title:focus-visible,
+.tag:focus-visible {
+  outline: var(--px) solid var(--accent);
+  outline-offset: var(--px);
+}
+
+@media (hover: hover) {
+  .inbox__title:hover { text-decoration: underline; }
+  .tag:not(:disabled):hover { background: var(--water-1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inbox__card { transition: none; }
+}

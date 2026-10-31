@@ -15,6 +15,7 @@ export const SCENES = {
   deep: { depth: DEEP, caustic: 2.7, bubbles: true },
   mosaic: { depth: WATER, caustic: 2.1, tiles: true, tile: 6 },
   play: { depth: WATER_DEEPER, caustic: 2.4, tiles: true, foam: true, ripples: 0.05 },
+  inlet: { depth: WATER, caustic: 2.8, tiles: true, tile: 16, foam: true, ripples: 0.03 },
   lane: { depth: WATER_DEEPER, caustic: 2.5, tiles: true, lanes: true, cat: "lane" },
   rest: { depth: WATER, caustic: 2.2, tiles: true, lanes: true, cat: "lane" },
   deck: { top: "deck", depth: WATER, caustic: 2.3, tiles: true, foam: true, cat: "drift" },

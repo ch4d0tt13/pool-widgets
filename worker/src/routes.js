@@ -1,5 +1,5 @@
 // D-day·달력 읽기·빠른 메모 쓰기·최근 브리핑 읽기
-import { notion, httpError } from "./notion.js";
+import { notion, httpError, plainText, blockText } from "./notion.js";
 
 const BRIEFING_LINES = 3; // 첫 섹션에서 보여 줄 줄 수
 const FOOTER_MAX = 40; // 맨 끝 집계 줄로 볼 최대 길이
@@ -14,8 +14,6 @@ function kstNow() {
   const iso = new Date(Date.now() + KST_OFFSET_MS).toISOString();
   return { date: iso.slice(0, 10), dateTime: `${iso.slice(0, 19)}+09:00` };
 }
-
-const plainText = (richText) => richText.map((t) => t.plain_text).join("");
 
 // 보관 안 한 프로젝트의 마감일을 날짜순으로 (이름·날짜만 보낸다)
 async function queryDeadlines(env, dateFilters, pageSize) {
@@ -77,9 +75,6 @@ export async function createMemo(env, body) {
 
 const HEADINGS = ["heading_1", "heading_2", "heading_3"];
 const LIST_ITEMS = ["bulleted_list_item", "numbered_list_item"];
-
-// 블록의 글만 뽑고 출처 표시([1] 등)는 지운다
-const blockText = (block) => plainText(block[block.type]?.rich_text ?? []).replace(/\s*\[\d+\]/g, "").trim();
 
 // 가장 최근 브리핑: 첫 섹션 글머리 최대 3줄 + 맨 끝 집계 줄 (메일 등 나머지 섹션은 보내지 않는다)
 export async function latestBriefing(env) {

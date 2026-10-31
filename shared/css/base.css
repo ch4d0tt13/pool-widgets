@@ -1,6 +1,9 @@
 /* 모든 위젯이 같이 쓰는 바탕·숫자·스티커·버튼 */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* hidden 속성은 display를 정한 클래스(스티커 등)보다 우선한다 */
+[hidden] { display: none !important; }
+
 /* 창이 임베드 칸을 채우고, 깎인 모서리 바깥은 투명하게 비운다
    (투명하게 보이려면 tokens.css의 color-scheme이 필요하다) */
 html, body {
@@ -120,6 +123,18 @@ body {
 .btn:active,
 .icon-btn:active { transform: translateY(var(--px)); }
 
+/* 작은 글자 버튼 · 흰 버튼 */
+.btn--small {
+  padding: 0 var(--space-2);
+  font-size: var(--size-small);
+  line-height: 1.6;
+}
+
+.btn--ghost {
+  color: var(--navy);
+  background: var(--white);
+}
+
 .btn:disabled { opacity: 0.5; cursor: default; }
 
 .btn:focus-visible,
@@ -132,6 +147,7 @@ body {
   .btn:not(:disabled):hover { background: var(--navy); }
   .icon-btn:hover { background: var(--water-1); }
   .icon-btn--main:hover { background: var(--accent); filter: brightness(1.1); }
+  .btn--ghost:not(:disabled):hover { background: var(--water-1); }
 }
 
 /* 화면에는 숨기고 화면 읽기 프로그램에만 읽히게 */

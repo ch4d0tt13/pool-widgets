@@ -5,6 +5,7 @@
 #   MEMO_SOURCE_ID     빠른 메모가 들어갈 데이터 소스 (자료함)
 #   PROJECT_SOURCE_ID  마감일을 읽을 데이터 소스 (프로젝트 목록)
 #   BRIEFING_SOURCE_ID 최근 브리핑을 읽을 데이터 소스 (브리핑)
+#   AREA_SOURCE_ID     인박스 자료에 연결할 영역·자원 데이터 소스
 name = "pool-widgets-api"
 main = "src/index.js"
 compatibility_date = "2026-10-01"

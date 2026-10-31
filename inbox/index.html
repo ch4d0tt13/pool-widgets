@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>수영장 인박스</title>
+  <link rel="stylesheet" href="../shared/css/index.css">
+  <link rel="stylesheet" href="inbox.css">
+</head>
+<body data-widget="inbox">
+  <main class="window window--stream" data-title="인박스.txt">
+    <div class="window__body inbox">
+      <p class="caption" data-count>불러오는 중</p>
+      <ol class="inbox__list" data-list></ol>
+      <p class="caption caption--plain" data-status role="status" hidden></p>
+    </div>
+  </main>
+
+  <script type="module">
+    import { startWidget } from "../shared/js/widget.js";
+    import { startInbox } from "./inbox.js";
+
+    startWidget("inlet");
+    startInbox();
+  </script>
+</body>
+</html>
