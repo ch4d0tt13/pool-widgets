@@ -15,11 +15,6 @@
 
 .note .caption { justify-self: start; }
 
-.note__title {
-  font-size: var(--size-caption);
-  line-height: 1.4;
-}
-
 .note__lines {
   display: grid;
   gap: var(--space-1);

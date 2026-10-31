@@ -1,4 +1,5 @@
-// 브리핑: 가장 최근 브리핑의 제목·첫 섹션 몇 줄·집계 줄을 쪽지로 보여 주고, 누르면 노션에서 연다
+// 브리핑: 가장 최근 브리핑의 종류·시각(스티커), 첫 섹션 몇 줄, 집계 줄을 쪽지로 보여 주고, 누르면 노션에서 연다.
+// 제목(「날짜 저녁 브리핑」)은 스티커와 겹쳐서 보여 주지 않는다
 import { $, pad } from "../shared/js/dom.js";
 import { api, hasKey } from "../shared/js/api.js";
 
@@ -13,7 +14,6 @@ function metaText({ kind, at }) {
 export function startBriefing() {
   const link = $("[data-link]");
   const meta = $("[data-meta]");
-  const heading = $("[data-heading]");
   const lines = $("[data-lines]");
   const footer = $("[data-footer]");
 
@@ -24,7 +24,6 @@ export function startBriefing() {
     }
     link.href = briefing.url;
     meta.textContent = metaText(briefing);
-    heading.textContent = briefing.title;
     lines.replaceChildren(
       ...briefing.lines.map((text) => {
         const li = document.createElement("li");
