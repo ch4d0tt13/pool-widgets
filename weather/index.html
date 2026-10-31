@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>수영장 날씨</title>
+  <link rel="stylesheet" href="../shared/css/index.css">
+  <link rel="stylesheet" href="weather.css">
+</head>
+<body>
+  <canvas class="pool" aria-hidden="true"></canvas>
+
+  <main class="panel">
+    <p class="caption" data-place></p>
+    <div class="weather__now">
+      <canvas class="weather__icon" data-icon aria-hidden="true"></canvas>
+      <p class="display" data-temp>--°</p>
+    </div>
+    <p class="weather__meta" data-desc>불러오는 중</p>
+    <p class="weather__meta">
+      <span>최고 <b data-max>--</b>°</span>
+      <span>최저 <b data-min>--</b>°</span>
+    </p>
+  </main>
+
+  <script type="module">
+    import { startPool } from "../shared/js/pool.js";
+    import { startWeather } from "./weather.js";
+
+    startPool(document.querySelector(".pool"));
+    startWeather();
+  </script>
+</body>
+</html>

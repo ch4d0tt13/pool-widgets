@@ -1,0 +1,27 @@
+.weather__now {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.weather__icon {
+  width: calc(var(--size-display) * 0.9);
+  height: calc(var(--size-display) * 0.9);
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.weather__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-1) var(--space-3);
+  font-size: var(--size-caption);
+  line-height: 1.2;
+  color: var(--ink-soft);
+}
+
+.weather__meta b {
+  font-weight: inherit;
+  color: var(--ink-strong);
+}

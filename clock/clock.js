@@ -1,9 +1,13 @@
 // 시계·날짜: 보는 사람 기기의 현지 시간으로 매초 갱신
+import { $, pad } from "../shared/js/dom.js";
+
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
-const pad = (n) => String(n).padStart(2, "0");
-
-export function startClock({ hour, minute, second, date }) {
+export function startClock() {
+  const hour = $("[data-hour]");
+  const minute = $("[data-minute]");
+  const second = $("[data-second]");
+  const date = $("[data-date]");
   let lastDateText = "";
 
   function render() {

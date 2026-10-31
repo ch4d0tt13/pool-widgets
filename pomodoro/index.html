@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>수영장 뽀모도로</title>
+  <link rel="stylesheet" href="../shared/css/index.css">
+  <link rel="stylesheet" href="pomodoro.css">
+</head>
+<body>
+  <canvas class="pool" aria-hidden="true"></canvas>
+
+  <main class="panel">
+    <p class="caption" data-mode>집중</p>
+    <p class="display" data-remaining role="timer">25:00</p>
+    <div class="progress" aria-hidden="true"><span class="progress__fill" data-progress></span></div>
+    <div class="controls">
+      <button class="btn" type="button" data-toggle>시작</button>
+      <button class="btn btn--ghost" type="button" data-reset>처음으로</button>
+    </div>
+  </main>
+
+  <script type="module">
+    import { startPool } from "../shared/js/pool.js";
+    import { startPomodoro } from "./pomodoro.js";
+
+    startPool(document.querySelector(".pool"));
+    startPomodoro();
+  </script>
+</body>
+</html>

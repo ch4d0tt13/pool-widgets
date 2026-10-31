@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>수영장 시계</title>
+  <link rel="stylesheet" href="../shared/css/index.css">
+</head>
+<body>
+  <canvas class="pool" aria-hidden="true"></canvas>
+
+  <main class="panel">
+    <p class="display">
+      <span data-hour>00</span><span class="blink">:</span><span data-minute>00</span>
+      <span class="display__sub" data-second>00</span>
+    </p>
+    <time class="caption" data-date></time>
+  </main>
+
+  <script type="module">
+    import { startPool } from "../shared/js/pool.js";
+    import { startClock } from "./clock.js";
+
+    startPool(document.querySelector(".pool"));
+    startClock();
+  </script>
+</body>
+</html>

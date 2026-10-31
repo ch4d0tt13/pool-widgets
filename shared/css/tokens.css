@@ -9,19 +9,26 @@
   --water-caustic: #e6f9ff;
   --water-foam: #ffffff;
 
-  /* 패널 */
+  /* 패널·글자 */
   --panel-bg: rgba(255, 255, 255, 0.88);
   --panel-line: #1f6f99;
   --ink-strong: #0d4566;
   --ink-soft: #2f7fa8;
+  --ink-on-line: #ffffff;
   --accent: #ff8fb1;
+
+  /* 날씨 아이콘 */
+  --sun: #ffd23f;
+  --sun-deep: #ff9f1c;
+  --cloud: #ffffff;
+  --cloud-shade: #b9d9ea;
 
   /* 글꼴 */
   --font-digit: "GalmuriMono11", monospace;
   --font-text: "Galmuri11", sans-serif;
-  --size-time: clamp(32px, min(17vw, 30vh), 128px);
-  --size-sec: calc(var(--size-time) * 0.36);
-  --size-date: clamp(12px, min(4.2vw, 7.5vh), 28px);
+  --size-display: clamp(28px, min(17vw, 28vh), 128px);
+  --size-display-sub: calc(var(--size-display) * 0.36);
+  --size-caption: clamp(12px, min(4.2vw, 7vh), 28px);
 
   /* 픽셀 단위와 간격 */
   --px: 4px;
@@ -33,10 +40,16 @@
   /* 모서리: 픽셀 테마라 둥글게 하지 않는다 */
   --radius: 0;
 
-  /* 그림자: 계단식 픽셀 그림자 */
+  /* 테두리·그림자: 네 모서리가 한 칸씩 깎인 픽셀 테두리와 계단식 그림자 */
+  --pixel-border:
+    0 calc(var(--px) * -1) 0 0 var(--panel-line),
+    0 var(--px) 0 0 var(--panel-line),
+    calc(var(--px) * -1) 0 0 0 var(--panel-line),
+    var(--px) 0 0 0 var(--panel-line);
   --shadow-text: var(--px) var(--px) 0 var(--water-2);
   --shadow-panel: 0 calc(var(--px) * 3) 0 0 rgba(13, 69, 102, 0.22);
 
   /* 움직임 */
   --blink: 1s;
+  --press: 80ms;
 }
