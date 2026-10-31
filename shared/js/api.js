@@ -1,6 +1,6 @@
 // 노션 중계 서버(worker/) 호출.
 // 열쇠는 임베드 주소의 # 뒤(#key=...)에 둔다. # 뒤는 어느 서버로도 전송되지 않는다
-const API_BASE = "https://pool-widgets-api.REPLACE_ME.workers.dev";
+const API_BASE = "https://pool-widgets-api.ch4d0tt13.workers.dev";
 
 const key = new URLSearchParams(location.hash.slice(1)).get("key");
 
