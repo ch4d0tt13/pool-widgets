@@ -62,7 +62,7 @@ export function startProjects() {
 
   function card(project) {
     const { text, tone } = pill(project.date);
-    const li = el("li", project.date ? "proj" : "proj is-none");
+    const li = el("li", `proj ${tone}`.trim()); // 킥판 색도 남은 날에 따라
 
     const link = el("a", "proj__link", project.name);
     Object.assign(link, { href: project.url, target: "_blank", rel: "noopener" });

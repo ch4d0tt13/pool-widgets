@@ -77,6 +77,12 @@
   --frame-orange-soft: #ffe2bf;
   --frame-wood: #8a5a32;
   --tank-glass: #eafaff; /* 기록 위젯 물탱크 유리 */
+  /* 프로젝트 킥판: 마감이 가까울수록 진한 색 (알약보다 옅게) */
+  --kick-far: #ffe2bf;
+  --kick-near: #fff0a3;
+  --kick-soon: #ffcf9e;
+  --kick-urgent: #ffc4c6;
+  --kick-none: var(--water-1);
   --paper: #fffaf3;
   --gingham: #ffd3e1;
   --night-bg: #12476a;

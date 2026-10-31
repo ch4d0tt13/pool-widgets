@@ -1,4 +1,4 @@
-/* 공기방울 오르는 물 위에 프로젝트 쪽지 카드를 갤러리처럼 (좁으면 1열) */
+/* 공기방울 오르는 물 위에 프로젝트 킥판을 갤러리처럼 (좁으면 1열) */
 .projects {
   align-items: stretch;
   justify-content: flex-start;
@@ -13,26 +13,49 @@
   align-content: start;
   gap: var(--gap-box);
   min-height: 0;
-  padding: var(--px) var(--space-1) var(--px) var(--px);
+  padding: calc(var(--px) * 2) var(--space-1) var(--px) var(--px); /* 위는 킥판이 둥실 떠오를 자리까지 */
   overflow-y: auto;
   list-style: none;
   scrollbar-width: thin;
   scrollbar-color: var(--line) transparent;
 }
 
+/* 물에 뜬 킥판: 위쪽 손잡이 구멍으로 물이 비치고, 카드마다 박자를 달리해 둥실거린다 */
 .proj {
   position: relative;
   display: grid;
   align-content: space-between;
   gap: var(--gap-box-tight);
   min-width: 0;
-  padding: var(--space-2);
+  padding: calc(var(--px) * 5) var(--space-2) var(--space-2);
   color: var(--navy);
-  background: var(--paper);
+  background: var(--kick-far);
+  box-shadow: var(--pixel-border);
+  animation: kick-bob var(--float) steps(2) infinite alternate;
+}
+
+.proj:nth-child(2n) { animation-delay: calc(var(--float) / -2); }
+
+.proj::before {
+  content: "";
+  position: absolute;
+  top: var(--space-1);
+  left: calc(50% - var(--px) * 4);
+  width: calc(var(--px) * 8);
+  height: var(--space-1);
+  background: var(--water-3);
   box-shadow: var(--pixel-border);
 }
 
-.proj.is-none { background: var(--water-1); }
+.proj.is-near { background: var(--kick-near); }
+.proj.is-soon { background: var(--kick-soon); }
+.proj.is-today,
+.proj.is-over { background: var(--kick-urgent); }
+.proj.is-none { background: var(--kick-none); }
+
+@keyframes kick-bob {
+  to { transform: translateY(calc(var(--px) * -1)); }
+}
 
 /* 이름 링크가 카드 전체를 덮어서 어디를 눌러도 노션 페이지가 열린다 */
 .proj__link {
@@ -125,4 +148,8 @@
 
 @media (hover: hover) {
   .proj:hover { background: var(--white); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proj { animation: none; }
 }
