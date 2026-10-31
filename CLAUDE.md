@@ -13,7 +13,8 @@
   - `css/tokens.css` 색·글꼴·간격·모서리·그림자 토큰. 값은 여기서만 정한다
   - `css/frames.css` 창 틀과 제목 표시줄 무늬 변주
   - `js/widget.js` `startWidget(장면)`: 창 제목 표시줄·물 장면·아이콘을 붙인다
-  - `js/pool.js` 픽셀 물 장면 그리기, `js/scenes.js` 장면 목록, `js/daylight.js` 시간대(새벽·노을·밤) 물들이기
+  - `js/pool.js` 픽셀 물 장면 그리기, `js/scenes.js` 장면 목록(물 색 토큰·그림 위치 `at`·소품), `js/daylight.js` 시간대(새벽·노을·밤) 물들이기
+  - `js/water-art.js`·`img/water.png` 사용자가 직접 그린 물 그림을 겹별로 담은 도트 그림 (R 빛 그물·G 그늘·B 물 색). 색은 그림에 없고 장면의 `water` 토큰으로 칠한다. 빛 그물과 그늘은 따로 일렁이고, 물 색은 가만히 있다. 흘러가는 움직임은 사용자가 원하지 않는다
   - `js/sprite.js`·`js/icons.js` 픽셀 그림 (글자 하나 = 한 칸, 색은 토큰)
   - `js/api.js` 중계 서버 호출, `js/dom.js` 작은 도우미 (`$`·`pad`·`el`·`showText`)
   - `js/live.js` 위젯끼리 바로 알리기(`announce`·`onAnnounce`)와 보이는 동안만 새로 고치기(`refreshWhileVisible`)
@@ -26,6 +27,7 @@
   - `projects/` 프로젝트 카드: 보관 안 한 프로젝트를 마감일 순 갤러리로, 누르면 노션 페이지 새 탭. 카드에서 마감일을 정하거나 지우면 `deadlines-changed`를 알려 D-day·달력이 바로 다시 본다
   - `inbox/` 인박스 정리: 프로젝트·영역·자원 연결이 모두 비고 보관 안 한 자료를 카드로 보여 주고 영역·자원 연결·보관·삭제(두 번 눌러야 하고 노션 휴지통으로). 30초마다·화면을 다시 볼 때 새로 고치고, 빠른 메모 저장 신호(`memo-saved`)를 받으면 바로 다시 본다
 - `tools/stamp.mjs` 배포용 복사본에 버전 붙이기 (Actions가 실행)
+- `tools/pixelate.py` 물 그림 원본 → `shared/img/water.png` (가로 180칸). 원본 그림은 저장소에 올리지 않는다
 - `worker/` 노션 키를 숨기는 중계 서버 (`GET /dday`, `GET /calendar?month=YYYY-MM`, `POST /memo`, `GET /briefing`, `GET /inbox`, `GET /areas`, `POST /inbox/<id>/area`·`/archive`·`/trash`, `GET /projects`, `POST /projects/<id>/deadline`)
   - `src/routes.js` 마감일·메모·브리핑, `src/inbox.js` 인박스, `src/projects.js` 프로젝트·마감일 정하기, `src/notion.js` 노션 호출·글자 도우미·소속 확인(`pageInSource`)
 

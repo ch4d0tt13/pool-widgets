@@ -1,0 +1,111 @@
+# 직접 그린 물 그림을 위젯용 도트 그림으로 바꾼다 (가로 180칸)
+# 그림을 그대로 줄이지 않고 겹(레이어)별로 뽑아 도트 규칙대로 다시 그린다.
+# 색은 넣지 않고 채널마다 한 겹을 담는다. 색은 위젯이 장면 토큰으로 칠한다(water-art.js).
+#   R: 빛 그물 (0 물 · 128 분홍 테두리 · 255 하얀 선)
+#   G: 물 조각 안 그늘 (0 · 255)
+#   B: 물 색 (0 파랑 · 128 섞임 · 255 민트)
+# 사용: python tools/pixelate.py <원본 그림> shared/img/water.png
+# 원본은 저장소에 올리지 않고, 결과 그림만 올린다
+import sys
+
+import numpy as np
+from PIL import Image
+
+WIDTH = 180
+NET_MIN = 228  # 세 채널이 모두 이보다 밝으면 하얀 선
+NET_COVER = 0.35  # 칸의 이만큼이 하얀 선이면 그 칸은 선 (낮을수록 가는 선도 끊기지 않는다)
+RIM_RED = 205  # 하얀 선 둘레에서 빨강이 이보다 밝으면 분홍 테두리
+SHADOW_DROP = 10  # 주변 물보다 이만큼 어두우면 그늘
+HUE_BLUR = 60  # 물 색은 넓게 뭉개서 큰 흐름만 본다
+HUE_MIX = (-9, -3)  # 이 사이의 물 색은 파랑·민트를 체크무늬로 섞는다
+SPECK = 14  # 이보다 작은 하얀 덩어리는 원본의 반짝이라서 뺀다 (반짝임은 위젯이 그린다)
+
+
+def coverage(mask, size):
+    """원본 크기 마스크를 칸 크기로 줄여, 칸마다 덮인 비율(0~1)을 돌려준다"""
+    small = Image.fromarray((mask * 255).astype(np.uint8)).resize(size, Image.BOX)
+    return np.asarray(small) / 255
+
+
+def below_right(mask):
+    """바로 위나 바로 왼쪽 칸이 켜진 칸 (빛이 왼쪽 위에서 비친다고 보고 테두리는 아래·오른쪽에만)"""
+    out = np.zeros_like(mask)
+    out[1:] |= mask[:-1]
+    out[:, 1:] |= mask[:, :-1]
+    return out
+
+
+def blur(values, r):
+    """가로세로 (2r+1)칸 평균 (가장자리는 있는 칸만으로)"""
+    def run(a, axis):
+        c = np.cumsum(np.pad(a, [(r + 1, r) if i == axis else (0, 0) for i in range(2)], mode="edge"), axis=axis)
+        hi = np.take(c, range(2 * r + 1, c.shape[axis]), axis=axis)
+        lo = np.take(c, range(0, c.shape[axis] - 2 * r - 1), axis=axis)
+        return (hi - lo) / (2 * r + 1)
+    return run(run(values.astype(np.float64), 0), 1)
+
+
+def drop_specks(mask, smallest):
+    """이어진 칸 수가 smallest보다 적은 덩어리를 지운다"""
+    h, w = mask.shape
+    seen = np.zeros_like(mask)
+    out = mask.copy()
+    for y, x in zip(*np.nonzero(mask)):
+        if seen[y, x]:
+            continue
+        stack, blob = [(y, x)], []
+        seen[y, x] = True
+        while stack:
+            cy, cx = stack.pop()
+            blob.append((cy, cx))
+            for ny, nx in ((cy - 1, cx), (cy + 1, cx), (cy, cx - 1), (cy, cx + 1)):
+                if 0 <= ny < h and 0 <= nx < w and mask[ny, nx] and not seen[ny, nx]:
+                    seen[ny, nx] = True
+                    stack.append((ny, nx))
+        if len(blob) < smallest:
+            for cy, cx in blob:
+                out[cy, cx] = False
+    return out
+
+
+def tidy(mask, keep=2):
+    """이웃(8칸) 중 켜진 칸이 keep개보다 적은 외톨이 점을 지운다"""
+    padded = np.pad(mask, 1).astype(np.uint8)
+    h, w = mask.shape
+    count = sum(padded[1 + dy : 1 + dy + h, 1 + dx : 1 + dx + w] for dy in (-1, 0, 1) for dx in (-1, 0, 1)) - mask
+    return mask & (count >= keep)
+
+
+src, out = sys.argv[1:3]
+image = Image.open(src).convert("RGB")
+rgb = np.asarray(image).astype(int)
+size = (WIDTH, round(WIDTH * image.height / image.width))
+
+# 하얀 빛 그물과 그 둘레의 분홍 테두리
+net_full = rgb.min(axis=2) > NET_MIN
+net = drop_specks(tidy(coverage(net_full, size) > NET_COVER), SPECK)
+rim_full = (rgb[..., 0] > RIM_RED) & ~net_full
+rim = below_right(net) & ~net & (coverage(rim_full | net_full, size) > 0.3)
+
+# 물 조각 안 그늘: 주변 물보다 어두운 줄무늬
+lum = rgb.mean(axis=2)
+water_lum = np.where(net_full | rim_full, np.nan, lum)
+fill = np.where(np.isnan(water_lum), np.nanmean(water_lum), water_lum)
+local = blur(fill, 40)
+shadow = tidy(coverage((lum < local - SHADOW_DROP) & ~net_full & ~rim_full, size) > 0.5, keep=3)
+
+# 물 색: 파랑(초록보다 파랑이 진함) → 민트, 가운데는 체크무늬로 섞는다
+mint_full = (rgb[..., 1] - rgb[..., 2]).astype(np.float32)
+hue = np.asarray(Image.fromarray(blur(mint_full, HUE_BLUR).astype(np.float32)).resize(size, Image.BOX))
+hue_level = np.where(hue > HUE_MIX[1], 255, np.where(hue < HUE_MIX[0], 0, 128)).astype(np.uint8)
+
+layers = np.stack(
+    [
+        np.where(net, 255, np.where(rim, 128, 0)).astype(np.uint8),
+        np.where(shadow, 255, 0).astype(np.uint8),
+        hue_level,
+    ],
+    axis=2,
+)
+Image.fromarray(layers, "RGB").save(out, optimize=True)
+print(f"{out}: {size[0]}x{size[1]}, 빛 그물 {net.mean():.0%} · 테두리 {rim.mean():.0%} · 그늘 {shadow.mean():.0%}")

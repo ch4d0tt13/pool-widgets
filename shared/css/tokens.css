@@ -16,8 +16,15 @@
   --water-4: #62c3ec;
   --water-5: #46acd9;
   --water-tile: #56b6e0;
-  --water-caustic: #e6f9ff;
   --water-foam: #ffffff;
+
+  /* 물 그림 (water-art.js): 파랑 · 민트 조각과 그늘, 빛 그물의 분홍 테두리와 하얀 선 */
+  --art-blue: #8acdef;
+  --art-blue-shade: #68b0e8;
+  --art-mint: #a0f0ec;
+  --art-mint-shade: #76d6de;
+  --art-rim: #f6d6fa;
+  --art-light: #fffef6;
 
   /* 장면별 물·하늘 색 */
   --deep-1: #3a9fd0;

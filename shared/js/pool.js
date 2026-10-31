@@ -1,13 +1,19 @@
-// 픽셀 수영장 장면: 창 본문 크기의 저해상도 캔버스에 장면(scenes.js)대로 그린다
+// 픽셀 수영장 장면: 창 본문 크기의 저해상도 캔버스에 직접 그린 물 그림을 겹별로 따로 일렁이게 그리고,
+// 장면(scenes.js)대로 색·소품(레인·하늘·데크·공기방울·고양이)을 얹는다
 import { SCENES } from "./scenes.js";
 import { spriteColors } from "./sprite.js";
 import { CAT, CLOUD } from "./icons.js";
 import { currentPhase } from "./daylight.js";
+import { LAYER, loadWaterArt, layerAt } from "./water-art.js";
 
 const FPS = 12;
-const TILE = 12; // 바닥 타일 한 칸 (논리 픽셀, 장면의 tile로 바꿀 수 있다)
 const SPLASH_RINGS = 5; // 물장구 한 번에 생기는 파문 수
-const WAVE_GAP = 16; // 물결 줄 간격
+// 겹마다 다르게 일렁인다: 물결의 촘촘함(가로 줄·세로 줄)과 빠르기. 물 색 겹은 가만히 있다
+const SWAY = {
+  net: { density: [0.18, 0.14], speed: [1.3, 1.1] },
+  shadow: { density: [0.09, 0.07], speed: [0.6, 0.45] },
+};
+const SPARKLE_AREA = 300; // 이 넓이(칸)마다 반짝임 하나 (장면의 sparkle로 곱한다)
 const LANE_GAP = 20; // 레인 줄 간격
 const TOP_RATIO = { sky: 0.5, deck: 0.35 }; // 위쪽 띠가 차지하는 비율
 const DECK_TILE = 8;
@@ -22,7 +28,6 @@ export function startPool(canvas, sceneName = "shallow") {
   const px = parseInt(styles.getPropertyValue("--px"), 10);
   const C = {
     tile: color("--water-tile"),
-    caustic: color("--water-caustic"),
     foam: color("--water-foam"),
     lane1: color("--lane-1"),
     lane2: color("--lane-2"),
@@ -37,7 +42,7 @@ export function startPool(canvas, sceneName = "shallow") {
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   let scene;
-  let depth;
+  let palette; // 물 그림 색 [파랑, 파랑 그늘, 민트, 민트 그늘, 테두리, 빛]
   let sky;
   let particles = []; // 공기방울 또는 파문
   let catProgress = 0; // 레인 고양이 위치 (0~1)
@@ -47,6 +52,8 @@ export function startPool(canvas, sceneName = "shallow") {
   let image = null;
   let phase = null; // 지금 시간대 (daylight.js)
   let tint = null; // 시간대 물들이기 색
+  let art = null; // 물 그림 (읽기 전에는 파랑 단색)
+  let artX = 0; // 물 그림의 어느 가로 위치부터 보여 줄지 (장면의 at)
 
   function layout() {
     // 창이 막 열릴 때는 크기가 0일 수 있다
@@ -57,6 +64,11 @@ export function startPool(canvas, sceneName = "shallow") {
     canvas.height = h;
     image = ctx.createImageData(w, h);
     particles = [];
+    placeArt();
+  }
+
+  function placeArt() {
+    artX = art ? Math.round((scene.at ?? 0) * Math.max(0, art.w - w)) : 0;
   }
 
   function bandColor(x, y) {
@@ -78,25 +90,22 @@ export function startPool(canvas, sceneName = "shallow") {
       }
     }
 
-    // 물결: 줄마다 좌우로 출렁이는 흰 픽셀 선
-    if (scene.foam) {
-      const sway = Math.round(Math.sin(x * 0.28 + t * 1.6 + Math.floor(wy / WAVE_GAP)) * 1.5);
-      if ((wy + sway) % WAVE_GAP === 0 && Math.sin(x * 0.11 - t * 0.9 + wy) > -0.2) return C.foam;
-    }
+    if (!art) return palette[0];
+    x += artX;
+    // 빛 그물(하얀 선·분홍 테두리)이 맨 위
+    const net = swayed(LAYER.net, SWAY.net, x, wy, t);
+    if (net === 255) return palette[5];
+    if (net === 128) return palette[4];
+    // 그 아래 물 조각: 파랑·민트(섞이는 곳은 체크무늬)에 그늘을 얹는다
+    const hue = layerAt(art, LAYER.hue, x, wy);
+    const mint = hue === 255 || (hue === 128 && (x + wy) % 2 === 0);
+    const shadow = swayed(LAYER.shadow, SWAY.shadow, x, wy, t) === 255;
+    return palette[(mint ? 2 : 0) + (shadow ? 1 : 0)];
+  }
 
-    // 수면 빛 무늬
-    const light = Math.sin(x * 0.35 + t) + Math.sin(wy * 0.45 - t * 0.8) + Math.sin((x + wy) * 0.2 + t * 0.6);
-    if (light > scene.caustic) return C.caustic;
-
-    // 바닥 타일 줄 (물에 굴절되어 살짝 흔들림)
-    if (scene.tiles) {
-      const size = scene.tile ?? TILE;
-      const bend = Math.round(Math.sin(wy * 0.3 + t) * 1);
-      if ((x + bend) % size === 0 || (wy + bend) % size === 0) return C.tile;
-    }
-
-    // 깊이에 따라 단계별 물 색
-    return depth[Math.min(depth.length - 1, Math.floor((wy / (h - top)) * depth.length))];
+  // 한 겹을 줄마다 한 칸씩 출렁이며 읽는다
+  function swayed(layer, { density: [dx, dy], speed: [sx, sy] }, x, y, t) {
+    return layerAt(art, layer, x + Math.round(Math.sin(y * dx + t * sx)), y + Math.round(Math.sin(x * dy + t * sy)));
   }
 
   function setPixel(x, y, [r, g, b]) {
@@ -177,6 +186,21 @@ export function startPool(canvas, sceneName = "shallow") {
     }
   }
 
+  // 반짝임: 물 위 여기저기서 픽셀 별이 반짝였다 사라지고, 다음엔 다른 자리에서 반짝인다
+  function drawSparkles(t) {
+    const count = Math.round(((w * (h - top)) / SPARKLE_AREA) * (scene.sparkle ?? 1));
+    for (let k = 0; k < count; k++) {
+      const cycle = t * 0.8 + k * 0.37;
+      const glow = Math.sin((cycle % 1) * Math.PI); // 0 → 1 → 0
+      if (glow < 0.5) continue;
+      const seed = Math.imul(k + 1, 73856093) ^ Math.imul(Math.floor(cycle) + 1, 19349663);
+      const x = (seed >>> 0) % w;
+      const y = top + ((seed >>> 8) % Math.max(1, h - top));
+      setPixel(x, y, C.star);
+      if (glow > 0.9) [[0, -1], [-1, 0], [1, 0], [0, 1]].forEach(([ax, ay]) => setPixel(x + ax, y + ay, C.foam));
+    }
+  }
+
   // 튜브 고양이: 떠다니거나(drift) 맨 아래 레인을 진행만큼 헤엄쳐 간다(lane)
   function drawCat(t) {
     const cw = CAT[0].length;
@@ -202,6 +226,7 @@ export function startPool(canvas, sceneName = "shallow") {
         data[i + 3] = 255;
       }
     }
+    if (!still && art) drawSparkles(t);
     if (scene.clouds) drawClouds(still ? 10 : t);
     if (!still && scene.rain) drawRain(t);
     if (!still && scene.bubbles) drawBubbles();
@@ -241,7 +266,7 @@ export function startPool(canvas, sceneName = "shallow") {
 
   function setScene(name) {
     scene = SCENES[name];
-    depth = scene.depth.map(color);
+    palette = scene.water.map(color);
     sky = (scene.sky ?? []).map(color);
     layout();
     draw(now());
@@ -275,6 +300,11 @@ export function startPool(canvas, sceneName = "shallow") {
   updatePhase();
   setInterval(updatePhase, PHASE_CHECK_MS);
   setScene(sceneName);
+  loadWaterArt().then((loaded) => {
+    art = loaded;
+    placeArt();
+    draw(now());
+  });
   new ResizeObserver(() => {
     layout();
     draw(now());

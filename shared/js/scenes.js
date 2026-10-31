@@ -1,27 +1,26 @@
-// 물 장면: 창 틀은 같아도 창 안 분위기는 위젯마다 다르게
-// depth: 위→아래 물 색 토큰 / caustic: 빛 무늬 문턱값(낮을수록 많이 반짝임)
-// top: 위쪽 띠 ("sky" 하늘 · "deck" 데크) / cat: "drift" 떠다님 · "lane" 레인 따라 헤엄
-// ripples: 프레임마다 파문이 생길 확률 / tile: 바닥 타일 크기(기본 12)
-const WATER = ["--water-1", "--water-2", "--water-3", "--water-4"];
-const WATER_DEEPER = ["--water-2", "--water-3", "--water-4", "--water-5"];
-const DEEP = ["--deep-1", "--deep-2", "--deep-3", "--deep-4"];
-const CLOUDY = ["--cloudy-1", "--cloudy-2", "--cloudy-3", "--cloudy-4"];
+// 물 장면: 바탕은 모두 직접 그린 물 그림(water-art.js)이고, 위젯마다 색과 소품을 다르게 준다
+// water: 물 그림을 칠할 토큰 [파랑, 파랑 그늘, 민트, 민트 그늘, 테두리, 빛] (그림을 읽기 전엔 파랑 단색)
+// at: 물 그림의 어느 부분을 보여 줄지 (0 왼쪽 파랑 → 1 오른쪽 민트) / sparkle: 반짝임 양 (기본 1) / top: 위쪽 띠 ("sky" 하늘 · "deck" 데크)
+// cat: "drift" 떠다님 · "lane" 레인 따라 헤엄 / ripples: 프레임마다 파문이 생길 확률
+const ART = ["--art-blue", "--art-blue-shade", "--art-mint", "--art-mint-shade", "--art-rim", "--art-light"];
+const DEEP = ["--deep-2", "--deep-3", "--deep-1", "--deep-2", "--water-5", "--water-3"];
+const CLOUDY = ["--cloudy-3", "--cloudy-4", "--cloudy-2", "--cloudy-3", "--cloudy-1", "--white"];
 const SKY = ["--sky-1", "--sky-2", "--sky-3"];
 const SKY_GRAY = ["--sky-gray-1", "--sky-gray-2", "--sky-gray-3"];
 
 export const SCENES = {
-  shallow: { depth: WATER, caustic: 2.3, tiles: true, foam: true, cat: "drift" },
-  calm: { depth: WATER, caustic: 2.6, foam: true, ripples: 0.12 },
-  deep: { depth: DEEP, caustic: 2.7, bubbles: true },
-  mosaic: { depth: WATER, caustic: 2.1, tiles: true, tile: 6 },
-  play: { depth: WATER_DEEPER, caustic: 2.4, tiles: true, foam: true, ripples: 0.05 },
-  inlet: { depth: WATER, caustic: 2.8, tiles: true, tile: 16, foam: true, ripples: 0.03 },
-  shimmer: { depth: WATER_DEEPER, caustic: 1.6, foam: true },
-  pebble: { depth: WATER_DEEPER, caustic: 2.3, tiles: true, tile: 8, bubbles: true },
-  lane: { depth: WATER_DEEPER, caustic: 2.5, tiles: true, lanes: true, cat: "lane" },
-  rest: { depth: WATER, caustic: 2.2, tiles: true, lanes: true, cat: "lane" },
-  deck: { top: "deck", depth: WATER, caustic: 2.3, tiles: true, foam: true, cat: "drift" },
-  sunny: { top: "sky", sky: SKY, depth: WATER, caustic: 1.9, tiles: true, foam: true, clouds: true },
-  cloudy: { top: "sky", sky: SKY_GRAY, depth: CLOUDY, caustic: 2.9, tiles: true, foam: true, clouds: true },
-  rainy: { top: "sky", sky: SKY_GRAY, depth: CLOUDY, caustic: 3.5, tiles: true, clouds: true, rain: true, ripples: 0.6 },
+  shallow: { at: 0, water: ART, cat: "drift" },
+  calm: { at: 0.35, water: ART, ripples: 0.12 },
+  deep: { at: 0.5, water: DEEP, sparkle: 0.5, bubbles: true },
+  mosaic: { at: 0.8, water: ART, sparkle: 0.6 },
+  play: { at: 0.6, water: ART, ripples: 0.05 },
+  inlet: { at: 0.25, water: ART, ripples: 0.03 },
+  shimmer: { at: 0.95, water: ART, sparkle: 2.5 },
+  pebble: { at: 0.45, water: ART, bubbles: true },
+  lane: { at: 0.15, water: ART, lanes: true, cat: "lane" },
+  rest: { at: 0.7, water: ART, lanes: true, cat: "lane" },
+  deck: { at: 0.55, top: "deck", water: ART, cat: "drift" },
+  sunny: { at: 0.3, top: "sky", sky: SKY, water: ART, sparkle: 2, clouds: true },
+  cloudy: { at: 0.3, top: "sky", sky: SKY_GRAY, water: CLOUDY, sparkle: 0.3, clouds: true },
+  rainy: { at: 0.3, top: "sky", sky: SKY_GRAY, water: CLOUDY, sparkle: 0, clouds: true, rain: true, ripples: 0.6 },
 };
