@@ -55,13 +55,14 @@
 
 .inbox__date {
   flex: none;
-  font-family: var(--font-digit);
+  font-family: var(--font-digit-small);
   font-size: var(--size-small);
   color: var(--ink-soft);
 }
 
 .inbox__lines p {
   overflow: hidden;
+  font-family: var(--font-small);
   font-size: var(--size-small);
   line-height: 1.5;
   white-space: nowrap;
@@ -106,6 +107,7 @@
 }
 
 .inbox__kind {
+  font-family: var(--font-small);
   font-size: var(--size-small);
   color: var(--ink-soft);
 }
@@ -114,6 +116,7 @@
 .tag {
   padding: 0 var(--space-1);
   font: inherit;
+  font-family: var(--font-small);
   font-size: var(--size-small);
   line-height: 1.5;
   color: var(--navy);

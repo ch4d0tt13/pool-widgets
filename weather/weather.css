@@ -8,8 +8,9 @@
 }
 
 .weather__icon {
-  width: calc(var(--size-display) * 0.9);
-  height: calc(var(--size-display) * 0.9);
+  /* 12×12 그림을 큰 숫자 크기(12px의 배수)로: 그림 1칸이 늘 정수 px라 고르게 찍힌다 */
+  width: var(--size-display);
+  height: var(--size-display);
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }

@@ -32,8 +32,8 @@
 .window__title {
   overflow: hidden;
   padding: 0 var(--space-1);
-  font-size: var(--size-caption);
-  line-height: 1.3;
+  font-size: var(--size-bar);
+  line-height: calc(var(--px) * 5); /* 표시줄 높이가 도트 칸에 딱 맞게 */
   white-space: nowrap;
   text-overflow: ellipsis;
   color: var(--navy);

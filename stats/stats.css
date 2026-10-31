@@ -50,6 +50,7 @@
 .stats__bar.is-empty { opacity: 0.25; }
 
 .stats__label {
+  font-family: var(--font-small);
   font-size: var(--size-small);
   line-height: 1.2;
   text-align: center;

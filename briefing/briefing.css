@@ -24,7 +24,8 @@
   display: grid;
   gap: var(--space-1);
   min-width: 0;
-  font-size: calc(var(--size-caption) * 0.85);
+  font-family: var(--font-small);
+  font-size: var(--size-small);
   line-height: 1.5;
   list-style: none;
   color: var(--ink-soft);
@@ -48,7 +49,8 @@
 .note__footer {
   justify-self: end;
   padding: 0 var(--space-1);
-  font-size: calc(var(--size-caption) * 0.85);
+  font-family: var(--font-small);
+  font-size: var(--size-small);
   background: var(--gingham);
 }
 

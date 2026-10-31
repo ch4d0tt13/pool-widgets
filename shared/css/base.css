@@ -126,6 +126,7 @@ body {
 /* 작은 글자 버튼 · 흰 버튼 */
 .btn--small {
   padding: 0 var(--space-2);
+  font-family: var(--font-small);
   font-size: var(--size-small);
   line-height: 1.6;
 }

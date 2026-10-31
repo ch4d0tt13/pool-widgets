@@ -69,7 +69,7 @@
 /* 마감까지 남은 날 알약: 가까울수록 진하게 */
 .proj__pill {
   padding: 0 var(--space-1);
-  font-family: var(--font-digit);
+  font-family: var(--font-digit-small);
   font-size: var(--size-small);
   line-height: 1.5;
   color: var(--navy);
@@ -83,13 +83,13 @@
 .proj__pill.is-over { color: var(--white); background: var(--lane-1); }
 
 .proj__pill.is-none {
-  font-family: var(--font-text);
+  font-family: var(--font-small);
   color: var(--ink-soft);
   background: var(--white);
 }
 
 .proj__date {
-  font-family: var(--font-digit);
+  font-family: var(--font-digit-small);
   font-size: var(--size-small);
   color: var(--ink-soft);
 }
@@ -107,6 +107,7 @@
   min-width: 0;
   padding: 0 var(--space-1);
   font: inherit;
+  font-family: var(--font-small);
   font-size: var(--size-small);
   line-height: 1.6;
   color: var(--navy);

@@ -9,7 +9,7 @@
   grid-template-columns: repeat(7, 1fr);
   width: 100%;
   padding: var(--space-1) var(--space-2);
-  font-family: var(--font-digit);
+  font-family: var(--font-digit-small);
   font-size: var(--size-small);
   line-height: 1.35;
   text-align: center;
@@ -19,7 +19,7 @@
 }
 
 .calendar__weekday {
-  font-family: var(--font-text);
+  font-family: var(--font-small);
   color: var(--ink-soft);
 }
 

@@ -83,13 +83,17 @@
   --chip-bg: var(--white);
   --chip-ink: var(--navy);
 
-  /* 글꼴 */
+  /* 글꼴: 갈무리는 픽셀 글꼴이라 제 크기의 배수에서만 또렷하다 (11 계열은 12px, 9 계열은 10px의 배수).
+     그래서 크기는 창에 맞춰 계산한 뒤 그 배수로 내려 맞춘다. 작은 글자(--size-small)는 9 계열과 짝지어 쓴다 */
   --font-digit: "GalmuriMono11", monospace;
   --font-text: "Galmuri11", sans-serif;
-  --size-display: clamp(28px, min(16vw, 26vh), 120px);
-  --size-display-sub: calc(var(--size-display) * 0.36);
-  --size-caption: clamp(12px, min(4vw, 6.5vh), 24px);
-  --size-small: clamp(10px, min(3.2vw, 5.2vh), 18px);
+  --font-digit-small: "GalmuriMono9", monospace;
+  --font-small: "Galmuri9", sans-serif;
+  --size-display: round(down, clamp(36px, min(16vw, 26vh), 120px), 12px);
+  --size-display-sub: max(12px, round(down, calc(var(--size-display) * 0.36), 12px));
+  --size-caption: round(down, clamp(12px, min(4vw, 6.5vh), 24px), 12px);
+  --size-small: round(down, clamp(10px, min(3.2vw, 5.2vh), 20px), 10px);
+  --size-bar: 12px; /* 창 제목 표시줄은 창 크기와 상관없이 고정 */
 
   /* 픽셀 단위와 간격 */
   --px: 3px;
