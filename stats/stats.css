@@ -41,7 +41,7 @@
 }
 
 .stats__bar {
-  width: calc(var(--px) * 2);
+  width: calc(var(--px) * 4);
   min-height: var(--px);
 }
 
