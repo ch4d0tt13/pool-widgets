@@ -81,6 +81,12 @@ body {
   image-rendering: crisp-edges;
 }
 
+/* 글자 옆에 쓰는 작은 아이콘 (5×5 그림, icons.js의 -small) */
+.icon--small {
+  width: calc(var(--px) * 5);
+  height: calc(var(--px) * 5);
+}
+
 /* 글자 버튼 */
 .btn {
   display: inline-flex;
@@ -95,11 +101,6 @@ body {
   box-shadow: var(--pixel-border);
   cursor: pointer;
   transition: transform var(--press) steps(1);
-}
-
-.btn .icon {
-  width: calc(var(--px) * 4);
-  height: calc(var(--px) * 4);
 }
 
 /* 아이콘 버튼 */

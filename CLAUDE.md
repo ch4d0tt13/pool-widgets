@@ -15,7 +15,7 @@
   - `js/widget.js` `startWidget(장면)`: 창 제목 표시줄·물 장면·아이콘을 붙인다
   - `js/pool.js` 픽셀 물 장면 그리기, `js/scenes.js` 장면 목록(물 색 토큰·그림 위치 `at`·소품), `js/daylight.js` 시간대(새벽·노을·밤). 필터를 덮지 않고, 문서(`<html>`)에 `data-phase`를 붙여 `tokens.css`의 시간대 색 토큰으로 물 장면을 통째로 다시 칠한다. 창 틀·상자 안 글자는 그대로이고, 밤에는 물 위 큰 숫자(`.display`)만 밝게 바꾼다
   - `js/water-art.js`·`img/water.png` 사용자가 직접 그린 물 그림의 빛 그물만 도트로 다시 그린 그림 (R 빛 그물·G 물 조각의 가운데 위치). 색은 그림에 없다. 물 조각은 창 왼쪽일수록 어두운 하늘, 오른쪽일수록 밝은 하늘(조각 하나는 한 색). 그늘은 빛 그물과 같은 무늬를 비켜서 따로 일렁인다(사용자가 그린 방식). 흘러가는 움직임은 사용자가 원하지 않는다
-  - `js/sprite.js`·`js/icons.js` 픽셀 그림 (글자 하나 = 한 칸, 색은 토큰)
+  - `js/sprite.js`·`js/icons.js` 픽셀 그림 (글자 하나 = 한 칸, 색은 토큰). 늘 정수 배율로 띄운다: 보통 아이콘 7×7, 글자 옆 작은 아이콘은 5×5(`-small` + `.icon--small`), 창 버튼 3×3. 그림을 어중간한 크기로 늘리면 픽셀이 고르지 않다
   - `js/api.js` 중계 서버 호출, `js/dom.js` 작은 도우미 (`$`·`pad`·`el`·`showText`)
   - `js/live.js` 위젯끼리 바로 알리기(`announce`·`onAnnounce`)와 보이는 동안만 새로 고치기(`refreshWhileVisible`)
   - `js/dates.js` 마감일 계산 (`daysUntil`·`ddayLabel`·`shortDate`)

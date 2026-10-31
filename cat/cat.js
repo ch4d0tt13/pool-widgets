@@ -62,9 +62,9 @@ export function startCat(pool) {
 
   // 아이콘 색은 화면에 붙은 뒤에야 읽을 수 있어서, 붙이고 나서 그린다
   function renderHearts(stat) {
-    const icons = Array.from({ length: MAX }, () => el("canvas", "icon"));
+    const icons = Array.from({ length: MAX }, () => el("canvas", "icon icon--small"));
     hearts[stat].replaceChildren(...icons);
-    icons.forEach((c, i) => setIcon(c, i < state[stat] ? "heart" : "heart-empty"));
+    icons.forEach((c, i) => setIcon(c, i < state[stat] ? "heart-small" : "heart-empty-small"));
     hearts[stat].setAttribute("aria-label", `${state[stat]}/${MAX}`);
   }
 
@@ -89,12 +89,12 @@ export function startCat(pool) {
   // 픽셀 하트가 고양이 위로 떠오른다
   function burstHearts() {
     for (let k = 0; k < 3; k++) {
-      const c = el("canvas", "icon");
+      const c = el("canvas", "icon icon--small");
       c.style.left = `${30 + k * 18}%`;
       c.style.animationDelay = `${k * 0.15}s`;
       c.addEventListener("animationend", () => c.remove());
       fx.append(c);
-      setIcon(c, "heart");
+      setIcon(c, "heart-small");
     }
   }
 
