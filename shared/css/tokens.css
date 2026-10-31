@@ -127,8 +127,8 @@
   --float: 2.4s;
 }
 
-/* 시간대 색: daylight.js가 물 장면 캔버스에 data-phase를 붙이면 장면 색을 통째로 바꾼다 (창 틀·글자는 그대로) */
-.pool[data-phase="dawn"] {
+/* 시간대 색: pool.js가 문서에 data-phase를 붙이면 물 장면 색을 통째로 바꾼다 (창 틀·상자 안 글자는 그대로) */
+:root[data-phase="dawn"] .pool {
   --art-1: #9aaee8;
   --art-1-shade: #7d8fd6;
   --art-2: #adbfee;
@@ -164,7 +164,7 @@
   --cloud-shade: #e4c6dc;
 }
 
-.pool[data-phase="sunset"] {
+:root[data-phase="sunset"] .pool {
   --art-1: #6f8fd0;
   --art-1-shade: #5872b8;
   --art-2: #8a9fd2;
@@ -200,7 +200,7 @@
   --cloud-shade: #e8a6a2;
 }
 
-.pool[data-phase="night"] {
+:root[data-phase="night"] .pool {
   --art-1: #1f4a78;
   --art-1-shade: #183a63;
   --art-2: #275a86;
@@ -236,6 +236,13 @@
   --cloud-shade: #66758f;
   --lane-1: #d0505a;
   --lane-2: #b8c4d8;
+}
+
+/* 밤에는 물 위 큰 숫자를 밝게 (짙은 남색 물 위에서도 읽히게) */
+:root[data-phase="night"] .display {
+  --ink-strong: var(--white);
+  --ink-soft: var(--water-1);
+  --shadow-text: var(--px) var(--px) 0 var(--deep-4);
 }
 
 /* 위젯별 포인트 색과 글자색 */

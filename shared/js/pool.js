@@ -238,11 +238,12 @@ export function startPool(canvas, sceneName = "shallow") {
     }
   }
 
-  // 시간대(새벽·노을·밤)는 캔버스의 data-phase로 토큰 색을 통째로 바꾼다 (tokens.css)
+  // 시간대(새벽·노을·밤)는 문서의 data-phase로 물 장면과 물 위 숫자의 토큰 색을 통째로 바꾼다 (tokens.css)
   function updatePhase() {
     phase = currentPhase();
-    if (phase) canvas.dataset.phase = phase.name;
-    else delete canvas.dataset.phase;
+    const root = document.documentElement;
+    if (phase) root.dataset.phase = phase.name;
+    else delete root.dataset.phase;
     if (!scene) return;
     readColors();
     draw(now());
