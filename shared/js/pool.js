@@ -9,9 +9,10 @@ import { LAYER, loadWaterArt, layerAt } from "./water-art.js";
 const FPS = 12;
 const SPLASH_RINGS = 5; // 물장구 한 번에 생기는 파문 수
 // 겹마다 다르게 일렁인다: 물결의 촘촘함(가로 줄·세로 줄)과 빠르기. 물 색 겹은 가만히 있다
+// 촘촘하면 줄마다 따로 밀려 선이 찢겨 보이니, 넓은 띠로 묶여 한 칸씩 밀리게 성기게 둔다
 const SWAY = {
-  net: { density: [0.18, 0.14], speed: [1.3, 1.1] },
-  shadow: { density: [0.09, 0.07], speed: [0.6, 0.45] },
+  net: { density: [0.06, 0.05], speed: [1.1, 0.9] },
+  shadow: { density: [0.04, 0.035], speed: [0.6, 0.45] },
 };
 const SPARKLE_AREA = 300; // 이 넓이(칸)마다 반짝임 하나 (장면의 sparkle로 곱한다)
 const LANE_GAP = 20; // 레인 줄 간격

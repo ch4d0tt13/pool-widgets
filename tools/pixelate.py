@@ -19,6 +19,7 @@ SHADOW_DROP = 10  # 주변 물보다 이만큼 어두우면 그늘
 HUE_BLUR = 60  # 물 색은 넓게 뭉개서 큰 흐름만 본다
 HUE_MIX = (-9, -3)  # 이 사이의 물 색은 파랑·민트를 체크무늬로 섞는다
 SPECK = 14  # 이보다 작은 하얀 덩어리는 원본의 반짝이라서 뺀다 (반짝임은 위젯이 그린다)
+HOLE = 8  # 하얀 선 속 이보다 작은 물 구멍은 메운다 (구멍마다 분홍 점이 생기지 않게)
 
 
 def coverage(mask, size):
@@ -68,12 +69,22 @@ def drop_specks(mask, smallest):
     return out
 
 
+def around(mask):
+    """칸마다 이웃 8칸 중 켜진 칸 수"""
+    padded = np.pad(mask, 1, mode="edge").astype(np.uint8)
+    h, w = mask.shape
+    return sum(padded[1 + dy : 1 + dy + h, 1 + dx : 1 + dx + w] for dy in (-1, 0, 1) for dx in (-1, 0, 1)) - mask
+
+
 def tidy(mask, keep=2):
     """이웃(8칸) 중 켜진 칸이 keep개보다 적은 외톨이 점을 지운다"""
-    padded = np.pad(mask, 1).astype(np.uint8)
-    h, w = mask.shape
-    count = sum(padded[1 + dy : 1 + dy + h, 1 + dx : 1 + dx + w] for dy in (-1, 0, 1) for dx in (-1, 0, 1)) - mask
-    return mask & (count >= keep)
+    return mask & (around(mask) >= keep)
+
+
+def smooth(mask):
+    """가장자리 계단을 다듬는다: 이웃 5칸 이상이 켜진 빈칸은 채우고, 2칸 이하인 칸은 지운다"""
+    count = around(mask)
+    return (mask | (count >= 5)) & (count >= 3)
 
 
 src, out = sys.argv[1:3]
@@ -83,9 +94,10 @@ size = (WIDTH, round(WIDTH * image.height / image.width))
 
 # 하얀 빛 그물과 그 둘레의 분홍 테두리
 net_full = rgb.min(axis=2) > NET_MIN
-net = drop_specks(tidy(coverage(net_full, size) > NET_COVER), SPECK)
+net = smooth(drop_specks(tidy(coverage(net_full, size) > NET_COVER), SPECK))
+net |= ~drop_specks(~net, HOLE)
 rim_full = (rgb[..., 0] > RIM_RED) & ~net_full
-rim = below_right(net) & ~net & (coverage(rim_full | net_full, size) > 0.3)
+rim = tidy(below_right(net) & ~net & (coverage(rim_full | net_full, size) > 0.3), keep=1)
 
 # 물 조각 안 그늘: 주변 물보다 어두운 줄무늬
 lum = rgb.mean(axis=2)
