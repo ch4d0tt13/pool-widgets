@@ -1,7 +1,7 @@
 /* 깊은 물 속에 떠 있는 다음 마감들 */
 .dday__list {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--gap-box-tight);
   width: 100%;
   margin-top: var(--space-1);
   list-style: none;

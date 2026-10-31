@@ -1,7 +1,7 @@
 /* 모자이크 바닥 위에 놓인 하얀 달력판 */
 .calendar {
   justify-content: flex-start;
-  gap: var(--space-2);
+  gap: var(--gap-box-tight);
 }
 
 .calendar__board {

@@ -11,7 +11,7 @@
   flex: 1;
   grid-template-columns: repeat(auto-fill, minmax(calc(var(--px) * 38), 1fr));
   align-content: start;
-  gap: var(--space-2);
+  gap: var(--gap-box);
   min-height: 0;
   padding: var(--px) var(--space-1) var(--px) var(--px);
   overflow-y: auto;
@@ -24,7 +24,7 @@
   position: relative;
   display: grid;
   align-content: space-between;
-  gap: var(--space-2);
+  gap: var(--gap-box-tight);
   min-width: 0;
   padding: var(--space-2);
   color: var(--navy);
@@ -63,7 +63,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1) var(--space-2);
+  gap: var(--gap-box-tight);
 }
 
 /* 마감까지 남은 날 알약: 가까울수록 진하게 */
@@ -100,7 +100,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1) var(--space-2);
+  gap: var(--gap-box-tight);
 }
 
 .proj__input {

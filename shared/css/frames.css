@@ -43,7 +43,7 @@
 .window__controls {
   display: flex;
   flex: none;
-  gap: var(--space-2);
+  gap: var(--gap-box-tight);
 }
 
 /* 최소화·최대화·닫기: 5칸 하얀 칸 가운데에 3칸 픽셀 아이콘 */
@@ -74,7 +74,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
+  gap: var(--gap-box-tight);
   min-height: 0;
   padding: var(--space-3);
   overflow: clip; /* 스크롤 영역이 되지 않게: 버튼에 초점이 가도 내용이 밀려 올라가지 않는다 */

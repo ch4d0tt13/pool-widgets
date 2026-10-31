@@ -10,7 +10,7 @@
   display: grid;
   flex: 1;
   align-content: start;
-  gap: var(--space-2);
+  gap: var(--gap-box);
   min-height: 0;
   padding: var(--px) var(--space-1) var(--px) var(--px);
   overflow-y: auto;
@@ -72,7 +72,7 @@
 .inbox__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: var(--gap-box-tight);
 }
 
 /* 삭제: 빨간 글자, 한 번 누르면 빨간 바탕으로 「정말 삭제?」 */
@@ -94,15 +94,15 @@
 
 .inbox__picker {
   display: grid;
-  gap: var(--space-1);
-  padding-top: var(--space-1);
+  gap: var(--gap-box-tight);
+  padding-top: calc(var(--gap-box-tight) - var(--space-1)); /* 카드 줄 간격(space-1)에 더해 위 버튼들과 1칸 띄운다 */
 }
 
 .inbox__group {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1) var(--space-2);
+  gap: var(--gap-box-tight);
 }
 
 .inbox__kind {
