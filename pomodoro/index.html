@@ -8,12 +8,13 @@
   <link rel="stylesheet" href="pomodoro.css">
 </head>
 <body data-widget="pomodoro">
-  <main class="panel window window--night" data-title="집중.exe">
-    <div class="window__body">
-      <p class="caption" data-mode>집중</p>
-      <p class="display" data-remaining role="timer">25:00</p>
-      <div class="track" aria-hidden="true"><span class="track__fill" data-progress></span></div>
-      <div class="controls">
+  <main class="window window--lane" data-title="집중.exe">
+    <div class="window__body pomodoro">
+      <div class="pomodoro__head">
+        <p class="caption" data-mode>집중</p>
+        <p class="display" data-remaining role="timer">25:00</p>
+      </div>
+      <div class="pomodoro__controls">
         <button class="icon-btn" type="button" data-reset aria-label="처음으로" title="처음으로">
           <canvas class="icon" data-icon="restart"></canvas>
         </button>

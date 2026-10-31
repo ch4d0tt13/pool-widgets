@@ -8,18 +8,17 @@
   <link rel="stylesheet" href="weather.css">
 </head>
 <body data-widget="weather">
-  <main class="panel window window--sun" data-title="날씨.exe">
-    <div class="window__body">
-      <p class="caption" data-place></p>
-      <div class="weather__now">
+  <main class="window window--sun" data-title="날씨.exe">
+    <div class="window__body weather">
+      <div class="weather__sky">
         <canvas class="weather__icon" data-icon-weather aria-hidden="true"></canvas>
         <p class="display" data-temp>--°</p>
       </div>
-      <p class="weather__meta" data-desc>불러오는 중</p>
-      <p class="weather__meta">
-        <span>최고 <b data-max>--</b>°</span>
-        <span>최저 <b data-min>--</b>°</span>
-      </p>
+      <div class="weather__water">
+        <p class="caption" data-place></p>
+        <p class="caption caption--plain" data-desc>불러오는 중</p>
+        <p class="caption caption--plain"><span>최고 <span data-max>--</span>° · 최저 <span data-min>--</span>°</span></p>
+      </div>
     </div>
   </main>
 
@@ -27,7 +26,7 @@
     import { startWidget } from "../shared/js/widget.js";
     import { startWeather } from "./weather.js";
 
-    startWeather(startWidget("shallow"));
+    startWeather(startWidget("sunny"));
   </script>
 </body>
 </html>

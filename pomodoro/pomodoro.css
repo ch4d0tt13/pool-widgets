@@ -1,32 +1,17 @@
-/* 플레이어 진행 줄: 가는 선 위에 분홍 손잡이 */
-.track {
-  position: relative;
-  width: 100%;
-  height: var(--px);
-  margin: var(--space-1) 0;
-  background: var(--deep-3);
+/* 위에 시간과 버튼, 맨 아래 레인은 비워 두어 고양이가 헤엄치게 한다 */
+.pomodoro {
+  justify-content: flex-start;
+  padding-bottom: calc(var(--px) * 18);
 }
 
-.track__fill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 0;
-  background: var(--accent);
-}
-
-.track__fill::after {
-  content: "";
-  position: absolute;
-  top: calc(var(--px) * -1);
-  right: calc(var(--px) * -1);
-  width: var(--space-2);
-  height: var(--space-2);
-  background: var(--cloud);
-  box-shadow: var(--pixel-border);
-}
-
-.controls {
+.pomodoro__head {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.pomodoro__controls {
+  display: flex;
   gap: var(--space-3);
 }

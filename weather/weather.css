@@ -1,4 +1,7 @@
-.weather__now {
+/* 위는 하늘(아이콘·기온), 아래는 수면(스티커들) */
+.weather { justify-content: space-around; }
+
+.weather__sky {
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -11,17 +14,9 @@
   image-rendering: crisp-edges;
 }
 
-.weather__meta {
+.weather__water {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--space-1) var(--space-3);
-  font-size: var(--size-caption);
-  line-height: 1.2;
-  color: var(--ink-soft);
-}
-
-.weather__meta b {
-  font-weight: inherit;
-  color: var(--ink-strong);
+  gap: var(--space-2) var(--space-3);
 }

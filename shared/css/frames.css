@@ -1,20 +1,32 @@
-/* 창 틀: 모든 위젯은 도트 픽셀 창이다.
-   제목 표시줄 무늬(--bar)와 본문 색(--panel-bg 등)만 변주로 바꾼다 */
+/* 창 틀: 모든 위젯이 공유한다 (계단식 둥근 모서리 · 제목 표시줄 · 물 장면 본문).
+   변주는 제목 표시줄 무늬(--bar)로만 준다. 창 안 배치는 위젯마다 따로 짠다 */
 .window {
   --bar: repeating-linear-gradient(var(--water-2) 0 var(--px), var(--water-1) var(--px) calc(var(--px) * 2));
-  padding: 0;
-  gap: 0;
-  justify-items: stretch;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--px);
+  background: var(--line);
+  clip-path: var(--corner-outer);
+}
+
+.window__inner {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--px);
+  min-width: 0;
+  clip-path: var(--corner-inner);
 }
 
 .window__bar {
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
   padding: var(--space-1) var(--space-2);
   background: var(--bar);
-  box-shadow: 0 var(--px) 0 var(--panel-line);
 }
 
 .window__title {
@@ -24,8 +36,8 @@
   line-height: 1.3;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: var(--ink-strong);
-  background: var(--cloud);
+  color: var(--navy);
+  background: var(--white);
 }
 
 .window__controls {
@@ -41,40 +53,45 @@
   height: var(--space-3);
   font-size: calc(var(--space-3) * 0.8);
   line-height: 1;
-  color: var(--ink-strong);
-  background: var(--cloud);
+  color: var(--navy);
+  background: var(--white);
   box-shadow: var(--pixel-border);
 }
 
+/* 본문: 물 장면 위에 내용을 얹는다 */
 .window__body {
-  display: grid;
-  justify-items: center;
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
+  min-height: 0;
+  padding: var(--space-3);
+  overflow: hidden;
+  background: var(--water-3);
 }
 
-/* 가로로 긴 창 */
-.window--wide { width: calc(100% - var(--space-4) * 2); }
-.window--wide .window__body { justify-items: stretch; }
+.window__body > :not(.pool) { position: relative; }
 
-/* 해 줄무늬 */
+/* 제목 표시줄 무늬 변주 */
 .window--sun {
-  --bar: repeating-linear-gradient(var(--sun) 0 var(--px), var(--cloud) var(--px) calc(var(--px) * 2));
-  --panel-bg: var(--water-1);
+  --bar: repeating-linear-gradient(var(--sun) 0 var(--px), var(--white) var(--px) calc(var(--px) * 2));
 }
 
-/* 분홍 체크 + 종이 */
-.window--paper {
+.window--gingham {
   --bar: repeating-conic-gradient(var(--gingham) 0 25%, var(--paper) 0 50%) 0 0 / var(--space-2) var(--space-2);
-  --panel-bg: var(--paper);
 }
 
-/* 밤바다: 진한 남색 바탕에 밝은 글자 */
 .window--night {
   --bar: repeating-linear-gradient(var(--deep-3) 0 var(--px), var(--deep-4) var(--px) calc(var(--px) * 2));
-  --panel-bg: var(--night-bg);
-  --ink-soft: var(--water-2);
-  --icon-ink: var(--cloud);
-  --shadow-text: var(--px) var(--px) 0 var(--deep-3);
-  color: var(--cloud);
+}
+
+.window--lane {
+  --bar: repeating-linear-gradient(90deg, var(--lane-1) 0 var(--space-2), var(--lane-2) var(--space-2) var(--space-3));
+}
+
+.window--deck {
+  --bar: repeating-linear-gradient(90deg, var(--deck-1) 0 calc(var(--space-2) - var(--px)), var(--deck-2) calc(var(--space-2) - var(--px)) var(--space-2));
 }

@@ -54,6 +54,14 @@ export const CAT = [
   ".ggwwggwwggg.",
 ];
 
+// 하늘에 흘러가는 작은 구름 (물 배경 소품)
+export const CLOUD = [
+  "...www....",
+  ".wwwwwww..",
+  "wwwwwwwwww",
+  ".ssssssss.",
+];
+
 export const setIcon = (canvas, name) => drawSprite(canvas, ICONS[name]);
 
 // 페이지 안의 <canvas data-icon="이름"> 을 모두 그린다

@@ -8,8 +8,14 @@ export function startMemo() {
   const status = $("[data-status]");
   const save = $("[data-save]");
 
+  // 상태 스티커는 글이 있을 때만 보인다
+  const setStatus = (text) => {
+    status.textContent = text;
+    status.hidden = !text;
+  };
+
   if (!hasKey) {
-    status.textContent = "연결 정보가 없어요";
+    setStatus("연결 정보가 없어요");
     input.disabled = save.disabled = true;
     return;
   }
@@ -18,14 +24,14 @@ export function startMemo() {
     const text = input.value.trim();
     if (!text || save.disabled) return;
     save.disabled = true;
-    status.textContent = "저장하는 중…";
+    setStatus("저장하는 중…");
     try {
       await api("/memo", { text });
       const now = new Date();
       input.value = "";
-      status.textContent = `저장했어요 · ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+      setStatus(`저장했어요 · ${pad(now.getHours())}:${pad(now.getMinutes())}`);
     } catch {
-      status.textContent = "저장 못 했어요. 다시 눌러 주세요";
+      setStatus("저장 못 했어요. 다시 눌러 주세요");
     } finally {
       save.disabled = false;
       input.focus();

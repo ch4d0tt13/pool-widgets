@@ -8,13 +8,13 @@
   <link rel="stylesheet" href="memo.css">
 </head>
 <body data-widget="memo">
-  <main class="panel window window--wide" data-title="빠른메모.txt">
-    <form class="window__body" data-form>
+  <main class="window window--deck" data-title="빠른메모.txt">
+    <form class="window__body memo" data-form>
       <label class="sr-only" for="memo-text">메모 내용</label>
       <textarea class="memo__input" id="memo-text" rows="2" maxlength="2000"
         placeholder="떠오른 걸 적어 두세요 (Ctrl+Enter로 저장)"></textarea>
       <div class="memo__foot">
-        <p class="memo__status" data-status role="status"></p>
+        <p class="caption caption--plain memo__status" data-status role="status" hidden></p>
         <button class="btn" type="submit" data-save>
           <canvas class="icon" data-icon="heart"></canvas>저장
         </button>

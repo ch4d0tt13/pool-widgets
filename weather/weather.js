@@ -10,7 +10,7 @@ const REFRESH_MS = 30 * 60 * 1000;
 // WMO 날씨 코드 → [설명, 아이콘, 물 장면]
 function describe(code) {
   if (code === 0) return ["맑음", "sun", "sunny"];
-  if (code <= 2) return ["구름 조금", "partly", "shallow"];
+  if (code <= 2) return ["구름 조금", "partly", "sunny"];
   if (code === 3) return ["흐림", "cloud", "cloudy"];
   if (code <= 48) return ["안개", "cloud", "cloudy"];
   if (code <= 57) return ["이슬비", "rain", "rainy"];

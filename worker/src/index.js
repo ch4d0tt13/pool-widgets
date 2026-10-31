@@ -1,5 +1,5 @@
 // 노션 중계 서버: 위젯이 노션 키 없이 D-day를 읽고 빠른 메모를 쓰게 한다
-import { listDeadlines, createMemo } from "./routes.js";
+import { listDeadlines, createMemo, latestBriefing } from "./routes.js";
 
 function corsHeaders(request, env) {
   const origin = request.headers.get("Origin") ?? "";
@@ -30,6 +30,7 @@ export default {
     const route = `${request.method} ${new URL(request.url).pathname}`;
     try {
       if (route === "GET /dday") return json(await listDeadlines(env), 200, cors);
+      if (route === "GET /briefing") return json(await latestBriefing(env), 200, cors);
       if (route === "POST /memo") return json(await createMemo(env, await request.json()), 201, cors);
       return json({ error: "not found" }, 404, cors);
     } catch (err) {

@@ -1,13 +1,18 @@
+/* 데크 위에 종이 한 장, 아래 물가엔 고양이 */
+.memo {
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
 .memo__input {
   width: 100%;
   padding: var(--space-2);
   font: inherit;
   font-size: var(--size-caption);
   line-height: 1.5;
-  color: var(--ink-strong);
-  background: var(--cloud);
+  color: var(--navy);
+  background: var(--paper);
   border: 0;
-  border-radius: var(--radius);
   box-shadow: var(--pixel-border);
   resize: none;
 }
@@ -22,13 +27,8 @@
 .memo__foot {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: var(--space-3);
 }
 
-.memo__status {
-  min-width: 0;
-  font-size: var(--size-caption);
-  line-height: 1.2;
-  color: var(--ink-soft);
-}
+.memo__status { margin-right: auto; }

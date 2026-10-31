@@ -1,4 +1,5 @@
 // 뽀모도로: 집중 25분 → 휴식 5분. 끝나면 짧게 울리고 다음 단계에서 멈춰 기다린다
+// 진행은 레인 고양이가 헤엄쳐 간 거리로 보여 준다
 import { $, pad } from "../shared/js/dom.js";
 import { setIcon } from "../shared/js/icons.js";
 
@@ -10,7 +11,6 @@ const MODES = {
 export function startPomodoro(pool) {
   const modeEl = $("[data-mode]");
   const remainingEl = $("[data-remaining]");
-  const progressEl = $("[data-progress]");
   const toggleBtn = $("[data-toggle]");
   const toggleIcon = $("[data-toggle-icon]");
   const resetBtn = $("[data-reset]");
@@ -28,7 +28,7 @@ export function startPomodoro(pool) {
     const left = running() ? Math.max(0, endAt - Date.now()) : leftMs;
     const secs = Math.ceil(left / 1000);
     remainingEl.textContent = `${pad(Math.floor(secs / 60))}:${pad(secs % 60)}`;
-    progressEl.style.width = `${((total - left) / total) * 100}%`;
+    pool.setCatProgress((total - left) / total);
     modeEl.textContent = MODES[mode].label;
 
     const label = running() ? "멈춤" : leftMs < total ? "계속" : "시작";

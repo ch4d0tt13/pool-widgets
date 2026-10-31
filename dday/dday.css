@@ -1,11 +1,10 @@
+/* 깊은 물 속에 떠 있는 다음 마감들 */
 .dday__list {
   display: grid;
   gap: var(--space-2);
   width: 100%;
   margin-top: var(--space-1);
-  padding-top: var(--space-2);
   list-style: none;
-  border-top: var(--px) dashed var(--gingham);
 }
 
 .dday__list:empty { display: none; }
@@ -16,7 +15,7 @@
   gap: var(--space-2);
   min-width: 0;
   font-size: var(--size-caption);
-  line-height: 1.2;
+  line-height: 1.4;
 }
 
 /* 알약 모양 남은 날 */
@@ -24,7 +23,7 @@
   flex: none;
   padding: 0 var(--space-1);
   font-family: var(--font-digit);
-  color: var(--ink-strong);
+  color: var(--navy);
   background: var(--gingham);
   box-shadow: var(--pixel-border);
 }
@@ -33,5 +32,5 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: var(--ink-soft);
+  color: var(--ink-strong);
 }

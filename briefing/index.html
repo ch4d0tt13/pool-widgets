@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>수영장 브리핑</title>
+  <link rel="stylesheet" href="../shared/css/index.css">
+  <link rel="stylesheet" href="briefing.css">
+</head>
+<body data-widget="briefing">
+  <main class="window window--gingham" data-title="브리핑.txt">
+    <div class="window__body">
+      <a class="note" data-link target="_blank" rel="noopener">
+        <p class="caption" data-meta>불러오는 중</p>
+        <p class="note__title" data-heading></p>
+        <ul class="note__lines" data-lines></ul>
+        <p class="note__footer" data-footer></p>
+      </a>
+    </div>
+  </main>
+
+  <script type="module">
+    import { startWidget } from "../shared/js/widget.js";
+    import { startBriefing } from "./briefing.js";
+
+    startWidget("calm");
+    startBriefing();
+  </script>
+</body>
+</html>

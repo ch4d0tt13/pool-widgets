@@ -1,0 +1,70 @@
+/* 물 위에 둥실 떠 있는 종이 쪽지 */
+.note {
+  display: grid;
+  gap: var(--space-1);
+  width: 100%;
+  max-height: 100%;
+  padding: var(--space-2) var(--space-3);
+  overflow: hidden;
+  color: var(--navy);
+  text-decoration: none;
+  background: var(--paper);
+  box-shadow: var(--pixel-border), 0 var(--space-2) 0 var(--px) rgba(13, 69, 102, 0.25);
+  animation: float var(--float) steps(2) infinite alternate;
+}
+
+.note .caption { justify-self: start; }
+
+.note__title {
+  font-size: var(--size-caption);
+  line-height: 1.4;
+}
+
+.note__lines {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  font-size: calc(var(--size-caption) * 0.85);
+  line-height: 1.5;
+  list-style: none;
+  color: var(--ink-soft);
+}
+
+/* 한 줄씩, 넘치면 말줄임 */
+.note__lines li {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.note__lines li::before {
+  content: "· ";
+  color: var(--accent);
+}
+
+.note__lines:empty,
+.note__footer:empty { display: none; }
+
+.note__footer {
+  justify-self: end;
+  padding: 0 var(--space-1);
+  font-size: calc(var(--size-caption) * 0.85);
+  background: var(--gingham);
+}
+
+.note:focus-visible {
+  outline: var(--px) solid var(--accent);
+  outline-offset: var(--space-1);
+}
+
+@media (hover: hover) {
+  .note:hover { background: var(--white); }
+}
+
+@keyframes float {
+  to { transform: translateY(calc(var(--px) * -1)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note { animation: none; }
+}

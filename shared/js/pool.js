@@ -1,22 +1,21 @@
-// 픽셀 수영장 배경: 저해상도 캔버스에 장면(scenes.js)대로 물을 그린다
+// 픽셀 수영장 장면: 창 본문 크기의 저해상도 캔버스에 장면(scenes.js)대로 그린다
 import { SCENES } from "./scenes.js";
 import { spriteColors } from "./sprite.js";
-import { CAT } from "./icons.js";
+import { CAT, CLOUD } from "./icons.js";
 
 const FPS = 12;
 const TILE = 12; // 바닥 타일 한 칸 (논리 픽셀)
 const WAVE_GAP = 16; // 물결 줄 간격
 const LANE_GAP = 20; // 레인 줄 간격
-const DECK_RATIO = 0.4; // 데크가 차지하는 위쪽 비율
+const TOP_RATIO = { sky: 0.5, deck: 0.35 }; // 위쪽 띠가 차지하는 비율
 const DECK_TILE = 8;
 
 const hexToRgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
-const readColor = (styles, name) => hexToRgb(styles.getPropertyValue(name).trim());
 
 export function startPool(canvas, sceneName = "shallow") {
   const ctx = canvas.getContext("2d");
-  const styles = getComputedStyle(document.documentElement);
-  const color = (name) => readColor(styles, name);
+  const styles = getComputedStyle(canvas);
+  const color = (name) => hexToRgb(styles.getPropertyValue(name).trim());
   const px = parseInt(styles.getPropertyValue("--px"), 10);
   const C = {
     tile: color("--water-tile"),
@@ -28,37 +27,40 @@ export function startPool(canvas, sceneName = "shallow") {
     grout: color("--deck-2"),
     coping: color("--coping"),
     bubble: color("--bubble"),
+    rain: color("--ink-soft"),
   };
-  const catColors = Object.fromEntries(
-    Object.entries(spriteColors(document.documentElement)).map(([ch, hex]) => [ch, hexToRgb(hex)]),
-  );
+  const spriteRgb = Object.fromEntries(Object.entries(spriteColors(canvas)).map(([ch, hex]) => [ch, hexToRgb(hex)]));
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   let scene;
   let depth;
-  let particles = []; // 공기방울 또는 빗방울 파문
+  let sky;
+  let particles = []; // 공기방울 또는 파문
+  let catProgress = 0; // 레인 고양이 위치 (0~1)
   let w = 0;
   let h = 0;
+  let top = 0; // 위쪽 띠 높이
   let image = null;
 
-  function resize() {
-    // 임베드가 막 열릴 때는 크기가 0일 수 있다
-    w = Math.max(1, Math.ceil(innerWidth / px));
-    h = Math.max(1, Math.ceil(innerHeight / px));
+  function layout() {
+    // 창이 막 열릴 때는 크기가 0일 수 있다
+    w = Math.max(1, Math.ceil(canvas.clientWidth / px));
+    h = Math.max(1, Math.ceil(canvas.clientHeight / px));
+    top = scene.top ? Math.round(h * TOP_RATIO[scene.top]) : 0;
     canvas.width = w;
     canvas.height = h;
     image = ctx.createImageData(w, h);
     particles = [];
   }
 
-  function deckColor(x, y, top) {
-    if (y >= top - 2) return y === top - 1 ? C.tile : C.coping; // 가장자리 돌과 그 그림자
-    return x % DECK_TILE === 0 || y % DECK_TILE === 0 ? C.grout : C.deck;
+  function bandColor(x, y) {
+    if (y >= top - 2) return y === top - 1 ? C.tile : C.coping; // 수영장 가장자리 돌과 그림자
+    if (scene.top === "deck") return x % DECK_TILE === 0 || y % DECK_TILE === 0 ? C.grout : C.deck;
+    return sky[Math.min(sky.length - 1, Math.floor((y / (top - 2)) * sky.length))];
   }
 
   function colorAt(x, y, t) {
-    const top = scene.deck ? Math.round(h * DECK_RATIO) : 0;
-    if (y < top) return deckColor(x, y, top);
+    if (y < top) return bandColor(x, y);
     const wy = y - top;
 
     // 레인 부표 줄 (두 칸 두께, 빨강·하양 번갈아)
@@ -86,7 +88,7 @@ export function startPool(canvas, sceneName = "shallow") {
       if ((x + bend) % TILE === 0 || (wy + bend) % TILE === 0) return C.tile;
     }
 
-    // 깊이에 따라 4단계 물 색
+    // 깊이에 따라 단계별 물 색
     return depth[Math.min(depth.length - 1, Math.floor((wy / (h - top)) * depth.length))];
   }
 
@@ -98,11 +100,40 @@ export function startPool(canvas, sceneName = "shallow") {
     image.data[i + 2] = b;
   }
 
+  function stamp(rows, x0, y0, clipBottom = h) {
+    rows.forEach((row, y) => {
+      if (y0 + y >= clipBottom) return;
+      [...row].forEach((ch, x) => {
+        if (spriteRgb[ch]) setPixel(x0 + x, y0 + y, spriteRgb[ch]);
+      });
+    });
+  }
+
+  // 하늘의 구름: 서로 다른 높이·속도로 천천히 흘러간다
+  function drawClouds(t) {
+    const cw = CLOUD[0].length;
+    for (let k = 0; k < 3; k++) {
+      const x = Math.floor((t * (1.5 + k) + k * 37) % (w + cw)) - cw;
+      const y = 2 + Math.floor(((top - 6) * k) / 3);
+      stamp(CLOUD, x, y, top - 2);
+    }
+  }
+
+  // 빗줄기: 하늘에서 비스듬히 떨어지는 점
+  function drawRain(t) {
+    const count = Math.ceil(w / 6);
+    for (let k = 0; k < count; k++) {
+      const y = Math.floor((k * 53 + t * 40) % Math.max(1, top - 2));
+      const x = Math.floor((k * 37 + y * 0.3) % w);
+      setPixel(x, y, C.rain);
+      setPixel(x, y + 1, C.rain);
+    }
+  }
+
   // 공기방울: 아래에서 위로 올라가고, 위에 닿으면 다시 아래에서 나온다
   function drawBubbles() {
     if (!particles.length) {
-      const count = Math.ceil((w * h) / 500);
-      particles = Array.from({ length: count }, () => ({
+      particles = Array.from({ length: Math.ceil((w * h) / 500) }, () => ({
         x: Math.floor(Math.random() * w),
         y: Math.random() * h,
         big: Math.random() < 0.3,
@@ -113,17 +144,16 @@ export function startPool(canvas, sceneName = "shallow") {
       b.y -= b.speed;
       if (b.y < -2) Object.assign(b, { y: h + 2, x: Math.floor(Math.random() * w) });
       const y = Math.round(b.y);
-      if (!b.big) {
-        setPixel(b.x, y, C.bubble);
-        continue;
-      }
-      [[0, -1], [-1, 0], [1, 0], [0, 1]].forEach(([dx, dy]) => setPixel(b.x + dx, y + dy, C.bubble));
+      if (!b.big) setPixel(b.x, y, C.bubble);
+      else [[0, -1], [-1, 0], [1, 0], [0, 1]].forEach(([dx, dy]) => setPixel(b.x + dx, y + dy, C.bubble));
     }
   }
 
-  // 빗방울 파문: 떨어진 자리에서 고리가 커지다 사라진다
+  // 파문: 떨어진 자리에서 고리가 커지다 사라진다
   function drawRipples() {
-    if (Math.random() < 0.6) particles.push({ x: Math.floor(Math.random() * w), y: Math.floor(Math.random() * h), age: 0 });
+    if (Math.random() < scene.ripples) {
+      particles.push({ x: Math.floor(Math.random() * w), y: top + Math.floor(Math.random() * (h - top)), age: 0 });
+    }
     particles = particles.filter((p) => p.age <= 4);
     for (const p of particles) {
       if (p.age === 0) setPixel(p.x, p.y, C.foam);
@@ -136,17 +166,17 @@ export function startPool(canvas, sceneName = "shallow") {
     }
   }
 
-  // 튜브 고양이: 물 아래쪽에서 천천히 가로질러 떠가며 위아래로 출렁인다
+  // 튜브 고양이: 떠다니거나(drift) 맨 아래 레인을 진행만큼 헤엄쳐 간다(lane)
   function drawCat(t) {
     const cw = CAT[0].length;
-    const top = scene.deck ? Math.round(h * DECK_RATIO) : 0;
+    const bob = Math.round(Math.sin(t * 2));
+    if (scene.cat === "lane") {
+      const laneCenter = top + Math.max(LANE_GAP, Math.floor((h - top - 6) / LANE_GAP) * LANE_GAP);
+      stamp(CAT, Math.round(catProgress * (w - cw)), laneCenter - 7 + bob);
+      return;
+    }
     const x0 = Math.floor((t * 3) % (w + cw)) - cw;
-    const y0 = Math.round(top + (h - top) * 0.7 + Math.sin(t * 2) * 1) - CAT.length;
-    CAT.forEach((row, y) => {
-      [...row].forEach((ch, x) => {
-        if (catColors[ch]) setPixel(x0 + x, y0 + y, catColors[ch]);
-      });
-    });
+    stamp(CAT, x0, Math.round(top + (h - top) * 0.75) - CAT.length + bob);
   }
 
   function draw(t) {
@@ -161,35 +191,43 @@ export function startPool(canvas, sceneName = "shallow") {
         data[i + 3] = 255;
       }
     }
+    if (scene.clouds) drawClouds(still ? 10 : t);
+    if (!still && scene.rain) drawRain(t);
     if (!still && scene.bubbles) drawBubbles();
     if (!still && scene.ripples) drawRipples();
     if (scene.cat) drawCat(still ? w / 3 : t);
     ctx.putImageData(image, 0, 0);
   }
 
+  const now = () => performance.now() / 1000;
+
   function setScene(name) {
     scene = SCENES[name];
     depth = scene.depth.map(color);
-    particles = [];
-    if (image) draw(performance.now() / 1000);
+    sky = (scene.sky ?? []).map(color);
+    layout();
+    draw(now());
+  }
+
+  function setCatProgress(value) {
+    catProgress = Math.min(1, Math.max(0, value));
   }
 
   let last = 0;
-  function loop(now) {
-    if (now - last >= 1000 / FPS) {
-      draw(now / 1000);
-      last = now;
+  function loop(ms) {
+    if (ms - last >= 1000 / FPS) {
+      draw(ms / 1000);
+      last = ms;
     }
     requestAnimationFrame(loop);
   }
 
-  resize();
   setScene(sceneName);
-  addEventListener("resize", () => {
-    resize();
-    draw(performance.now() / 1000);
-  });
+  new ResizeObserver(() => {
+    layout();
+    draw(now());
+  }).observe(canvas);
   if (!still) requestAnimationFrame(loop);
 
-  return { setScene };
+  return { setScene, setCatProgress };
 }
