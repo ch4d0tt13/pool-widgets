@@ -1,0 +1,42 @@
+/* 디자인 토큰: 색·글꼴·간격·모서리·그림자는 여기서만 정한다 */
+:root {
+  /* 물 색 (얕은 곳 → 깊은 곳) */
+  --water-1: #bdeeff;
+  --water-2: #9fe3fb;
+  --water-3: #7fd4f5;
+  --water-4: #62c3ec;
+  --water-tile: #56b6e0;
+  --water-caustic: #e6f9ff;
+  --water-foam: #ffffff;
+
+  /* 패널 */
+  --panel-bg: rgba(255, 255, 255, 0.88);
+  --panel-line: #1f6f99;
+  --ink-strong: #0d4566;
+  --ink-soft: #2f7fa8;
+  --accent: #ff8fb1;
+
+  /* 글꼴 */
+  --font-digit: "GalmuriMono11", monospace;
+  --font-text: "Galmuri11", sans-serif;
+  --size-time: clamp(32px, min(17vw, 30vh), 128px);
+  --size-sec: calc(var(--size-time) * 0.36);
+  --size-date: clamp(12px, min(4.2vw, 7.5vh), 28px);
+
+  /* 픽셀 단위와 간격 */
+  --px: 4px;
+  --space-1: calc(var(--px) * 1);
+  --space-2: calc(var(--px) * 2);
+  --space-3: calc(var(--px) * 4);
+  --space-4: calc(var(--px) * 6);
+
+  /* 모서리: 픽셀 테마라 둥글게 하지 않는다 */
+  --radius: 0;
+
+  /* 그림자: 계단식 픽셀 그림자 */
+  --shadow-text: var(--px) var(--px) 0 var(--water-2);
+  --shadow-panel: 0 calc(var(--px) * 3) 0 0 rgba(13, 69, 102, 0.22);
+
+  /* 움직임 */
+  --blink: 1s;
+}
