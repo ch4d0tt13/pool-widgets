@@ -46,16 +46,19 @@
   gap: var(--space-2);
 }
 
+/* 최소화·최대화·닫기: 5칸 하얀 칸 가운데에 3칸 픽셀 아이콘 */
 .window__controls span {
   display: grid;
   place-items: center;
-  width: var(--space-3);
-  height: var(--space-3);
-  font-size: calc(var(--space-3) * 0.8);
-  line-height: 1;
-  color: var(--navy);
+  width: calc(var(--px) * 5);
+  height: calc(var(--px) * 5);
   background: var(--white);
   box-shadow: var(--pixel-border);
+}
+
+.window__controls .icon {
+  width: calc(var(--px) * 3);
+  height: calc(var(--px) * 3);
 }
 
 /* 휴대폰 노션은 임베드 오른쪽 위에 「…」 버튼을 늘 띄운다: 창 버튼이 가려지지 않게 비켜 둔다 */

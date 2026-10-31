@@ -9,7 +9,9 @@ function mountWindow(win) {
   inner.className = "window__inner";
   inner.innerHTML =
     '<div class="window__bar"><span class="window__title"></span>' +
-    '<span class="window__controls" aria-hidden="true"><span>_</span><span>□</span><span>×</span></span></div>';
+    '<span class="window__controls" aria-hidden="true">' +
+    ["win-min", "win-max", "win-close"].map((icon) => `<span><canvas class="icon" data-icon="${icon}"></canvas></span>`).join("") +
+    "</span></div>";
   inner.querySelector(".window__title").textContent = win.dataset.title;
   inner.append(...win.children);
   win.append(inner);

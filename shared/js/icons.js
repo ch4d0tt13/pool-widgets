@@ -1,7 +1,10 @@
-// 버튼·장식용 7×7 픽셀 아이콘 (i = 아이콘 글자색, r = 하트 빨강)
+// 버튼·장식용 7×7 픽셀 아이콘 (i = 아이콘 글자색, r = 하트 빨강). 창 제목 표시줄 버튼만 3×3
 import { drawSprite } from "./sprite.js";
 
 export const ICONS = {
+  "win-min": ["...", "...", "iii"],
+  "win-max": ["iii", "i.i", "iii"],
+  "win-close": ["i.i", ".i.", "i.i"],
   play: [
     ".i.....",
     ".ii....",
