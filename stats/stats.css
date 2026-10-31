@@ -1,4 +1,4 @@
-/* 하얀 판 위에 월~일 7칸, 칸마다 집중(빨강)·정리(파랑) 픽셀 막대 */
+/* 물 위에 월~일 유리 물탱크 7개, 위에는 합계 스티커 */
 .stats { gap: var(--gap-box-tight); }
 
 .stats__totals {
@@ -8,10 +8,11 @@
   gap: var(--gap-box-tight);
 }
 
-/* 합계 스티커 앞 물방울을 막대 색으로 */
+/* 합계 스티커 앞 물방울을 탱크 물 색으로 */
 .stats__total.is-focus::before { background: var(--lane-1); }
 .stats__total.is-tidy::before { background: var(--water-5); }
 
+/* 요일마다 유리 물탱크: 정리(파랑)·집중(분홍) 물이 아래부터 차오른다 */
 .stats__chart {
   display: grid;
   flex: 1;
@@ -19,42 +20,43 @@
   gap: var(--space-1);
   width: 100%;
   min-height: 0;
-  padding: var(--space-2) var(--space-2) var(--space-1);
-  background: var(--white);
-  box-shadow: var(--pixel-border);
+  padding: var(--px) var(--space-2) 0;
 }
 
 .stats__day {
   display: grid;
   grid-template-rows: 1fr auto;
-  gap: var(--space-1);
+  justify-items: center;
+  gap: var(--gap-box-tight);
   min-height: 0;
 }
 
-.stats__bars {
+.stats__tank {
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: var(--px);
+  flex-direction: column-reverse;
+  width: calc(var(--px) * 8);
   min-height: 0;
-  border-bottom: var(--px) solid var(--water-2);
+  background: var(--tank-glass);
+  box-shadow: var(--pixel-border);
 }
 
-.stats__bar {
-  width: calc(var(--px) * 4);
-  min-height: var(--px);
-}
+.stats__water { flex: none; }
+.stats__water.is-tidy { background: var(--water-5); }
+.stats__water.is-focus { background: var(--lane-1); }
 
-.stats__bar.is-focus { background: var(--lane-1); }
-.stats__bar.is-tidy { background: var(--water-5); }
-.stats__bar.is-empty { opacity: 0.25; }
+/* 맨 위 물에는 하얀 수면 한 줄 */
+.stats__water:last-child { box-shadow: inset 0 var(--px) 0 var(--white); }
 
+/* 요일: 물 위에서도 읽히게 작은 하얀 스티커 */
 .stats__label {
+  padding: 0 var(--px);
   font-family: var(--font-small);
   font-size: var(--size-small);
   line-height: 1.2;
   text-align: center;
-  color: var(--ink-soft);
+  color: var(--chip-ink);
+  background: var(--chip-bg);
+  box-shadow: var(--pixel-border);
 }
 
 .stats__day.is-today .stats__label {

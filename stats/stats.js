@@ -1,10 +1,11 @@
-// 이번 주 기록: 월~일 날마다 끝낸 집중 횟수와 정리한 인박스 자료 수 (이 기기에 남긴 기록, records.js)
+// 이번 주 기록: 월~일 날마다 끝낸 집중 횟수와 정리한 인박스 자료 수를 물탱크 수위로 (이 기기에 남긴 기록, records.js)
 import { $, el } from "../shared/js/dom.js";
 import { counts, dayKey } from "../shared/js/records.js";
 import { onAnnounce, refreshWhileVisible } from "../shared/js/live.js";
 
 const LABELS = ["월", "화", "수", "목", "금", "토", "일"];
 const SERIES = ["focus", "tidy"];
+const STACK = ["tidy", "focus"]; // 탱크 아래부터 쌓는 순서
 const REFRESH_MS = 60 * 1000; // 자정이 지나면 오늘 칸이 넘어가게
 
 // 이번 주 월요일부터 일요일까지
@@ -21,20 +22,22 @@ export function startStats() {
     const days = weekDays().map((d) => dayKey(d));
     const today = dayKey();
     const data = Object.fromEntries(SERIES.map((s) => [s, counts(s, days)]));
-    const max = Math.max(1, ...SERIES.flatMap((s) => data[s]));
+    // 한 주에서 가장 많이 한 날이 탱크를 가득 채운다
+    const max = Math.max(1, ...days.map((_, i) => data.focus[i] + data.tidy[i]));
 
     chart.replaceChildren(
       ...days.map((day, i) => {
         const col = el("div", day === today ? "stats__day is-today" : "stats__day");
-        const bars = el("div", "stats__bars");
-        for (const s of SERIES) {
+        const tank = el("div", "stats__tank");
+        tank.title = `집중 ${data.focus[i]} · 정리 ${data.tidy[i]}`;
+        for (const s of STACK) {
           const n = data[s][i];
-          const bar = el("span", n ? `stats__bar is-${s}` : `stats__bar is-${s} is-empty`);
-          bar.style.height = `${(n / max) * 100}%`;
-          bar.title = `${s === "focus" ? "집중" : "정리"} ${n}`;
-          bars.append(bar);
+          if (!n) continue;
+          const water = el("span", `stats__water is-${s}`);
+          water.style.height = `${(n / max) * 100}%`;
+          tank.append(water);
         }
-        col.append(bars, el("span", "stats__label", LABELS[i]));
+        col.append(tank, el("span", "stats__label", LABELS[i]));
         return col;
       }),
     );
