@@ -1,11 +1,20 @@
 // 물 장면: 바탕은 모두 직접 그린 물 그림(water-art.js)이고, 위젯마다 색과 소품을 다르게 준다
-// water: 물 그림을 칠할 토큰 [파랑, 파랑 그늘, 민트, 민트 그늘, 테두리, 빛] (그림을 읽기 전엔 파랑 단색)
-// at: 물 그림의 어느 부분을 보여 줄지 (0 왼쪽 파랑 → 1 오른쪽 민트) / sparkle: 반짝임 양 (기본 1) / top: 위쪽 띠 ("sky" 하늘 · "deck" 데크)
+// water: 물 그림을 칠할 토큰. tones는 창 왼쪽 → 오른쪽 조각 색 [바탕, 그늘], rim은 빛 그물 테두리, light는 하얀 선
+//   (시간대마다 tokens.css에서 같은 토큰이 다른 색이 된다)
+// at: 물 그림의 어느 부분을 보여 줄지 (0 왼쪽 끝 → 1 오른쪽 끝) / sparkle: 반짝임 양 (기본 1) / top: 위쪽 띠 ("sky" 하늘 · "deck" 데크)
 // squash: 물 그림을 위아래로 누르는 배율 (하늘 아래 물은 멀리서 본 물결처럼 납작하게)
 // cat: "drift" 떠다님 · "lane" 레인 따라 헤엄 / ripples: 프레임마다 파문이 생길 확률
-const ART = ["--art-blue", "--art-blue-shade", "--art-mint", "--art-mint-shade", "--art-rim", "--art-light"];
-const DEEP = ["--deep-2", "--deep-3", "--deep-1", "--deep-2", "--water-5", "--water-3"];
-const CLOUDY = ["--cloudy-3", "--cloudy-4", "--cloudy-2", "--cloudy-3", "--cloudy-1", "--white"];
+const ART = {
+  tones: [["--art-1", "--art-1-shade"], ["--art-2", "--art-2-shade"], ["--art-3", "--art-3-shade"]],
+  rim: "--art-rim",
+  light: "--art-light",
+};
+const DEEP = { tones: [["--deep-3", "--deep-4"], ["--deep-2", "--deep-3"], ["--deep-1", "--deep-2"]], rim: "--deep-rim", light: "--deep-light" };
+const CLOUDY = {
+  tones: [["--cloudy-3", "--cloudy-4"], ["--cloudy-2", "--cloudy-3"], ["--cloudy-1", "--cloudy-2"]],
+  rim: "--cloudy-rim",
+  light: "--cloudy-light",
+};
 const SKY = ["--sky-1", "--sky-2", "--sky-3"];
 const SKY_GRAY = ["--sky-gray-1", "--sky-gray-2", "--sky-gray-3"];
 

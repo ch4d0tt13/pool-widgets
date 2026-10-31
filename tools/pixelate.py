@@ -1,12 +1,13 @@
 # 직접 그린 물 그림을 위젯용 도트 그림으로 바꾼다 (가로 180칸으로 줄인 뒤, 끝과 처음이 이어지게 잘라 붙여 150×46)
-# 그림을 그대로 줄이지 않고 겹(레이어)별로 뽑아 도트 규칙대로 다시 그린다.
+# 그림을 그대로 줄이지 않고 빛 그물만 뽑아 도트 규칙대로 다시 그린다.
+# 그늘은 빛 그물을 살짝 비켜 비틀어 위젯이 그리고, 물 색은 위젯이 창 위치로 정한다(그림 속 색은 쓰지 않는다).
 # 색은 넣지 않고 채널마다 한 겹을 담는다. 색은 위젯이 장면 토큰으로 칠한다(water-art.js).
 #   R: 빛 그물 (0 물 · 128 분홍 테두리 · 255 하얀 선)
-#   G: 물 조각 안 그늘 (0 · 255)
-#   B: 물 색 (0 파랑 · 128 섞임 · 255 민트)
+#   G: 물 조각의 가운데 가로 위치 (칸). 위젯이 조각마다 창 왼쪽은 어두운 하늘 → 오른쪽은 밝은 하늘로 칠한다
 # 사용: python tools/pixelate.py <원본 그림> shared/img/water.png
 # 원본은 저장소에 올리지 않고, 결과 그림만 올린다
 import sys
+from collections import deque
 
 import numpy as np
 from PIL import Image
@@ -15,9 +16,7 @@ WIDTH = 180
 NET_MIN = 228  # 세 채널이 모두 이보다 밝으면 하얀 선
 NET_COVER = 0.35  # 칸의 이만큼이 하얀 선이면 그 칸은 선 (낮을수록 가는 선도 끊기지 않는다)
 RIM_RED = 205  # 하얀 선 둘레에서 빨강이 이보다 밝으면 분홍 테두리
-SHADOW_DROP = 10  # 주변 물보다 이만큼 어두우면 그늘
-HUE_BLUR = 60  # 물 색은 넓게 뭉개서 큰 흐름만 본다
-HUE_MIX = (-9, -3)  # 이 사이의 물 색은 파랑·민트를 체크무늬로 섞는다
+CORE = 2  # 하얀 선에서 이만큼 떨어진 곳을 조각의 속으로 본다 (선이 거의 닫힌 좁은 목에서 조각을 나눈다)
 SPECK = 14  # 이보다 작은 하얀 덩어리는 원본의 반짝이라서 뺀다 (반짝임은 위젯이 그린다)
 OVERLAP = (30, 14)  # 끝과 처음을 겹쳐 잘라 붙일 폭 (가로, 세로)
 HOLE = 8  # 하얀 선 속 이보다 작은 물 구멍은 메운다 (구멍마다 분홍 점이 생기지 않게)
@@ -34,21 +33,10 @@ def below_right(mask):
     return np.roll(mask, 1, 0) | np.roll(mask, 1, 1)
 
 
-def blur(values, r):
-    """가로세로 (2r+1)칸 평균 (가장자리는 있는 칸만으로)"""
-    def run(a, axis):
-        c = np.cumsum(np.pad(a, [(r + 1, r) if i == axis else (0, 0) for i in range(2)], mode="edge"), axis=axis)
-        hi = np.take(c, range(2 * r + 1, c.shape[axis]), axis=axis)
-        lo = np.take(c, range(0, c.shape[axis] - 2 * r - 1), axis=axis)
-        return (hi - lo) / (2 * r + 1)
-    return run(run(values.astype(np.float64), 0), 1)
-
-
-def drop_specks(mask, smallest):
-    """이어진 칸 수가 smallest보다 적은 덩어리를 지운다"""
+def blobs(mask, wrap=False):
+    """위·아래·왼쪽·오른쪽으로 이어진 덩어리마다 칸 목록을 돌려준다 (wrap이면 끝과 처음도 이어진 것으로 본다)"""
     h, w = mask.shape
     seen = np.zeros_like(mask)
-    out = mask.copy()
     for y, x in zip(*np.nonzero(mask)):
         if seen[y, x]:
             continue
@@ -58,12 +46,75 @@ def drop_specks(mask, smallest):
             cy, cx = stack.pop()
             blob.append((cy, cx))
             for ny, nx in ((cy - 1, cx), (cy + 1, cx), (cy, cx - 1), (cy, cx + 1)):
-                if 0 <= ny < h and 0 <= nx < w and mask[ny, nx] and not seen[ny, nx]:
+                if wrap:
+                    ny, nx = ny % h, nx % w
+                elif not (0 <= ny < h and 0 <= nx < w):
+                    continue
+                if mask[ny, nx] and not seen[ny, nx]:
                     seen[ny, nx] = True
                     stack.append((ny, nx))
+        yield blob
+
+
+def drop_specks(mask, smallest):
+    """이어진 칸 수가 smallest보다 적은 덩어리를 지운다"""
+    out = mask.copy()
+    for blob in blobs(mask):
         if len(blob) < smallest:
-            for cy, cx in blob:
-                out[cy, cx] = False
+            out[tuple(zip(*blob))] = False
+    return out
+
+
+def steps4(y, x, h, w):
+    """위·아래·왼쪽·오른쪽 이웃 (끝과 처음이 이어진 그림)"""
+    return (((y - 1) % h, x), ((y + 1) % h, x), (y, (x - 1) % w), (y, (x + 1) % w))
+
+
+def distance_from(mask):
+    """칸마다 가장 가까운 켜진 칸까지의 거리 (위·아래·왼쪽·오른쪽 걸음 수)"""
+    h, w = mask.shape
+    dist = np.where(mask, 0, -1)
+    queue = deque(zip(*np.nonzero(mask)))
+    while queue:
+        y, x = queue.popleft()
+        for ny, nx in steps4(y, x, h, w):
+            if dist[ny, nx] < 0:
+                dist[ny, nx] = dist[y, x] + 1
+                queue.append((ny, nx))
+    return dist
+
+
+def water_cells(water, net):
+    """물을 조각으로 나눈다. 하얀 선이 열려 있어도 좁은 목에서 끊기게,
+    선에서 CORE칸 넘게 떨어진 속끼리 먼저 묶고 나머지 칸은 가까운 속에 붙인다"""
+    h, w = water.shape
+    label = np.full(water.shape, -1)
+    queue = deque()
+    for i, blob in enumerate(blobs(water & (distance_from(net) > CORE), wrap=True)):
+        for y, x in blob:
+            label[y, x] = i
+            queue.append((y, x))
+    while queue:
+        y, x = queue.popleft()
+        for ny, nx in steps4(y, x, h, w):
+            if water[ny, nx] and label[ny, nx] < 0:
+                label[ny, nx] = label[y, x]
+                queue.append((ny, nx))
+    rest = water & (label < 0)  # 속이 없을 만큼 작은 조각은 그 자체로 한 조각
+    for blob in blobs(rest, wrap=True):
+        i = label.max() + 1
+        label[tuple(zip(*blob))] = i
+    return [list(zip(*np.nonzero(label == i))) for i in range(label.max() + 1)]
+
+
+def cell_centers(water, net):
+    """물 조각마다 가운데 가로 위치를 그 조각의 모든 칸에 적는다 (끝과 처음에 걸친 조각도 한 조각으로)"""
+    h, w = water.shape
+    out = np.zeros(water.shape, np.uint8)
+    for cell in water_cells(water, net):
+        ys, xs = map(np.array, zip(*cell))
+        angle = np.angle(np.exp(2j * np.pi * xs / w).mean())  # 둥글게 이어진 가로 위치의 평균
+        out[ys, xs] = round((angle / (2 * np.pi) * w) % w) % w
     return out
 
 
@@ -92,8 +143,7 @@ def seam_wrap(layers, overlap, axis):
     h, w = layers.shape[:2]
     end, start = layers[:, w - overlap :], layers[:, :overlap]
     net_e, net_s = end[..., 0] > 0, start[..., 0] > 0
-    water = ~(net_e | net_s)  # 하얀 선에 덮인 곳은 그늘·물 색이 달라도 보이지 않는다
-    cost = 2.0 * (net_e != net_s) + water * ((end[..., 2] != start[..., 2]) + 0.5 * (end[..., 3] != start[..., 3]))
+    cost = (net_e != net_s).astype(float)
     # 줄마다 자를 자리를 고른다 (이웃 줄과 한 칸까지만 어긋나게)
     acc = cost.copy()
     acc[:, 0] = acc[:, -1] = np.inf  # 맨 끝을 자르면 이음새가 그대로 남는다
@@ -122,33 +172,20 @@ net |= ~drop_specks(~net, HOLE)
 rim_full = (rgb[..., 0] > RIM_RED) & ~net_full
 rim_glow = coverage(rim_full | net_full, size) > 0.3  # 원본에서 분홍빛이 도는 곳
 
-# 물 조각 안 그늘: 주변 물보다 어두운 줄무늬
-lum = rgb.mean(axis=2)
-water_lum = np.where(net_full | rim_full, np.nan, lum)
-fill = np.where(np.isnan(water_lum), np.nanmean(water_lum), water_lum)
-local = blur(fill, 40)
-shadow = tidy(coverage((lum < local - SHADOW_DROP) & ~net_full & ~rim_full, size) > 0.5, keep=3)
-
-# 물 색: 파랑(초록보다 파랑이 진함) → 민트, 가운데는 체크무늬로 섞는다
-mint_full = (rgb[..., 1] - rgb[..., 2]).astype(np.float32)
-hue = np.asarray(Image.fromarray(blur(mint_full, HUE_BLUR).astype(np.float32)).resize(size, Image.BOX))
-hue_level = np.where(hue > HUE_MIX[1], 255, np.where(hue < HUE_MIX[0], 0, 128)).astype(np.uint8)
-
 # 끝과 처음이 이어지게 잘라 붙인 뒤, 이음새를 다듬고 테두리를 두른다
-tile = np.stack([net, rim_glow, shadow, hue_level], axis=2).astype(np.uint8)
+tile = np.stack([net, rim_glow], axis=2).astype(np.uint8)
 tile = seam_wrap(seam_wrap(tile, OVERLAP[0], 1), OVERLAP[1], 0)
 net = smooth(tile[..., 0] > 0)
 rim = tidy(below_right(net) & ~net & (tile[..., 1] > 0), keep=1)
-shadow = tile[..., 2] > 0
 
 layers = np.stack(
     [
         np.where(net, 255, np.where(rim, 128, 0)).astype(np.uint8),
-        np.where(shadow, 255, 0).astype(np.uint8),
-        tile[..., 3],
+        cell_centers(~net, net),
+        np.zeros(net.shape, np.uint8),
     ],
     axis=2,
 )
 Image.fromarray(layers, "RGB").save(out, optimize=True)
 h, w = net.shape
-print(f"{out}: {w}x{h}, 빛 그물 {net.mean():.0%} · 테두리 {rim.mean():.0%} · 그늘 {shadow.mean():.0%}")
+print(f"{out}: {w}x{h}, 빛 그물 {net.mean():.0%} · 테두리 {rim.mean():.0%}")

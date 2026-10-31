@@ -18,11 +18,13 @@
   --water-tile: #56b6e0;
   --water-foam: #ffffff;
 
-  /* 물 그림 (water-art.js): 파랑 · 민트 조각과 그늘, 빛 그물의 분홍 테두리와 하얀 선 */
-  --art-blue: #8acdef;
-  --art-blue-shade: #68b0e8;
-  --art-mint: #a0f0ec;
-  --art-mint-shade: #76d6de;
+  /* 물 그림 (water-art.js): 창 왼쪽(1, 어두운 하늘) → 오른쪽(3, 밝은 하늘) 조각 색과 그늘, 빛 그물의 테두리와 하얀 선 */
+  --art-1: #86c8ef;
+  --art-1-shade: #66ade6;
+  --art-2: #95dcf0;
+  --art-2-shade: #6fc2e3;
+  --art-3: #a4efee;
+  --art-3-shade: #78d5dc;
   --art-rim: #f6d6fa;
   --art-light: #fffef6;
 
@@ -31,10 +33,14 @@
   --deep-2: #2a86bb;
   --deep-3: #1f6f99;
   --deep-4: #175a80;
+  --deep-rim: #46acd9;
+  --deep-light: #7fd4f5;
   --cloudy-1: #d3e6ec;
   --cloudy-2: #b9d5df;
   --cloudy-3: #9fc4d1;
   --cloudy-4: #88b3c3;
+  --cloudy-rim: #e8f1f4;
+  --cloudy-light: #ffffff;
   --sky-1: #8fd3ff;
   --sky-2: #a9ddff;
   --sky-3: #c6e9ff;
@@ -52,10 +58,7 @@
   --cat: #2b2d42;
   --ring: #ff8fb1;
 
-  /* 시간대 물들이기 (daylight.js) · 밤하늘 별 */
-  --tint-dawn: #ffb3c7;
-  --tint-sunset: #ff9a5a;
-  --tint-night: #0b1d3a;
+  /* 밤하늘 별 */
   --star: #fff4c2;
 
   /* 날씨 아이콘 */
@@ -122,6 +125,117 @@
   --blink: 1s;
   --press: 80ms;
   --float: 2.4s;
+}
+
+/* 시간대 색: daylight.js가 물 장면 캔버스에 data-phase를 붙이면 장면 색을 통째로 바꾼다 (창 틀·글자는 그대로) */
+.pool[data-phase="dawn"] {
+  --art-1: #9aaee8;
+  --art-1-shade: #7d8fd6;
+  --art-2: #adbfee;
+  --art-2-shade: #8fa0e0;
+  --art-3: #c3d3f2;
+  --art-3-shade: #a2b3e6;
+  --art-rim: #ffc2d4;
+  --art-light: #fff4f0;
+  --deep-1: #6a8ed0;
+  --deep-2: #5875b8;
+  --deep-3: #4a61a0;
+  --deep-4: #3d5088;
+  --deep-rim: #8fa6e0;
+  --deep-light: #c8d0f4;
+  --cloudy-1: #dcd8ea;
+  --cloudy-2: #c6c2de;
+  --cloudy-3: #b1add1;
+  --cloudy-4: #9c99c3;
+  --cloudy-rim: #f2e2ec;
+  --cloudy-light: #fff6f6;
+  --sky-1: #b4b0ee;
+  --sky-2: #eab6d6;
+  --sky-3: #ffd3c4;
+  --sky-gray-1: #b1aec6;
+  --sky-gray-2: #c6bccd;
+  --sky-gray-3: #dacdd6;
+  --deck-1: #f5dcd8;
+  --deck-2: #e0c2be;
+  --coping: #fff0f2;
+  --water-tile: #8d9ddc;
+  --bubble: #eef0ff;
+  --cloud: #fff2f6;
+  --cloud-shade: #e4c6dc;
+}
+
+.pool[data-phase="sunset"] {
+  --art-1: #6f8fd0;
+  --art-1-shade: #5872b8;
+  --art-2: #8a9fd2;
+  --art-2-shade: #6e82bd;
+  --art-3: #a7afcf;
+  --art-3-shade: #8a8fbb;
+  --art-rim: #ff9f86;
+  --art-light: #ffe3bd;
+  --deep-1: #5a78b8;
+  --deep-2: #4a63a0;
+  --deep-3: #3d5088;
+  --deep-4: #314070;
+  --deep-rim: #e08a86;
+  --deep-light: #ffd2a8;
+  --cloudy-1: #d9c6cc;
+  --cloudy-2: #c3afba;
+  --cloudy-3: #ad99a8;
+  --cloudy-4: #978497;
+  --cloudy-rim: #f0c8b8;
+  --cloudy-light: #ffeedd;
+  --sky-1: #6e68b8;
+  --sky-2: #e98a96;
+  --sky-3: #ffb070;
+  --sky-gray-1: #9d8fa6;
+  --sky-gray-2: #b99aa3;
+  --sky-gray-3: #d1aa9e;
+  --deck-1: #f0c69e;
+  --deck-2: #d6a47c;
+  --coping: #ffe4c8;
+  --water-tile: #7a88c4;
+  --bubble: #ffe8dc;
+  --cloud: #ffdcc6;
+  --cloud-shade: #e8a6a2;
+}
+
+.pool[data-phase="night"] {
+  --art-1: #4a76a2;
+  --art-1-shade: #3b6290;
+  --art-2: #5585ad;
+  --art-2-shade: #456f9a;
+  --art-3: #6194b6;
+  --art-3-shade: #4f7ea2;
+  --art-rim: #7d86c8;
+  --art-light: #bfe2f0;
+  --deep-1: #1a466e;
+  --deep-2: #14385b;
+  --deep-3: #102c49;
+  --deep-4: #0b2038;
+  --deep-rim: #3d5596;
+  --deep-light: #78b8d8;
+  --cloudy-1: #56697d;
+  --cloudy-2: #475a6d;
+  --cloudy-3: #3a4c5f;
+  --cloudy-4: #2f4051;
+  --cloudy-rim: #6a7896;
+  --cloudy-light: #a8bccc;
+  --sky-1: #0d1f3d;
+  --sky-2: #13294d;
+  --sky-3: #1b375f;
+  --sky-gray-1: #232f40;
+  --sky-gray-2: #2c394b;
+  --sky-gray-3: #354457;
+  --deck-1: #474d66;
+  --deck-2: #393e56;
+  --coping: #8a94b0;
+  --water-tile: #285680;
+  --bubble: #7aaccb;
+  --cloud: #8796b0;
+  --cloud-shade: #66758f;
+  --lane-1: #d0505a;
+  --lane-2: #b8c4d8;
 }
 
 /* 위젯별 포인트 색과 글자색 */

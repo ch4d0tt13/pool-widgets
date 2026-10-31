@@ -1,6 +1,6 @@
-// 직접 그린 물 그림을 겹(레이어)별로 담은 도트 그림(shared/img/water.png, 150×46)을 읽는다
-// 원본 그림은 저장소에 없고, tools/pixelate.py 로 만든 결과만 있다. 채널마다 한 겹이다
-export const LAYER = { net: 0, shadow: 1, hue: 2 }; // R 빛 그물 · G 그늘 · B 물 색
+// 직접 그린 물 그림의 빛 그물을 도트로 다시 그린 그림(shared/img/water.png, 150×46)을 읽는다
+// 원본 그림은 저장소에 없고, tools/pixelate.py 로 만든 결과만 있다. 색은 없고 채널마다 정보 하나다
+export const LAYER = { net: 0, cell: 1 }; // R 빛 그물 (0 물 · 128 분홍 테두리 · 255 하얀 선) · G 물 조각의 가운데 가로 위치
 const ART_URL = new URL(`../img/water.png${new URL(import.meta.url).search}`, import.meta.url);
 
 export function loadWaterArt() {
@@ -22,7 +22,14 @@ export function loadWaterArt() {
 // 그림은 끝과 처음이 이어지게 만들어 두었다 (pixelate.py). 창이 그림보다 크면 뒤집지 않고 그대로 이어 붙인다
 const wrap = (v, n) => ((v % n) + n) % n;
 
-// 한 겹의 값 (0 · 128 · 255)
 export function layerAt(art, layer, x, y) {
   return art.data[(wrap(y, art.h) * art.w + wrap(x, art.w)) * 4 + layer];
+}
+
+// (x, y) 칸이 속한 물 조각의 가운데 가로 위치. 이어 붙인 그림에서 x와 가장 가까운 쪽으로 돌려준다
+export function cellCenter(art, x, y) {
+  let d = layerAt(art, LAYER.cell, x, y) - wrap(x, art.w);
+  if (d > art.w / 2) d -= art.w;
+  else if (d < -art.w / 2) d += art.w;
+  return x + d;
 }

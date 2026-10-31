@@ -1,19 +1,20 @@
-// 픽셀 수영장 장면: 창 본문 크기의 저해상도 캔버스에 직접 그린 물 그림을 겹별로 따로 일렁이게 그리고,
-// 장면(scenes.js)대로 색·소품(레인·하늘·데크·공기방울·고양이)을 얹는다
+// 픽셀 수영장 장면: 창 본문 크기의 저해상도 캔버스에 직접 그린 물 그림(빛 그물과 그 그늘)을 따로 일렁이게 그리고,
+// 장면(scenes.js)대로 색·소품(레인·하늘·데크·공기방울·고양이)을 얹는다. 시간대마다 색 토큰이 바뀐다(tokens.css)
 import { SCENES } from "./scenes.js";
 import { spriteColors } from "./sprite.js";
 import { CAT, CLOUD } from "./icons.js";
 import { currentPhase } from "./daylight.js";
-import { LAYER, loadWaterArt, layerAt } from "./water-art.js";
+import { LAYER, cellCenter, loadWaterArt, layerAt } from "./water-art.js";
 
 const FPS = 12;
 const SPLASH_RINGS = 5; // 물장구 한 번에 생기는 파문 수
-// 겹마다 다르게 일렁인다: 물결의 촘촘함(가로 줄·세로 줄)과 빠르기. 물 색 겹은 가만히 있다
+// 빛 그물과 그 그늘이 다르게 일렁인다: 물결의 촘촘함(가로 줄·세로 줄)과 빠르기. 물 색은 가만히 있다
 // 촘촘하면 줄마다 따로 밀려 선이 찢겨 보이니, 넓은 띠로 묶여 한 칸씩 밀리게 성기게 둔다
 const SWAY = {
   net: { density: [0.06, 0.05], speed: [1.1, 0.9] },
   shadow: { density: [0.04, 0.035], speed: [0.6, 0.45] },
 };
+const SHADOW_OFFSET = [4, 5]; // 그늘은 빛 그물과 같은 무늬를 이만큼 비켜 바닥에 드리운다 (빛은 왼쪽 위에서)
 const SPARKLE_AREA = 300; // 이 넓이(칸)마다 반짝임 하나 (장면의 sparkle로 곱한다)
 const LANE_GAP = 20; // 레인 줄 간격
 const TOP_RATIO = { sky: 0.5, deck: 0.35 }; // 위쪽 띠가 차지하는 비율
@@ -27,23 +28,12 @@ export function startPool(canvas, sceneName = "shallow") {
   const styles = getComputedStyle(canvas);
   const color = (name) => hexToRgb(styles.getPropertyValue(name).trim());
   const px = parseInt(styles.getPropertyValue("--px"), 10);
-  const C = {
-    tile: color("--water-tile"),
-    foam: color("--water-foam"),
-    lane1: color("--lane-1"),
-    lane2: color("--lane-2"),
-    deck: color("--deck-1"),
-    grout: color("--deck-2"),
-    coping: color("--coping"),
-    bubble: color("--bubble"),
-    rain: color("--ink-soft"),
-    star: color("--star"),
-  };
-  const spriteRgb = Object.fromEntries(Object.entries(spriteColors(canvas)).map(([ch, hex]) => [ch, hexToRgb(hex)]));
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   let scene;
-  let palette; // 물 그림 색 [파랑, 파랑 그늘, 민트, 민트 그늘, 테두리, 빛]
+  let C; // 소품 색
+  let spriteRgb; // 픽셀 그림 색
+  let palette; // 물 그림 색 { tones: [[바탕, 그늘], ...], rim, light }
   let sky;
   let particles = []; // 공기방울 또는 파문
   let catProgress = 0; // 레인 고양이 위치 (0~1)
@@ -52,7 +42,6 @@ export function startPool(canvas, sceneName = "shallow") {
   let top = 0; // 위쪽 띠 높이
   let image = null;
   let phase = null; // 지금 시간대 (daylight.js)
-  let tint = null; // 시간대 물들이기 색
   let art = null; // 물 그림 (읽기 전에는 파랑 단색)
   let artX = 0; // 물 그림의 어느 가로 위치부터 보여 줄지 (장면의 at)
 
@@ -91,23 +80,25 @@ export function startPool(canvas, sceneName = "shallow") {
       }
     }
 
-    if (!art) return palette[0];
+    const { tones } = palette;
+    if (!art) return tones[1][0];
     x += artX;
     const ay = wy * (scene.squash ?? 1); // 하늘 장면은 위아래로 눌러 멀리 보이는 물결처럼
     // 빛 그물(하얀 선·분홍 테두리)이 맨 위
-    const net = swayed(LAYER.net, SWAY.net, x, ay, t);
-    if (net === 255) return palette[5];
-    if (net === 128) return palette[4];
-    // 그 아래 물 조각: 파랑·민트(섞이는 곳은 체크무늬)에 그늘을 얹는다
-    const hue = layerAt(art, LAYER.hue, x, ay);
-    const mint = hue === 255 || (hue === 128 && (x + wy) % 2 === 0);
-    const shadow = swayed(LAYER.shadow, SWAY.shadow, x, ay, t) === 255;
-    return palette[(mint ? 2 : 0) + (shadow ? 1 : 0)];
+    const net = swayed(SWAY.net, x, ay, t);
+    if (net === 255) return palette.light;
+    if (net === 128) return palette.rim;
+    // 그 아래 물 조각: 조각이 창 왼쪽에 있을수록 어두운 하늘, 오른쪽일수록 밝은 하늘. 조각 하나는 한 색이다
+    const center = cellCenter(art, x, ay) - artX;
+    const tone = tones[Math.min(tones.length - 1, Math.max(0, Math.floor((center / w) * tones.length)))];
+    // 바닥의 그늘: 빛 그물과 같은 무늬를 비켜서 따로 일렁인다
+    const shadow = swayed(SWAY.shadow, x + SHADOW_OFFSET[0], ay + SHADOW_OFFSET[1], t) === 255;
+    return tone[shadow ? 1 : 0];
   }
 
-  // 한 겹을 줄마다 한 칸씩 출렁이며 읽는다
-  function swayed(layer, { density: [dx, dy], speed: [sx, sy] }, x, y, t) {
-    return layerAt(art, layer, x + Math.round(Math.sin(y * dx + t * sx)), y + Math.round(Math.sin(x * dy + t * sy)));
+  // 빛 그물을 줄마다 한 칸씩 출렁이며 읽는다
+  function swayed({ density: [dx, dy], speed: [sx, sy] }, x, y, t) {
+    return layerAt(art, LAYER.net, x + Math.round(Math.sin(y * dx + t * sx)), y + Math.round(Math.sin(x * dy + t * sy)));
   }
 
   function setPixel(x, y, [r, g, b]) {
@@ -234,20 +225,8 @@ export function startPool(canvas, sceneName = "shallow") {
     if (!still && scene.bubbles) drawBubbles();
     if (!still && scene.ripples) drawRipples();
     if (scene.cat) drawCat(still ? w / 3 : t);
-    if (phase) applyTint();
     if (phase?.night && scene.top === "sky") drawStars(t);
     ctx.putImageData(image, 0, 0);
-  }
-
-  // 시간대 색을 한 겹 입힌다 (새벽 분홍 · 노을 주황 · 밤 남색)
-  function applyTint() {
-    const data = image.data;
-    const a = phase.amount;
-    for (let i = 0; i < data.length; i += 4) {
-      data[i] += (tint[0] - data[i]) * a;
-      data[i + 1] += (tint[1] - data[i + 1]) * a;
-      data[i + 2] += (tint[2] - data[i + 2]) * a;
-    }
   }
 
   // 밤하늘의 별: 자리는 고정, 번갈아 깜빡인다
@@ -259,17 +238,40 @@ export function startPool(canvas, sceneName = "shallow") {
     }
   }
 
+  // 시간대(새벽·노을·밤)는 캔버스의 data-phase로 토큰 색을 통째로 바꾼다 (tokens.css)
   function updatePhase() {
     phase = currentPhase();
-    tint = phase && color(phase.tint);
+    if (phase) canvas.dataset.phase = phase.name;
+    else delete canvas.dataset.phase;
+    if (!scene) return;
+    readColors();
+    draw(now());
+  }
+
+  function readColors() {
+    C = {
+      tile: color("--water-tile"),
+      foam: color("--water-foam"),
+      lane1: color("--lane-1"),
+      lane2: color("--lane-2"),
+      deck: color("--deck-1"),
+      grout: color("--deck-2"),
+      coping: color("--coping"),
+      bubble: color("--bubble"),
+      rain: color("--ink-soft"),
+      star: color("--star"),
+    };
+    spriteRgb = Object.fromEntries(Object.entries(spriteColors(canvas)).map(([ch, hex]) => [ch, hexToRgb(hex)]));
+    const { tones, rim, light } = scene.water;
+    palette = { tones: tones.map((pair) => pair.map(color)), rim: color(rim), light: color(light) };
+    sky = (scene.sky ?? []).map(color);
   }
 
   const now = () => performance.now() / 1000;
 
   function setScene(name) {
     scene = SCENES[name];
-    palette = scene.water.map(color);
-    sky = (scene.sky ?? []).map(color);
+    readColors();
     layout();
     draw(now());
   }
