@@ -4,10 +4,15 @@
   gap: var(--gap-box-tight);
 }
 
+/* 남은 높이를 다 채우고, 요일·날짜 줄을 고르게 벌린다 */
 .calendar__board {
   display: grid;
+  flex: 1;
   grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 1fr;
+  place-items: center;
   width: 100%;
+  min-height: 0;
   padding: var(--space-1) var(--space-2);
   font-family: var(--font-digit-small);
   font-size: var(--size-small);
@@ -27,7 +32,9 @@
 
 .calendar__day { position: relative; }
 
+/* 오늘: 숫자를 감싸는 알약 */
 .calendar__day.is-today {
+  padding: 0 var(--space-1);
   color: var(--white);
   background: var(--accent);
 }
