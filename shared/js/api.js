@@ -1,0 +1,17 @@
+// 노션 중계 서버(worker/) 호출.
+// 열쇠는 임베드 주소의 # 뒤(#key=...)에 둔다. # 뒤는 어느 서버로도 전송되지 않는다
+const API_BASE = "https://pool-widgets-api.REPLACE_ME.workers.dev";
+
+const key = new URLSearchParams(location.hash.slice(1)).get("key");
+
+export const hasKey = Boolean(key);
+
+export async function api(path, body) {
+  const res = await fetch(API_BASE + path, {
+    method: body ? "POST" : "GET",
+    headers: { "X-Pool-Key": key, ...(body && { "Content-Type": "application/json" }) },
+    body: body && JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`api ${res.status}`);
+  return res.json();
+}

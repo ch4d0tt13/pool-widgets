@@ -76,6 +76,79 @@ body {
   box-shadow: var(--px) var(--px) 0 var(--water-4);
 }
 
+/* 픽셀 아이콘 (icons.js) */
+.icon {
+  width: calc(var(--px) * 7);
+  height: calc(var(--px) * 7);
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* 글자 버튼 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  font: inherit;
+  font-size: var(--size-caption);
+  color: var(--ink-on-line);
+  background: var(--panel-line);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--pixel-border);
+  cursor: pointer;
+  transition: transform var(--press) steps(1);
+}
+
+.btn .icon {
+  width: calc(var(--px) * 4);
+  height: calc(var(--px) * 4);
+}
+
+/* 아이콘 버튼 */
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: calc(var(--px) * 11);
+  height: calc(var(--px) * 11);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--pixel-border);
+  cursor: pointer;
+  transition: transform var(--press) steps(1);
+}
+
+.icon-btn--main { background: var(--accent); }
+
+.btn:active,
+.icon-btn:active { transform: translateY(var(--px)); }
+
+.btn:disabled { opacity: 0.5; cursor: default; }
+
+.btn:focus-visible,
+.icon-btn:focus-visible {
+  outline: var(--px) solid var(--accent);
+  outline-offset: var(--space-1);
+}
+
+@media (hover: hover) {
+  .btn:not(:disabled):hover { background: var(--ink-strong); }
+  .icon-btn:hover { background: var(--panel-line); }
+  .icon-btn--main:hover { background: var(--accent); filter: brightness(1.1); }
+}
+
+/* 화면에는 숨기고 화면 읽기 프로그램에만 읽히게 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .blink { animation: blink var(--blink) steps(1) infinite; }
 
 @keyframes blink {

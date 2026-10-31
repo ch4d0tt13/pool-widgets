@@ -1,0 +1,34 @@
+.memo__input {
+  width: 100%;
+  padding: var(--space-2);
+  font: inherit;
+  font-size: var(--size-caption);
+  line-height: 1.5;
+  color: var(--ink-strong);
+  background: var(--cloud);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--pixel-border);
+  resize: none;
+}
+
+.memo__input::placeholder { color: var(--ink-soft); }
+
+.memo__input:focus-visible {
+  outline: var(--px) solid var(--accent);
+  outline-offset: var(--space-1);
+}
+
+.memo__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.memo__status {
+  min-width: 0;
+  font-size: var(--size-caption);
+  line-height: 1.2;
+  color: var(--ink-soft);
+}

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>수영장 D-day</title>
+  <link rel="stylesheet" href="../shared/css/index.css">
+  <link rel="stylesheet" href="dday.css">
+</head>
+<body data-widget="dday">
+  <main class="panel window window--paper" data-title="마감.txt">
+    <div class="window__body">
+      <p class="display" data-count>D-?</p>
+      <p class="caption" data-name>불러오는 중</p>
+      <ol class="dday__list" data-list></ol>
+    </div>
+  </main>
+
+  <script type="module">
+    import { startWidget } from "../shared/js/widget.js";
+    import { startDday } from "./dday.js";
+
+    startWidget("deep");
+    startDday();
+  </script>
+</body>
+</html>

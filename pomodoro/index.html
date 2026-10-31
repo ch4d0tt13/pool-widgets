@@ -7,25 +7,28 @@
   <link rel="stylesheet" href="../shared/css/index.css">
   <link rel="stylesheet" href="pomodoro.css">
 </head>
-<body>
-  <canvas class="pool" aria-hidden="true"></canvas>
-
-  <main class="panel">
-    <p class="caption" data-mode>집중</p>
-    <p class="display" data-remaining role="timer">25:00</p>
-    <div class="progress" aria-hidden="true"><span class="progress__fill" data-progress></span></div>
-    <div class="controls">
-      <button class="btn" type="button" data-toggle>시작</button>
-      <button class="btn btn--ghost" type="button" data-reset>처음으로</button>
+<body data-widget="pomodoro">
+  <main class="panel window window--night" data-title="집중.exe">
+    <div class="window__body">
+      <p class="caption" data-mode>집중</p>
+      <p class="display" data-remaining role="timer">25:00</p>
+      <div class="track" aria-hidden="true"><span class="track__fill" data-progress></span></div>
+      <div class="controls">
+        <button class="icon-btn" type="button" data-reset aria-label="처음으로" title="처음으로">
+          <canvas class="icon" data-icon="restart"></canvas>
+        </button>
+        <button class="icon-btn icon-btn--main" type="button" data-toggle aria-label="시작" title="시작">
+          <canvas class="icon" data-icon="play" data-toggle-icon></canvas>
+        </button>
+      </div>
     </div>
   </main>
 
   <script type="module">
-    import { startPool } from "../shared/js/pool.js";
+    import { startWidget } from "../shared/js/widget.js";
     import { startPomodoro } from "./pomodoro.js";
 
-    startPool(document.querySelector(".pool"));
-    startPomodoro();
+    startPomodoro(startWidget("lane"));
   </script>
 </body>
 </html>

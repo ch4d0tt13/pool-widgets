@@ -8,6 +8,35 @@
   --water-tile: #56b6e0;
   --water-caustic: #e6f9ff;
   --water-foam: #ffffff;
+  --water-5: #46acd9;
+
+  /* 장면별 물 색: 깊은 쪽 · 흐린 날 */
+  --deep-1: #3a9fd0;
+  --deep-2: #2a86bb;
+  --deep-3: #1f6f99;
+  --deep-4: #175a80;
+  --cloudy-1: #d3e6ec;
+  --cloudy-2: #b9d5df;
+  --cloudy-3: #9fc4d1;
+  --cloudy-4: #88b3c3;
+
+  /* 장면 소품: 레인 부표 · 데크 타일 · 공기방울 */
+  --lane-1: #ff5a5f;
+  --lane-2: #ffffff;
+  --deck-1: #f4e8d2;
+  --deck-2: #e2d0b0;
+  --coping: #ffffff;
+  --bubble: #d8f4ff;
+
+  /* 틀(frames.css)용 바탕 */
+  --paper: #fffaf3;
+  --gingham: #ffd3e1;
+  --night-bg: #12476a;
+  --icon-ink: var(--ink-strong);
+
+  /* 튜브 고양이 */
+  --cat: #2b2d42;
+  --ring: #ff8fb1;
 
   /* 패널·글자 */
   --panel-bg: rgba(255, 255, 255, 0.88);
@@ -53,3 +82,8 @@
   --blink: 1s;
   --press: 80ms;
 }
+
+/* 위젯별 포인트 색 (캡션 물방울 등) */
+[data-widget="pomodoro"] { --accent: var(--lane-1); }
+[data-widget="weather"] { --accent: var(--sun-deep); }
+[data-widget="dday"] { --accent: var(--sun); }

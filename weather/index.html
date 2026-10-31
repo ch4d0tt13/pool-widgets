@@ -7,28 +7,27 @@
   <link rel="stylesheet" href="../shared/css/index.css">
   <link rel="stylesheet" href="weather.css">
 </head>
-<body>
-  <canvas class="pool" aria-hidden="true"></canvas>
-
-  <main class="panel">
-    <p class="caption" data-place></p>
-    <div class="weather__now">
-      <canvas class="weather__icon" data-icon aria-hidden="true"></canvas>
-      <p class="display" data-temp>--°</p>
+<body data-widget="weather">
+  <main class="panel window window--sun" data-title="날씨.exe">
+    <div class="window__body">
+      <p class="caption" data-place></p>
+      <div class="weather__now">
+        <canvas class="weather__icon" data-icon-weather aria-hidden="true"></canvas>
+        <p class="display" data-temp>--°</p>
+      </div>
+      <p class="weather__meta" data-desc>불러오는 중</p>
+      <p class="weather__meta">
+        <span>최고 <b data-max>--</b>°</span>
+        <span>최저 <b data-min>--</b>°</span>
+      </p>
     </div>
-    <p class="weather__meta" data-desc>불러오는 중</p>
-    <p class="weather__meta">
-      <span>최고 <b data-max>--</b>°</span>
-      <span>최저 <b data-min>--</b>°</span>
-    </p>
   </main>
 
   <script type="module">
-    import { startPool } from "../shared/js/pool.js";
+    import { startWidget } from "../shared/js/widget.js";
     import { startWeather } from "./weather.js";
 
-    startPool(document.querySelector(".pool"));
-    startWeather();
+    startWeather(startWidget("shallow"));
   </script>
 </body>
 </html>

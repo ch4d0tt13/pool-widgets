@@ -1,23 +1,24 @@
 // 날씨: Open-Meteo(키 없음)에서 현재 기온과 오늘 최고·최저를 30분마다 받아온다
 import { $ } from "../shared/js/dom.js";
-import { drawSprite } from "./sprites.js";
+import { drawSprite } from "../shared/js/sprite.js";
+import { SPRITES } from "./sprites.js";
 
 // 공개 코드라 도시 단위 좌표만 쓴다
 const PLACE = { name: "울산", lat: 35.54, lon: 129.31 };
 const REFRESH_MS = 30 * 60 * 1000;
 
-// WMO 날씨 코드 → [설명, 아이콘]
+// WMO 날씨 코드 → [설명, 아이콘, 물 장면]
 function describe(code) {
-  if (code === 0) return ["맑음", "sun"];
-  if (code <= 2) return ["구름 조금", "partly"];
-  if (code === 3) return ["흐림", "cloud"];
-  if (code <= 48) return ["안개", "cloud"];
-  if (code <= 57) return ["이슬비", "rain"];
-  if (code <= 67) return ["비", "rain"];
-  if (code <= 77) return ["눈", "snow"];
-  if (code <= 82) return ["소나기", "rain"];
-  if (code <= 86) return ["눈", "snow"];
-  return ["뇌우", "storm"];
+  if (code === 0) return ["맑음", "sun", "sunny"];
+  if (code <= 2) return ["구름 조금", "partly", "shallow"];
+  if (code === 3) return ["흐림", "cloud", "cloudy"];
+  if (code <= 48) return ["안개", "cloud", "cloudy"];
+  if (code <= 57) return ["이슬비", "rain", "rainy"];
+  if (code <= 67) return ["비", "rain", "rainy"];
+  if (code <= 77) return ["눈", "snow", "cloudy"];
+  if (code <= 82) return ["소나기", "rain", "rainy"];
+  if (code <= 86) return ["눈", "snow", "cloudy"];
+  return ["뇌우", "storm", "rainy"];
 }
 
 const API_URL = "https://api.open-meteo.com/v1/forecast?" + new URLSearchParams({
@@ -29,8 +30,8 @@ const API_URL = "https://api.open-meteo.com/v1/forecast?" + new URLSearchParams(
   forecast_days: 1,
 });
 
-export function startWeather() {
-  const icon = $("[data-icon]");
+export function startWeather(pool) {
+  const icon = $("[data-icon-weather]");
   const temp = $("[data-temp]");
   const desc = $("[data-desc]");
   const max = $("[data-max]");
@@ -43,12 +44,13 @@ export function startWeather() {
       const res = await fetch(API_URL);
       if (!res.ok) throw new Error(res.status);
       const { current, daily } = await res.json();
-      const [text, sprite] = describe(current.weather_code);
+      const [text, sprite, scene] = describe(current.weather_code);
       temp.textContent = `${Math.round(current.temperature_2m)}°`;
       desc.textContent = text;
       max.textContent = Math.round(daily.temperature_2m_max[0]);
       min.textContent = Math.round(daily.temperature_2m_min[0]);
-      drawSprite(icon, sprite);
+      drawSprite(icon, SPRITES[sprite]);
+      pool.setScene(scene);
     } catch {
       // 지난 값은 그대로 두고 상태만 알린다
       desc.textContent = "날씨를 못 불러왔어요";

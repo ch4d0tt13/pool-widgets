@@ -1,16 +1,18 @@
 // 뽀모도로: 집중 25분 → 휴식 5분. 끝나면 짧게 울리고 다음 단계에서 멈춰 기다린다
 import { $, pad } from "../shared/js/dom.js";
+import { setIcon } from "../shared/js/icons.js";
 
 const MODES = {
-  focus: { label: "집중", seconds: 25 * 60, next: "rest" },
-  rest: { label: "휴식", seconds: 5 * 60, next: "focus" },
+  focus: { label: "집중", seconds: 25 * 60, next: "rest", scene: "lane" },
+  rest: { label: "휴식", seconds: 5 * 60, next: "focus", scene: "rest" },
 };
 
-export function startPomodoro() {
+export function startPomodoro(pool) {
   const modeEl = $("[data-mode]");
   const remainingEl = $("[data-remaining]");
   const progressEl = $("[data-progress]");
   const toggleBtn = $("[data-toggle]");
+  const toggleIcon = $("[data-toggle-icon]");
   const resetBtn = $("[data-reset]");
 
   let mode = "focus";
@@ -28,7 +30,11 @@ export function startPomodoro() {
     remainingEl.textContent = `${pad(Math.floor(secs / 60))}:${pad(secs % 60)}`;
     progressEl.style.width = `${((total - left) / total) * 100}%`;
     modeEl.textContent = MODES[mode].label;
-    toggleBtn.textContent = running() ? "멈춤" : leftMs < total ? "계속" : "시작";
+
+    const label = running() ? "멈춤" : leftMs < total ? "계속" : "시작";
+    toggleBtn.setAttribute("aria-label", label);
+    toggleBtn.title = label;
+    setIcon(toggleIcon, running() ? "pause" : "play");
     return left;
   }
 
@@ -43,6 +49,7 @@ export function startPomodoro() {
     endAt = null;
     mode = next;
     leftMs = MODES[mode].seconds * 1000;
+    pool.setScene(MODES[mode].scene);
     render();
   }
 

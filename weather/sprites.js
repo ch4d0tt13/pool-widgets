@@ -1,13 +1,4 @@
-// 12×12 픽셀 날씨 아이콘. 글자 하나가 한 칸, 색은 토큰 이름으로 정한다
-const PALETTE = {
-  y: "--sun",
-  o: "--sun-deep",
-  w: "--cloud",
-  s: "--cloud-shade",
-  b: "--ink-soft",
-  n: "--water-4",
-};
-
+// 12×12 픽셀 날씨 아이콘 (색 글자는 shared/js/sprite.js 참고)
 const CLOUD_TOP = [
   "............",
   ".....www....",
@@ -18,7 +9,7 @@ const CLOUD_TOP = [
   ".ssssssssss.",
 ];
 
-const SPRITES = {
+export const SPRITES = {
   sun: [
     ".....yy.....",
     ".y...yy...y.",
@@ -86,19 +77,3 @@ const SPRITES = {
     ".....y......",
   ],
 };
-
-export function drawSprite(canvas, name) {
-  const rows = SPRITES[name];
-  const styles = getComputedStyle(document.documentElement);
-  const ctx = canvas.getContext("2d");
-  canvas.width = rows[0].length;
-  canvas.height = rows.length;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  rows.forEach((row, y) => {
-    [...row].forEach((ch, x) => {
-      if (!PALETTE[ch]) return;
-      ctx.fillStyle = styles.getPropertyValue(PALETTE[ch]).trim();
-      ctx.fillRect(x, y, 1, 1);
-    });
-  });
-}

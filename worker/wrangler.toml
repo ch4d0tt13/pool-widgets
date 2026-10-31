@@ -1,0 +1,12 @@
+# 노션 중계 서버 (Cloudflare Worker)
+# 비밀 값은 여기에 쓰지 않고 `wrangler secret put` 으로만 넣는다:
+#   NOTION_TOKEN       노션 통합 키
+#   ACCESS_KEY         위젯 임베드 주소의 #key= 값
+#   MEMO_SOURCE_ID     빠른 메모가 들어갈 데이터 소스 (자료함)
+#   PROJECT_SOURCE_ID  마감일을 읽을 데이터 소스 (프로젝트 목록)
+name = "pool-widgets-api"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://ch4d0tt13.github.io,http://localhost:5174"
