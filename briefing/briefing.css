@@ -26,7 +26,7 @@
   position: relative;
   display: grid;
   gap: var(--space-1);
-  width: min(100%, calc(var(--px) * 150));
+  width: min(100%, var(--note-width));
   max-height: 100%;
   padding: var(--space-3) var(--space-3) var(--space-2);
   color: var(--navy);
@@ -53,8 +53,8 @@
   display: grid;
   gap: var(--space-1);
   min-width: 0;
-  font-family: var(--font-small);
-  font-size: var(--size-small);
+  font-family: var(--font-note);
+  font-size: var(--size-note);
   line-height: 1.5;
   list-style: none;
   color: var(--ink-soft);
@@ -78,8 +78,8 @@
 .note__footer {
   justify-self: end;
   padding: 0 var(--space-1);
-  font-family: var(--font-small);
-  font-size: var(--size-small);
+  font-family: var(--font-note);
+  font-size: var(--size-note);
   background: var(--gingham);
 }
 

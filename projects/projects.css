@@ -69,7 +69,8 @@
 .projects__grid {
   display: grid;
   flex: 1;
-  grid-template-columns: repeat(auto-fill, minmax(calc(var(--px) * 38), 1fr));
+  /* 카드 폭은 이름 글자 크기를 따라 넓힌다 (큰 칸에서 글자만 커지고 카드가 좁아 이름이 잘리지 않게) */
+  grid-template-columns: repeat(auto-fill, minmax(max(calc(var(--px) * 38), calc(var(--size-caption) * 8)), 1fr));
   align-content: start;
   gap: var(--gap-box);
   min-height: 0;
