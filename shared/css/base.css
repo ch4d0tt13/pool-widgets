@@ -151,6 +151,12 @@ body {
   transition: transform var(--press) steps(1);
 }
 
+/* 좁은 자리용 작은 아이콘 버튼 (아이콘 7칸 + 위아래 1칸) */
+.icon-btn--small {
+  width: calc(var(--px) * 9);
+  height: calc(var(--px) * 9);
+}
+
 .icon-btn--main {
   --icon-ink: var(--white);
   background: var(--accent);

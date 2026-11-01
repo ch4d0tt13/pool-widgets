@@ -8,31 +8,35 @@
   <link rel="stylesheet" href="pomodoro.css">
 </head>
 <body data-widget="pomodoro">
-  <main class="window window--lane" data-title="집중.exe">
-    <div class="window__body pomodoro" data-pool>
-      <div class="pomodoro__head">
-        <p class="caption" data-mode>집중</p>
-        <p class="display" data-remaining role="timer">25:00</p>
-      </div>
-      <div class="pomodoro__controls">
-        <button class="icon-btn" type="button" data-reset aria-label="처음으로" title="처음으로">
-          <canvas class="icon" data-icon="restart"></canvas>
-        </button>
-        <button class="icon-btn icon-btn--main" type="button" data-toggle aria-label="시작" title="시작">
-          <canvas class="icon" data-icon="play" data-toggle-icon></canvas>
-        </button>
-        <button class="icon-btn" type="button" data-sound aria-pressed="false" aria-label="물소리" title="물소리 켜기">
-          <canvas class="icon" data-icon="sound-off" data-sound-icon></canvas>
-        </button>
+  <main class="tube">
+    <div class="tube__ring">
+      <canvas class="tube__canvas" data-ring aria-hidden="true"></canvas>
+      <p class="caption tube__tag" data-mode>집중</p>
+      <div class="tube__center">
+        <p class="tube__time" data-remaining role="timer">25:00</p>
+        <div class="tube__controls">
+          <button class="icon-btn icon-btn--small" type="button" data-reset aria-label="처음으로" title="처음으로">
+            <canvas class="icon" data-icon="restart"></canvas>
+          </button>
+          <button class="icon-btn icon-btn--small icon-btn--main" type="button" data-toggle aria-label="시작" title="시작">
+            <canvas class="icon" data-icon="play" data-toggle-icon></canvas>
+          </button>
+          <button class="icon-btn icon-btn--small" type="button" data-sound aria-pressed="false" aria-label="물소리" title="물소리 켜기">
+            <canvas class="icon" data-icon="sound-off" data-sound-icon></canvas>
+          </button>
+        </div>
       </div>
     </div>
   </main>
 
   <script type="module">
     import { startWidget } from "../shared/js/widget.js";
+    import { createRing } from "./ring.js";
     import { startPomodoro } from "./pomodoro.js";
 
-    startPomodoro(startWidget("lane"));
+    // 창 없이 통통한 물놀이 튜브 하나: 지난 시간만큼 튜브가 동그랗게 차고, 가운데 구멍에 시간과 버튼
+    startWidget();
+    startPomodoro(createRing(document.querySelector("[data-ring]")));
   </script>
 </body>
 </html>

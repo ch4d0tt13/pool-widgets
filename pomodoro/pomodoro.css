@@ -1,18 +1,52 @@
-/* 맨 아래 레인 띠(부표 줄 + 헤엄치는 고양이, pool.js의 LANE_BAND 15칸)는 비워 두고, 시간과 버튼은 그 위 공간의 가운데에 */
-.pomodoro {
-  justify-content: center;
-  padding-bottom: calc(var(--px) * 15);
+/* 창 없이 통통한 물놀이 튜브 하나: 가운데 구멍(물)에 남은 시간과 버튼, 위쪽엔 단계 꼬리표 */
+.tube {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: var(--px);
 }
 
-/* 단계 스티커는 숫자 위에: 숫자가 창 가운데에 온다 */
-.pomodoro__head {
+/* 튜브 자리: 높이를 채우는 정사각형. 튜브 그림은 그 안에 도트 칸의 정수배로 (ring.js) */
+.tube__ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  max-width: 100%;
+  aspect-ratio: 1;
+}
+
+.tube__canvas {
+  position: absolute;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* 튜브 위에 붙은 꼬리표 (집중 · 휴식) */
+.tube__tag {
+  position: absolute;
+  top: var(--space-1);
+  left: 50%;
+  translate: -50% 0;
+}
+
+.tube__center {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--gap-box-tight);
 }
 
-.pomodoro__controls {
+.tube__time {
+  font-family: var(--font-digit);
+  font-size: calc(var(--size-caption) * 2);
+  line-height: 1;
+  color: var(--ink-strong);
+  text-shadow: var(--shadow-text);
+}
+
+.tube__controls {
   display: flex;
-  gap: var(--space-3);
+  gap: var(--gap-box-tight);
 }

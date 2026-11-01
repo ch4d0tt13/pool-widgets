@@ -87,6 +87,12 @@
   --frame-orange-soft: #ffe2bf;
   --frame-wood: #8a5a32;
   --tank-glass: #eafaff; /* 기록 위젯 물탱크 유리 */
+  /* 집중 튜브: 지난 시간만큼 줄무늬 색, 남은 쪽은 옅게, 가운데 구멍엔 물 */
+  --tube-focus: var(--ring);
+  --tube-rest: var(--water-4);
+  --tube-empty: #eef6fa;
+  --tube-empty-stripe: #d6e7ef;
+  --tube-hole: var(--water-2);
   /* 프로젝트 킥판: 마감이 가까울수록 진한 색 (알약보다 옅게) */
   --kick-far: #ffe2bf;
   --kick-near: #fff0a3;

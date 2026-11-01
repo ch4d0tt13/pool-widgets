@@ -1,16 +1,16 @@
 // 뽀모도로: 집중 25분 → 휴식 5분. 끝나면 짧게 울리고 다음 단계에서 멈춰 기다린다
-// 진행은 레인 고양이가 헤엄쳐 간 거리로 보여 주고, 물소리를 켜 두면 도는 동안만 들린다
+// 진행은 튜브가 동그랗게 찬 만큼 보여 주고(ring.js), 물소리를 켜 두면 도는 동안만 들린다
 import { $, pad } from "../shared/js/dom.js";
 import { setIcon } from "../shared/js/icons.js";
 import { record, addSnack } from "../shared/js/records.js";
 import { createWaterSound } from "./water-sound.js";
 
 const MODES = {
-  focus: { label: "집중", seconds: 25 * 60, next: "rest", scene: "lane" },
-  rest: { label: "휴식", seconds: 5 * 60, next: "focus", scene: "rest" },
+  focus: { label: "집중", seconds: 25 * 60, next: "rest" },
+  rest: { label: "휴식", seconds: 5 * 60, next: "focus" },
 };
 
-export function startPomodoro(pool) {
+export function startPomodoro(ring) {
   const modeEl = $("[data-mode]");
   const remainingEl = $("[data-remaining]");
   const toggleBtn = $("[data-toggle]");
@@ -41,7 +41,7 @@ export function startPomodoro(pool) {
     const left = running() ? Math.max(0, endAt - Date.now()) : leftMs;
     const secs = Math.ceil(left / 1000);
     remainingEl.textContent = `${pad(Math.floor(secs / 60))}:${pad(secs % 60)}`;
-    pool.setCatProgress((total - left) / total);
+    ring.setProgress((total - left) / total);
     modeEl.textContent = MODES[mode].label;
 
     const label = running() ? "멈춤" : leftMs < total ? "계속" : "시작";
@@ -67,7 +67,7 @@ export function startPomodoro(pool) {
     endAt = null;
     mode = next;
     leftMs = MODES[mode].seconds * 1000;
-    pool.setScene(MODES[mode].scene);
+    ring.setMode(mode);
     syncSound();
     render();
   }
