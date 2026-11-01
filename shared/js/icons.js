@@ -9,6 +9,7 @@ export const ICONS = {
   "heart-small": [".r.r.", "rrrrr", "rrrrr", ".rrr.", "..r.."],
   "heart-empty-small": [".r.r.", "r.r.r", "r...r", ".r.r.", "..r.."],
   "fish-small": [".....", ".ii.i", "i.iii", ".ii.i", "....."],
+  "pin-small": [".rrr.", "rwrrr", "rrrrr", ".rrr.", "..k.."],
   play: [
     ".i.....",
     ".ii....",

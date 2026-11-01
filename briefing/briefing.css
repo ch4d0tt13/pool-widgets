@@ -1,19 +1,50 @@
-/* 데크 위에 놓인 종이 쪽지, 아래 물에는 고양이가 헤엄친다 */
-.briefing { justify-content: flex-start; }
+/* 수영장 안내판: 나무 틀 안에 가로 판자를 대고, 종이 쪽지를 압정 두 개로 꽂는다 */
+.board {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--space-2);
+  background: var(--line);
+  clip-path: var(--corner-outer);
+}
 
-/* 쪽지는 데크 왼쪽에 놓고, 넓은 창에서는 오른쪽에 데크와 물이 보이게 폭을 줄인다 */
+/* 판자: 7칸 판자마다 1칸 이음매 */
+.board__face {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: var(--space-3);
+  overflow: clip;
+  background: repeating-linear-gradient(var(--deck-1) 0 calc(var(--px) * 7), var(--deck-2) calc(var(--px) * 7) calc(var(--px) * 8));
+  clip-path: var(--corner-inner);
+}
+
+/* 쪽지: 넓은 판에서는 가운데에 폭을 줄여 판자가 둘레로 보이게. 그림자는 오른쪽 아래로 1칸 */
 .note {
+  position: relative;
   display: grid;
-  align-self: flex-start;
   gap: var(--space-1);
   width: min(100%, calc(var(--px) * 150));
   max-height: 100%;
-  padding: var(--space-2) var(--space-3);
-  overflow: hidden;
+  padding: var(--space-3) var(--space-3) var(--space-2);
   color: var(--navy);
   text-decoration: none;
   background: var(--paper);
-  box-shadow: var(--pixel-border), 0 var(--space-2) 0 var(--px) rgba(13, 69, 102, 0.25);
+  box-shadow: var(--pixel-border), var(--px) var(--space-2) 0 0 var(--note-shadow);
+}
+
+/* 압정: 머리가 쪽지 위 테두리에 걸치게 (그림 5칸 중 아래 1칸이 바늘) */
+.note__pin {
+  position: absolute;
+  top: calc(var(--px) * -3);
+  left: var(--space-2);
+}
+
+.note__pin--right {
+  left: auto;
+  right: var(--space-2);
 }
 
 .note .caption { justify-self: start; }
@@ -52,9 +83,10 @@
   background: var(--gingham);
 }
 
+/* 초점 표시는 쪽지 안쪽에 (바깥은 판자 여백이 좁아 잘린다) */
 .note:focus-visible {
   outline: var(--px) solid var(--accent);
-  outline-offset: var(--space-1);
+  outline-offset: calc(var(--px) * -3);
 }
 
 @media (hover: hover) {

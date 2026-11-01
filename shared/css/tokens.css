@@ -321,3 +321,9 @@ body {
   --ink-soft: var(--water-1);
   --shadow-text: var(--px) var(--px) 0 var(--deep-4);
 }
+
+/* 브리핑 게시판: 판자 위 쪽지 그림자 (판자 이음매보다 진한 나무색) */
+[data-widget="briefing"] { --note-shadow: #c4a57a; }
+
+/* 탁상 달력: 칸 안 마감 이름 막대 글자는 창 크기와 상관없이 고정 (9 계열) */
+[data-widget="calendar"] { --size-mark: 10px; }
