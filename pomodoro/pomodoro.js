@@ -6,8 +6,11 @@ import { record, addSnack } from "../shared/js/records.js";
 import { createWaterSound } from "./water-sound.js";
 import { createChime } from "./chime.js";
 
+// 알림 확인용: 주소에 ?focus=10 처럼 주면 집중이 그 초만큼만 돈다 (이때는 기록·간식을 남기지 않는다)
+const TEST_SECONDS = Number(new URLSearchParams(location.search).get("focus")) || 0;
+
 const MODES = {
-  focus: { label: "집중", seconds: 25 * 60, next: "rest" },
+  focus: { label: "집중", seconds: TEST_SECONDS || 25 * 60, next: "rest" },
   rest: { label: "휴식", seconds: 5 * 60, next: "focus" },
 };
 
@@ -56,8 +59,8 @@ export function startPomodoro(ring) {
   function tick() {
     if (render() > 0) return;
     ring.flash(); // 알림 소리는 시작할 때 이 시각에 맞춰 예약해 두었다
-    // 집중을 끝까지 마치면 기록하고 고양이 간식을 하나 쌓는다
-    if (mode === "focus") {
+    // 집중을 끝까지 마치면 기록하고 고양이 간식을 하나 쌓는다 (확인용 짧은 집중은 빼고)
+    if (mode === "focus" && !TEST_SECONDS) {
       record("focus");
       addSnack();
     }
