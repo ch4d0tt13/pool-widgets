@@ -111,11 +111,3 @@
 .window--stream {
   --bar: repeating-linear-gradient(-45deg, var(--water-4) 0 var(--space-1), var(--white) var(--space-1) var(--space-2));
 }
-
-.window--chart {
-  --bar: repeating-linear-gradient(90deg, var(--frame-teal) 0 var(--px), var(--frame-teal-soft) var(--px) var(--space-2));
-}
-
-.window--buoy {
-  --bar: repeating-linear-gradient(90deg, var(--sun) 0 var(--space-2), var(--frame-orange-soft) var(--space-2) var(--space-3));
-}

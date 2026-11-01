@@ -84,7 +84,6 @@
   --frame-teal: #23857b;
   --frame-teal-soft: #c6eee8;
   --frame-orange: #c8701e;
-  --frame-orange-soft: #ffe2bf;
   --frame-wood: #8a5a32;
   --tank-glass: #eafaff; /* 기록 위젯 물탱크 유리 */
   /* 프로젝트 킥판: 마감이 가까울수록 진한 색 (알약보다 옅게) */
@@ -320,4 +319,18 @@ body {
   --ink-strong: var(--white);
   --ink-soft: var(--water-1);
   --shadow-text: var(--px) var(--px) 0 var(--deep-4);
+}
+
+/* 창 대신 물건 모양인 위젯의 색 */
+/* 기록: 청록 선반 (윗면은 밝게, 앞면에 요일) */
+[data-widget="stats"] {
+  --shelf-top: var(--frame-teal-soft);
+  --shelf-front: #3a9e92;
+}
+
+/* 프로젝트: 하얀 타일(--coping)로 두른 작은 수영장과 사다리 */
+[data-widget="projects"] {
+  --tile-grout: #b7dbe8;
+  --ladder: #dbe6ec;
+  --ladder-shade: #7f98a8;
 }
