@@ -48,10 +48,9 @@ export function startPool(canvas, sceneName = "shallow") {
   let phase = null; // 지금 시간대 (daylight.js)
   let art = null; // 물 그림 (읽기 전에는 파랑 단색)
   let artX = 0; // 물 그림의 어느 가로 위치부터 보여 줄지 (장면의 at)
-  // 가볍게 그리려고 미리 계산해 두는 것: 움직이지 않는 바닥(조각 색·타일 줄눈)은 크기가 바뀔 때 한 번,
+  // 가볍게 그리려고 미리 계산해 두는 것: 움직이지 않는 바닥(조각 색)은 크기가 바뀔 때 한 번,
   // 일렁임은 줄·열마다 값이 같으니 한 번 그릴 때 줄·열 단위로 (칸마다 사인을 다시 계산하지 않는다)
   let floorTone = new Uint8Array(0); // 칸마다 물 조각 색 번호
-  let floorGrout = new Uint8Array(0); // 칸마다 타일 줄눈인지
   const sway = { netRow: null, netCol: null, shadowRow: null, shadowCol: null, lane: null };
 
   function layout() {
@@ -81,11 +80,10 @@ export function startPool(canvas, sceneName = "shallow") {
     buildFloor();
   }
 
-  // 물 조각 색(창 왼쪽일수록 어두운 하늘)과 타일 줄눈은 움직이지 않으니 칸마다 한 번만 정해 둔다
+  // 물 조각 색(창 왼쪽일수록 어두운 하늘)은 움직이지 않으니 칸마다 한 번만 정해 둔다
   function buildFloor() {
     const rows = Math.max(0, h - top);
     floorTone = new Uint8Array(w * rows);
-    floorGrout = new Uint8Array(w * rows);
     if (!art) return;
     const n = scene.water.tones.length;
     const squash = scene.squash ?? 1;
@@ -95,7 +93,6 @@ export function startPool(canvas, sceneName = "shallow") {
         const x = c + artX;
         const center = cellCenter(art, x, ay) - artX;
         floorTone[r * w + c] = Math.min(n - 1, Math.max(0, Math.floor((center / w) * n)));
-        floorGrout[r * w + c] = scene.tiles && (x % scene.tiles === 0 || ay % scene.tiles === 0) ? 1 : 0;
       }
     }
   }
@@ -157,10 +154,7 @@ export function startPool(canvas, sceneName = "shallow") {
     if (net === 255) return palette.light;
     if (net === 128) return palette.rim;
     // 그 아래 물 조각: 조각이 창 왼쪽에 있을수록 어두운 하늘, 오른쪽일수록 밝은 하늘. 조각 하나는 한 색이다
-    const i = r * w + c;
-    const tone = tones[floorTone[i]];
-    // 타일 바닥 장면: 일정 간격의 줄눈은 그늘 색 (빛 그물 아래에 깔린다)
-    if (floorGrout[i]) return tone[1];
+    const tone = tones[floorTone[r * w + c]];
     // 바닥의 그늘: 빛 그물과 같은 무늬를 비켜서 따로 일렁인다
     const [ox, oy] = SHADOW_OFFSET;
     const shadow = layerAt(art, LAYER.net, x + ox + sway.shadowRow[r], ay + oy + sway.shadowCol[c]) === 255;

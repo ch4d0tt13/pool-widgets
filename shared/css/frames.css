@@ -100,10 +100,6 @@
   --bar: repeating-linear-gradient(90deg, var(--deck-1) 0 calc(var(--space-2) - var(--px)), var(--deck-2) calc(var(--space-2) - var(--px)) var(--space-2));
 }
 
-.window--mosaic {
-  --bar: repeating-conic-gradient(var(--frame-violet-soft) 0 25%, var(--white) 0 50%) 0 0 / var(--space-2) var(--space-2);
-}
-
 .window--ring {
   --bar: repeating-linear-gradient(45deg, var(--ring) 0 var(--space-1), var(--white) var(--space-1) var(--space-2));
 }

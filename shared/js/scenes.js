@@ -2,7 +2,6 @@
 // water: 물 그림을 칠할 토큰. tones는 창 왼쪽 → 오른쪽 조각 색 [바탕, 그늘], rim은 빛 그물 테두리, light는 하얀 선
 //   (시간대마다 tokens.css에서 같은 토큰이 다른 색이 된다)
 // at: 물 그림의 어느 부분을 보여 줄지 (0 왼쪽 끝 → 1 오른쪽 끝) / sparkle: 반짝임 양 (기본 1) / top: 위쪽 띠 ("sky" 하늘 · "deck" 데크)
-// tiles: 바닥 타일 한 변(칸). 줄눈을 그늘 색으로 깐다
 // squash: 물 그림을 위아래로 누르는 배율 (하늘 아래 물은 멀리서 본 물결처럼 납작하게)
 // lanes: 레인 부표 줄 (true 수면 전체 · 숫자는 바닥에서부터 그 줄 수만) / gulls: 맑은 낮 하늘의 갈매기 / cat: "drift" 떠다님 · "lane" 레인 따라 헤엄 / ripples: 프레임마다 파문이 생길 확률
 const ART = {
@@ -27,10 +26,8 @@ const SKY_GRAY = ["--sky-gray-1", "--sky-gray-2", "--sky-gray-3"];
 export const SCENES = {
   shallow: { at: 0, water: ART, cat: "drift" },
   deep: { at: 0.5, water: DEEP, sparkle: 0.5, bubbles: true },
-  mosaic: { at: 0.8, water: ART, sparkle: 0.6, tiles: 8 },
   play: { at: 0.6, water: ROSE, ripples: 0.05 },
   inlet: { at: 0.25, water: ART, ripples: 0.03 },
-  shimmer: { at: 0.95, water: ART, sparkle: 2.5 },
   pebble: { at: 0.45, water: ART, bubbles: true },
   lane: { at: 0.15, water: ART, lanes: true, cat: "lane" },
   rest: { at: 0.7, water: ART, lanes: 2, cat: "lane" },
