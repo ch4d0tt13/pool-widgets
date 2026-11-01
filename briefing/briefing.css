@@ -48,7 +48,11 @@
   right: var(--space-2);
 }
 
-.note .caption { justify-self: start; }
+/* 스티커 테두리가 바깥으로 1칸 나와서, 아래 줄과 보이는 틈이 2칸 되게 쪽지 간격(1칸)에 2칸을 더한다 */
+.note .caption {
+  justify-self: start;
+  margin-bottom: var(--space-2);
+}
 
 /* 긴 줄은 줄바꿈해서 쪽지가 아래로 길어진다. 게시판에 다 안 들어가면
    briefing.js가 들어가는 줄 수(--note-lines)를 재서 거기까지만 보이고 끝에 말줄임 */
