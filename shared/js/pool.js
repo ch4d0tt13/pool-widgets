@@ -47,6 +47,11 @@ export function startPool(canvas, sceneName = "shallow") {
   let phase = null; // 지금 시간대 (daylight.js)
   let art = null; // 물 그림 (읽기 전에는 파랑 단색)
   let artX = 0; // 물 그림의 어느 가로 위치부터 보여 줄지 (장면의 at)
+  // 가볍게 그리려고 미리 계산해 두는 것: 움직이지 않는 바닥(조각 색·타일 줄눈)은 크기가 바뀔 때 한 번,
+  // 일렁임은 줄·열마다 값이 같으니 한 번 그릴 때 줄·열 단위로 (칸마다 사인을 다시 계산하지 않는다)
+  let floorTone = new Uint8Array(0); // 칸마다 물 조각 색 번호
+  let floorGrout = new Uint8Array(0); // 칸마다 타일 줄눈인지
+  const sway = { netRow: null, netCol: null, shadowRow: null, shadowCol: null, lane: null };
 
   function layout() {
     // 창이 막 열릴 때는 크기가 0일 수 있다
@@ -59,11 +64,60 @@ export function startPool(canvas, sceneName = "shallow") {
     canvas.height = h;
     image = ctx.createImageData(w, h);
     particles = [];
+    const rows = Math.max(0, h - top);
+    Object.assign(sway, {
+      netRow: new Int8Array(rows),
+      shadowRow: new Int8Array(rows),
+      netCol: new Int8Array(w),
+      shadowCol: new Int8Array(w),
+      lane: new Int8Array(w),
+    });
     placeArt();
   }
 
   function placeArt() {
     artX = art ? Math.round((scene.at ?? 0) * Math.max(0, art.w - w)) : 0;
+    buildFloor();
+  }
+
+  // 물 조각 색(창 왼쪽일수록 어두운 하늘)과 타일 줄눈은 움직이지 않으니 칸마다 한 번만 정해 둔다
+  function buildFloor() {
+    const rows = Math.max(0, h - top);
+    floorTone = new Uint8Array(w * rows);
+    floorGrout = new Uint8Array(w * rows);
+    if (!art) return;
+    const n = scene.water.tones.length;
+    const squash = scene.squash ?? 1;
+    for (let r = 0; r < rows; r++) {
+      const ay = r * squash;
+      for (let c = 0; c < w; c++) {
+        const x = c + artX;
+        const center = cellCenter(art, x, ay) - artX;
+        floorTone[r * w + c] = Math.min(n - 1, Math.max(0, Math.floor((center / w) * n)));
+        floorGrout[r * w + c] = scene.tiles && (x % scene.tiles === 0 || ay % scene.tiles === 0) ? 1 : 0;
+      }
+    }
+  }
+
+  // 빛 그물·그늘은 줄마다 가로로, 열마다 세로로 한 칸씩 출렁인다
+  function prepareSway(t) {
+    const squash = scene.squash ?? 1;
+    const [nx, ny] = SWAY.net.density;
+    const [ns, nt] = SWAY.net.speed;
+    const [sx, sy] = SWAY.shadow.density;
+    const [ss, st] = SWAY.shadow.speed;
+    const [ox, oy] = SHADOW_OFFSET;
+    for (let r = 0; r < sway.netRow.length; r++) {
+      const ay = r * squash;
+      sway.netRow[r] = Math.round(Math.sin(ay * nx + t * ns));
+      sway.shadowRow[r] = Math.round(Math.sin((ay + oy) * sx + t * ss));
+    }
+    for (let c = 0; c < w; c++) {
+      const x = c + artX;
+      sway.netCol[c] = Math.round(Math.sin(x * ny + t * nt));
+      sway.shadowCol[c] = Math.round(Math.sin((x + ox) * sy + t * st));
+      sway.lane[c] = Math.round(Math.sin(c * 0.15 + t));
+    }
   }
 
   function bandColor(x, y) {
@@ -72,40 +126,36 @@ export function startPool(canvas, sceneName = "shallow") {
     return sky[Math.min(sky.length - 1, Math.floor((y / (top - 2)) * sky.length))];
   }
 
-  function colorAt(x, y, t) {
-    if (y < top) return bandColor(x, y);
-    const wy = y - top;
+  // (c, y) 칸의 색. 일렁임은 prepareSway, 바닥은 buildFloor에서 미리 계산해 둔 값을 쓴다
+  function colorAt(c, y) {
+    if (y < top) return bandColor(c, y);
+    const r = y - top;
 
     // 레인 부표 줄 (두 칸 두께, 빨강·하양 번갈아). 맨 아래 줄부터 위로 일정 간격
-    if (scene.lanes && wy >= laneTop) {
-      const sway = Math.round(Math.sin(x * 0.15 + t) * 1);
-      const row = (((wy + sway - lowestLane) % LANE_GAP) + LANE_GAP) % LANE_GAP;
+    if (scene.lanes && r >= laneTop) {
+      const row = (((r + sway.lane[c] - lowestLane) % LANE_GAP) + LANE_GAP) % LANE_GAP;
       if (row === 0 || row === 1) {
-        return Math.floor(x / 3) % 4 < 2 ? C.lane1 : C.lane2;
+        return Math.floor(c / 3) % 4 < 2 ? C.lane1 : C.lane2;
       }
     }
 
     const { tones } = palette;
     if (!art) return tones[1][0];
-    x += artX;
-    const ay = wy * (scene.squash ?? 1); // 하늘 장면은 위아래로 눌러 멀리 보이는 물결처럼
+    const x = c + artX;
+    const ay = r * (scene.squash ?? 1); // 하늘 장면은 위아래로 눌러 멀리 보이는 물결처럼
     // 빛 그물(하얀 선·분홍 테두리)이 맨 위
-    const net = swayed(SWAY.net, x, ay, t);
+    const net = layerAt(art, LAYER.net, x + sway.netRow[r], ay + sway.netCol[c]);
     if (net === 255) return palette.light;
     if (net === 128) return palette.rim;
     // 그 아래 물 조각: 조각이 창 왼쪽에 있을수록 어두운 하늘, 오른쪽일수록 밝은 하늘. 조각 하나는 한 색이다
-    const center = cellCenter(art, x, ay) - artX;
-    const tone = tones[Math.min(tones.length - 1, Math.max(0, Math.floor((center / w) * tones.length)))];
+    const i = r * w + c;
+    const tone = tones[floorTone[i]];
     // 타일 바닥 장면: 일정 간격의 줄눈은 그늘 색 (빛 그물 아래에 깔린다)
-    if (scene.tiles && (x % scene.tiles === 0 || ay % scene.tiles === 0)) return tone[1];
+    if (floorGrout[i]) return tone[1];
     // 바닥의 그늘: 빛 그물과 같은 무늬를 비켜서 따로 일렁인다
-    const shadow = swayed(SWAY.shadow, x + SHADOW_OFFSET[0], ay + SHADOW_OFFSET[1], t) === 255;
+    const [ox, oy] = SHADOW_OFFSET;
+    const shadow = layerAt(art, LAYER.net, x + ox + sway.shadowRow[r], ay + oy + sway.shadowCol[c]) === 255;
     return tone[shadow ? 1 : 0];
-  }
-
-  // 빛 그물을 줄마다 한 칸씩 출렁이며 읽는다
-  function swayed({ density: [dx, dy], speed: [sx, sy] }, x, y, t) {
-    return layerAt(art, LAYER.net, x + Math.round(Math.sin(y * dx + t * sx)), y + Math.round(Math.sin(x * dy + t * sy)));
   }
 
   function setPixel(x, y, [r, g, b]) {
@@ -215,13 +265,14 @@ export function startPool(canvas, sceneName = "shallow") {
 
   function draw(t) {
     const data = image.data;
+    prepareSway(t);
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
-        const [r, g, b] = colorAt(x, y, t);
+        const rgb = colorAt(x, y);
         const i = (y * w + x) * 4;
-        data[i] = r;
-        data[i + 1] = g;
-        data[i + 2] = b;
+        data[i] = rgb[0];
+        data[i + 1] = rgb[1];
+        data[i + 2] = rgb[2];
         data[i + 3] = 255;
       }
     }
