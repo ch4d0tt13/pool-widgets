@@ -1,7 +1,9 @@
-// 노션 중계 서버: 위젯이 노션 키 없이 마감일·브리핑·인박스·프로젝트를 읽고, 메모를 쓰고, 인박스와 마감일을 정리하게 한다
+// 노션 중계 서버: 위젯이 노션 키 없이 마감일·브리핑·인박스·프로젝트를 읽고, 메모를 쓰고, 인박스와 마감일을 정리하게 한다.
+// 기기끼리 합치는 기록(집중·정리 횟수, 고양이 간식)은 노션이 아니라 D1에 둔다 (records.js)
 import { listDeadlines, monthDeadlines, createMemo, latestBriefing } from "./routes.js";
 import { listInbox, listAreas, linkArea, archive, trash } from "./inbox.js";
 import { listProjects, setDeadline } from "./projects.js";
+import { getRecords, addRecord, useSnack, importRecords } from "./records.js";
 
 function corsHeaders(request, env) {
   const origin = request.headers.get("Origin") ?? "";
@@ -39,6 +41,10 @@ export default {
       if (route === "GET /inbox") return json(await listInbox(env), 200, cors);
       if (route === "GET /areas") return json(await listAreas(env), 200, cors);
       if (route === "GET /projects") return json(await listProjects(env), 200, cors);
+      if (route === "GET /records") return json(await getRecords(env, url.searchParams.get("day")), 200, cors);
+      if (route === "POST /records") return json(await addRecord(env, await request.json()), 200, cors);
+      if (route === "POST /records/snack/use") return json(await useSnack(env, await request.json()), 200, cors);
+      if (route === "POST /records/import") return json(await importRecords(env, await request.json()), 200, cors);
 
       // POST /inbox/<페이지 id>/area · /archive · /trash
       const [, pageId, action] = url.pathname.match(/^\/inbox\/([^/]+)\/(area|archive|trash)$/) ?? [];

@@ -17,16 +17,16 @@
   - `js/pool.js` 픽셀 물 장면 그리기(타이머로 1초에 12번만 깨운다. 탭이 숨겨졌거나 `<html data-rest>`가 붙으면 마지막 그림 그대로 쉰다. `data-rest`는 바탕화면 앱이 가려진 창에 붙인다), `js/scenes.js` 장면 목록(물 색 토큰·그림 위치 `at`·소품), `js/daylight.js` 시간대(새벽·노을·밤). 필터를 덮지 않고, `startWidget`이 `watchPhase()`로 문서(`<html>`)에 `data-phase`를 붙여 `tokens.css`의 시간대 색 토큰으로 물 장면을 통째로 다시 칠한다(캔버스는 `watchPhase(다시 그리기)`). 창 없는 위젯도 물건 겉면(튜브·선반·물탱크 유리·게시판 판자·달력 뒷판·수영장 틀 타일)이 시간대 색을 따른다. 창 틀·쪽지·종이·상자 안 글자는 그대로이고, 밤에는 물 위 큰 숫자(`.display`·튜브 남은 시간)만 밝게 바꾼다
   - `js/water-art.js`·`img/water.png` 사용자가 직접 그린 물 그림의 빛 그물만 도트로 다시 그린 그림 (R 빛 그물·G 물 조각의 가운데 위치). 색은 그림에 없다. 물 조각은 창 왼쪽일수록 어두운 하늘, 오른쪽일수록 밝은 하늘(조각 하나는 한 색). 그늘은 빛 그물과 같은 무늬를 비켜서 따로 일렁인다(사용자가 그린 방식). 흘러가는 움직임은 사용자가 원하지 않는다
   - `js/sprite.js`·`js/icons.js` 픽셀 그림 (글자 하나 = 한 칸, 색은 토큰). 늘 정수 배율로 띄운다: 보통 아이콘 7×7, 글자 옆 작은 아이콘과 작은 버튼(`.icon-btn--small`) 아이콘은 5×5(`-small` + `.icon--small`), 창 버튼 3×3. 그림을 어중간한 크기로 늘리면 픽셀이 고르지 않다
-  - `js/api.js` 중계 서버 호출, `js/dom.js` 작은 도우미 (`$`·`pad`·`el`·`showText`)
+  - `js/api.js` 중계 서버 호출(주소에 `?api=local`을 붙이면 로컬 서버 `localhost:8787`로), `js/dom.js` 작은 도우미 (`$`·`pad`·`el`·`showText`)
   - `js/live.js` 위젯끼리 바로 알리기(`announce`·`onAnnounce`)와 보이는 동안만 새로 고치기(`refreshWhileVisible`)
   - `js/dates.js` 마감일 계산 (`daysUntil`·`ddayLabel`·`shortDate`)
-  - `js/records.js` 이 기기에 남기는 기록: 날마다 집중(`focus`)·정리(`tidy`) 횟수와 고양이 간식. 바뀌면 `records-changed`를 알린다
+  - `js/records.js` 기록: 날마다 집중(`focus`)·정리(`tidy`) 횟수와 고양이 간식. 열쇠 있는 주소면 중계 서버(D1)에 모아 기기끼리 합친다: +1은 화면에 먼저 반영하고 id를 붙여 보낸다(못 보내면 기기에 쌓아 두고 다음에, 같은 id는 서버가 한 번만 더함). 기기마다 처음 한 번 남아 있던 기록을 서버에 더한다(`imports`). 간식 쓰기는 서버가 확인한다. 기록을 보여 주는 위젯은 `onRecords(render)`로 받고, 보이는 동안 1분마다 서버와 맞춘다. 열쇠가 없으면 그 기기에만 남긴다. 바뀌면 `records-changed`를 알린다
 - 위젯 폴더: `clock/` `weather/` `pomodoro/` `dday/` `memo/` `briefing/` `calendar/` `cat/` `inbox/` `stats/` `projects/` (각각 `index.html` + 위젯 전용 js·css)
   - `pomodoro/` 집중: 창 없이 통통한 물놀이 튜브(`ring.js`). 지난 시간만큼 맨 위부터 시계 방향으로 줄무늬가 차고, 가운데 구멍에 단계 스티커(집중·휴식)·남은 시간·작은 버튼(5×5 아이콘). 선은 늘 한 칸 두께(원 안이면서 옆 칸이 밖인 칸, 칸 수는 짝수). 튜브 자리가 넓으면(360px·540px 이상) 튜브 도트와 가운데 묶음을 함께 2배·3배로 키운다(`--tube-zoom`, 글자 크기는 고정)
   - `pomodoro/water-sound.js` 파일 없이 만드는 물소리 (타이머가 도는 동안만). 집중을 끝까지 마치면 기록하고 고양이 간식을 하나 쌓는다
   - `pomodoro/chime.js` 끝 알림: 물방울 세 음을 세 번. 시작할 때 끝나는 시각에 소리 시계로 미리 예약한다(탭이 뒤에 있으면 타이머는 느려지지만 소리 시계는 제때 울린다). 멈춤·처음으로에서 취소. 끝나는 순간 튜브는 꽉 찬 튜브와 하얀 튜브를 번갈아 3초 반짝인다(`ring.flash()`)
-  - `cat/` 고양이 키우기: 서버·열쇠 없이 기록을 각 기기 브라우저(localStorage)에만 저장. 「간식 주기」는 뽀모도로로 쌓은 간식을 쓴다
-  - `stats/` 이번 주 기록: 창 없이 청록 선반 위에 요일별 유리 물탱크 7개, 정리(파랑)·집중(분홍) 물이 차오르는 수위계 (records.js, 기기별). 요일은 선반 앞면에, 합계는 선반 아래 매달린 이름표에
+  - `cat/` 고양이 키우기: 고양이 상태는 각 기기 브라우저(localStorage)에만 저장. 「간식 주기」는 뽀모도로로 쌓은 간식을 쓴다(간식은 records.js라 열쇠가 있으면 기기끼리 합친다)
+  - `stats/` 이번 주 기록: 창 없이 청록 선반 위에 요일별 유리 물탱크 7개, 정리(파랑)·집중(분홍) 물이 차오르는 수위계 (records.js, 열쇠가 있으면 기기끼리 합친 기록). 요일은 선반 앞면에, 합계는 선반 아래 매달린 이름표에
   - `memo/` 빠른 메모: 창 틀·물 배경 없이 한 줄 입력칸과 저장 버튼만 (`startWidget()`만). 결과는 입력칸 안내 문구 자리에 잠깐 보여 준다
   - `briefing/` 브리핑: 창 대신 나무 게시판(나무 틀·가로 판자, 물 장면 없음). 쪽지를 가운데에 압정 두 개로 꽂는다(쪽지 폭은 최대 240칸. 긴 줄은 말줄임 대신 줄바꿈해서 쪽지가 아래로 길어지고, 게시판에 다 안 들어가면 `briefing.js`가 들어가는 줄 수만큼만 보이고 끝에 말줄임. 글자를 키우는 건 사용자가 원하지 않는다) (스티커에 종류·시각이 있어 제목 줄은 보여 주지 않는다)
   - `calendar/` 달력: 창 대신 스프링 탁상 달력(보라 타일 뒷판·스프링 고리·밑장 비치는 종이, 물 장면 없음). 날짜 칸을 재서(ResizeObserver) 작으면 숫자 아래 픽셀 점, 넉넉하면(칸 너비 20칸 이상·막대 1줄 이상) 칸 안에 마감 이름 막대를 쌓고(칸 너비 26칸 이상이면 `is-roomy`로 막대를 12px·6칸 높이로 한 단계 크게) 못 넣은 개수는 칸 오른쪽 위 「+n」
@@ -34,8 +34,8 @@
   - `inbox/` 인박스 정리: 프로젝트·영역·자원 연결이 모두 비고 보관 안 한 자료를 카드로 보여 주고 영역·자원 연결·보관·삭제(두 번 눌러야 하고 노션 휴지통으로). 30초마다·화면을 다시 볼 때 새로 고치고, 빠른 메모 저장 신호(`memo-saved`)를 받으면 바로 다시 본다
 - `tools/stamp.mjs` 배포용 복사본에 버전 붙이기 (Actions가 실행)
 - `tools/pixelate.py` 물 그림 원본 → `shared/img/water.png` (180칸으로 줄여 겹별로 다시 그리고, 끝과 처음이 이어지게 잘라 붙여 150×46). 원본 그림은 저장소에 올리지 않는다. 그림은 뒤집어 잇지 않는다(데칼코마니처럼 보여서 사용자가 싫어함)
-- `worker/` 노션 키를 숨기는 중계 서버 (`GET /dday`, `GET /calendar?month=YYYY-MM`, `POST /memo`, `GET /briefing`, `GET /inbox`, `GET /areas`, `POST /inbox/<id>/area`·`/archive`·`/trash`, `GET /projects`, `POST /projects/<id>/deadline`)
-  - `src/routes.js` 마감일·메모·브리핑, `src/inbox.js` 인박스, `src/projects.js` 프로젝트·마감일 정하기, `src/notion.js` 노션 호출·글자 도우미·소속 확인(`pageInSource`)
+- `worker/` 노션 키를 숨기는 중계 서버 (`GET /dday`, `GET /calendar?month=YYYY-MM`, `POST /memo`, `GET /briefing`, `GET /inbox`, `GET /areas`, `POST /inbox/<id>/area`·`/archive`·`/trash`, `GET /projects`, `POST /projects/<id>/deadline`, 기록 `GET /records?day=`·`POST /records`·`POST /records/snack/use`·`POST /records/import`)
+  - `src/routes.js` 마감일·메모·브리핑, `src/inbox.js` 인박스, `src/projects.js` 프로젝트·마감일 정하기, `src/notion.js` 노션 호출·글자 도우미·소속 확인(`pageInSource`), `src/records.js` 기기끼리 합치는 기록(노션이 아니라 D1 `pool-records`, 표는 `schema.sql`)
 
 ## 디자인 규칙
 - 물과 픽셀 테마를 벗어나지 않는다. 글꼴은 Galmuri(숫자는 GalmuriMono11). 픽셀 글꼴이라 11 계열은 12px, 9 계열은 10px의 배수에서만 또렷하다. 크기는 `--size-*` 토큰(배수로 내려 맞춤)만 쓰고, 작은 글자(`--size-small`)는 `--font-small`·`--font-digit-small`(9 계열)과 짝지어 쓴다. 제목 표시줄은 `--size-bar`(12px)로 창 크기와 상관없이 고정이다.
@@ -67,6 +67,7 @@
 ## 로컬 확인
 - 저장소 루트에서 `npx http-server@14.1.1 . -p 5174 -c-1`. 5174 포트는 Worker의 `ALLOWED_ORIGINS`에 들어 있다.
 - 노션 크기 기준: 왼쪽 좁은 칸 약 330×220, 가로형(메모·브리핑) 약 640×220.
+- 기록 합치기는 `worker/`에서 `npx wrangler d1 execute pool-records --local --file schema.sql`(처음 한 번)·`npx wrangler dev --port 8787 --local`을 띄우고 위젯 주소에 `?api=local#key=…`를 붙여 확인한다(로컬 D1이라 실제 기록은 안 바뀐다).
 - 시간대 색은 주소에 `?hour=6`(새벽)·`?hour=18`(노을)·`?hour=22`(밤)을 붙여 확인한다.
 - 집중 끝 알림(소리·튜브 반짝임)은 `pomodoro/?focus=10`처럼 집중을 초 단위로 줄여 확인한다. 이때는 기록·간식을 남기지 않는다.
 - 아이콘 캔버스는 화면에 붙인 뒤에 그린다(붙기 전에는 토큰 색을 읽지 못해 빈칸이 된다).

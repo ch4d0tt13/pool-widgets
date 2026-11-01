@@ -1,7 +1,7 @@
-// 이번 주 기록: 월~일 날마다 끝낸 집중 횟수와 정리한 인박스 자료 수를 선반 위 물탱크 수위로 (이 기기에 남긴 기록, records.js)
+// 이번 주 기록: 월~일 날마다 끝낸 집중 횟수와 정리한 인박스 자료 수를 선반 위 물탱크 수위로 (records.js: 열쇠가 있으면 기기끼리 합친 기록)
 import { $, el } from "../shared/js/dom.js";
-import { counts, dayKey } from "../shared/js/records.js";
-import { onAnnounce, refreshWhileVisible } from "../shared/js/live.js";
+import { counts, dayKey, onRecords } from "../shared/js/records.js";
+import { refreshWhileVisible } from "../shared/js/live.js";
 
 const LABELS = ["월", "화", "수", "목", "금", "토", "일"];
 const SERIES = ["focus", "tidy"];
@@ -47,6 +47,6 @@ export function startStats() {
   }
 
   render();
-  onAnnounce("records-changed", render);
+  onRecords(render);
   refreshWhileVisible(render, REFRESH_MS);
 }

@@ -4,8 +4,7 @@
 import { $, el, showText } from "../shared/js/dom.js";
 import { drawSprite } from "../shared/js/sprite.js";
 import { CAT, CAT_HAPPY, setIcon } from "../shared/js/icons.js";
-import { snacks, useSnack } from "../shared/js/records.js";
-import { onAnnounce } from "../shared/js/live.js";
+import { snacks, useSnack, onRecords } from "../shared/js/records.js";
 
 const STORE_KEY = "pool-widgets:cat";
 const MAX = 3;
@@ -98,12 +97,12 @@ export function startCat(pool) {
     }
   }
 
-  function act(name) {
+  async function act(name) {
     const { stat, say: line, saidFull } = ACTIONS[name];
     decay(state);
     const wasFull = state[stat] === MAX;
     // 간식은 쌓아 둔 것만 줄 수 있다 (배부르면 아끼고)
-    if (name === "feed" && !wasFull && !useSnack()) {
+    if (name === "feed" && !wasFull && !(await useSnack())) {
       speak("간식이 없어요");
       return;
     }
@@ -127,7 +126,7 @@ export function startCat(pool) {
     render();
   }, TICK_MS);
 
-  onAnnounce("records-changed", render);
+  onRecords(render);
   save(state);
   render();
 }

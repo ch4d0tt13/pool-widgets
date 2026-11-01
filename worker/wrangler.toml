@@ -12,3 +12,9 @@ compatibility_date = "2026-10-01"
 
 [vars]
 ALLOWED_ORIGINS = "https://ch4d0tt13.github.io,http://localhost:5174"
+
+# 기기끼리 합치는 기록(집중·정리 횟수, 고양이 간식). 표는 schema.sql
+[[d1_databases]]
+binding = "DB"
+database_name = "pool-records"
+database_id = "6fb2c095-41ce-4a3e-93d8-814ec4f19d79"
