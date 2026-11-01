@@ -1,9 +1,10 @@
-// 뽀모도로: 집중 25분 → 휴식 5분. 끝나면 짧게 울리고 다음 단계에서 멈춰 기다린다
+// 뽀모도로: 집중 25분 → 휴식 5분. 끝나면 물방울 알림(chime.js)과 튜브 반짝임으로 알리고 다음 단계에서 멈춰 기다린다
 // 진행은 튜브가 동그랗게 찬 만큼 보여 주고(ring.js), 물소리를 켜 두면 도는 동안만 들린다
 import { $, pad } from "../shared/js/dom.js";
 import { setIcon } from "../shared/js/icons.js";
 import { record, addSnack } from "../shared/js/records.js";
 import { createWaterSound } from "./water-sound.js";
+import { createChime } from "./chime.js";
 
 const MODES = {
   focus: { label: "집중", seconds: 25 * 60, next: "rest" },
@@ -29,6 +30,7 @@ export function startPomodoro(ring) {
   // 소리는 버튼을 누른 뒤에만 낼 수 있어서, 처음 누를 때 만든다
   const getAudio = () => (audio ??= new AudioContext());
   const water = createWaterSound(getAudio);
+  const chime = createChime(getAudio);
   const running = () => endAt !== null;
 
   function syncSound() {
@@ -53,7 +55,7 @@ export function startPomodoro(ring) {
 
   function tick() {
     if (render() > 0) return;
-    chime();
+    ring.flash(); // 알림 소리는 시작할 때 이 시각에 맞춰 예약해 두었다
     // 집중을 끝까지 마치면 기록하고 고양이 간식을 하나 쌓는다
     if (mode === "focus") {
       record("focus");
@@ -72,32 +74,17 @@ export function startPomodoro(ring) {
     render();
   }
 
-  // 8비트 느낌의 두 음 알림
-  function chime() {
-    if (!audio) return;
-    [880, 1320].forEach((freq, i) => {
-      const osc = audio.createOscillator();
-      const gain = audio.createGain();
-      const start = audio.currentTime + i * 0.18;
-      osc.type = "square";
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.08, start);
-      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.16);
-      osc.connect(gain).connect(audio.destination);
-      osc.start(start);
-      osc.stop(start + 0.16);
-    });
-  }
-
   toggleBtn.addEventListener("click", () => {
     getAudio();
     if (running()) {
       leftMs = Math.max(0, endAt - Date.now());
       endAt = null;
       clearInterval(timer);
+      chime.cancel();
     } else {
       endAt = Date.now() + leftMs;
       timer = setInterval(tick, 250);
+      chime.schedule(leftMs / 1000);
     }
     syncSound();
     render();
@@ -112,7 +99,10 @@ export function startPomodoro(ring) {
     syncSound();
   });
 
-  resetBtn.addEventListener("click", () => setMode("focus"));
+  resetBtn.addEventListener("click", () => {
+    chime.cancel();
+    setMode("focus");
+  });
 
   render();
 }

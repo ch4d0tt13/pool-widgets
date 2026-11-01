@@ -4,6 +4,8 @@ import { watchPhase } from "../shared/js/daylight.js";
 const STRIPES = 12; // 튜브 줄무늬 칸 수
 const THICK = 0.42; // 튜브 두께 (바깥 반지름에 대한 비): 통통하게
 const SHINE = [0.8, 0.94]; // 왼쪽 위 반짝임이 걸치는 자리 (맨 위에서 시계 방향 비율)
+const FLASH_MS = 250; // 끝 반짝임: 하얀 튜브와 꽉 찬 튜브를 이 간격으로 번갈아
+const FLASH_STEPS = 12; // 3초 (알림 소리 길이쯤)
 
 export function createRing(canvas) {
   const styles = getComputedStyle(canvas);
@@ -12,6 +14,8 @@ export function createRing(canvas) {
   const ctx = canvas.getContext("2d");
   let progress = 0;
   let mode = "focus";
+  let flashing = null; // 반짝이는 동안: { mode: 끝난 단계, white: 이번에 하얗게 칠할지 }
+  let flashTimer = null;
 
   function draw() {
     // 튜브 칸 수는 자리 크기에 맞추고, 화면에는 도트 칸의 정수배로 띄운다.
@@ -25,7 +29,7 @@ export function createRing(canvas) {
 
     const color = {
       line: token("--line"),
-      stripe: token(`--tube-${mode}`),
+      stripe: token(`--tube-${flashing?.mode ?? mode}`),
       white: token("--white"),
       empty: token("--tube-empty"),
       emptyStripe: token("--tube-empty-stripe"),
@@ -58,9 +62,10 @@ export function createRing(canvas) {
         } else {
           const turn = (Math.atan2(dx, -dy) / (2 * Math.PI) + 1) % 1; // 맨 위에서 시계 방향 0 → 1
           const white = Math.floor(turn * STRIPES) % 2 === 1;
-          const done = turn < progress;
+          const done = flashing ? true : turn < progress; // 반짝이는 동안은 꽉 찬 튜브
           // 튜브 몸통 가운데 줄, 왼쪽 위에 하얀 반짝임 (통통해 보이게)
           if (rim(mid, x, y) && turn > SHINE[0] && turn < SHINE[1]) fill = color.shine;
+          else if (flashing?.white) fill = color.white;
           else fill = done ? (white ? color.white : color.stripe) : white ? color.empty : color.emptyStripe;
         }
         ctx.fillStyle = fill;
@@ -82,6 +87,20 @@ export function createRing(canvas) {
     },
     setMode(next) {
       mode = next;
+      draw();
+    },
+    // 끝 알림: 끝난 단계의 꽉 찬 튜브와 하얀 튜브를 번갈아 칠한 뒤 지금 모습으로 돌아온다
+    flash() {
+      const finished = mode;
+      let step = 0;
+      clearInterval(flashTimer);
+      flashTimer = setInterval(() => {
+        step++;
+        flashing = step < FLASH_STEPS ? { mode: finished, white: step % 2 === 1 } : null;
+        if (!flashing) clearInterval(flashTimer);
+        draw();
+      }, FLASH_MS);
+      flashing = { mode: finished, white: false };
       draw();
     },
   };
