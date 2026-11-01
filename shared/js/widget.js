@@ -23,12 +23,14 @@ export function startWidget(scene) {
   const win = document.querySelector(".window");
   if (win) mountWindow(win);
 
+  // 물 장면은 장면 이름을 주고 깔 자리([data-pool])가 있을 때만 (자리가 없으면 장면 없이 넘어간다)
   let pool = null;
-  if (scene) {
+  const host = scene && document.querySelector("[data-pool]");
+  if (host) {
     const canvas = document.createElement("canvas");
     canvas.className = "pool";
     canvas.setAttribute("aria-hidden", "true");
-    document.querySelector("[data-pool]").prepend(canvas);
+    host.prepend(canvas);
     pool = startPool(canvas, scene);
   }
 
