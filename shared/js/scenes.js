@@ -4,7 +4,7 @@
 // at: 물 그림의 어느 부분을 보여 줄지 (0 왼쪽 끝 → 1 오른쪽 끝) / sparkle: 반짝임 양 (기본 1) / top: 위쪽 띠 ("sky" 하늘 · "deck" 데크)
 // tiles: 바닥 타일 한 변(칸). 줄눈을 그늘 색으로 깐다
 // squash: 물 그림을 위아래로 누르는 배율 (하늘 아래 물은 멀리서 본 물결처럼 납작하게)
-// lanes: 레인 부표 줄 (true 수면 전체 · 숫자는 바닥에서부터 그 줄 수만) / cat: "drift" 떠다님 · "lane" 레인 따라 헤엄 / ripples: 프레임마다 파문이 생길 확률
+// lanes: 레인 부표 줄 (true 수면 전체 · 숫자는 바닥에서부터 그 줄 수만) / gulls: 맑은 낮 하늘의 갈매기 / cat: "drift" 떠다님 · "lane" 레인 따라 헤엄 / ripples: 프레임마다 파문이 생길 확률
 const ART = {
   tones: [["--art-1", "--art-1-shade"], ["--art-2", "--art-2-shade"], ["--art-3", "--art-3-shade"]],
   rim: "--art-rim",
@@ -35,7 +35,7 @@ export const SCENES = {
   lane: { at: 0.15, water: ART, lanes: true, cat: "lane" },
   rest: { at: 0.7, water: ART, lanes: 2, cat: "lane" },
   deck: { at: 0.55, top: "deck", water: ART, cat: "drift" },
-  sunny: { at: 0.9, squash: 2, top: "sky", sky: SKY, water: ART, sparkle: 2, clouds: true },
+  sunny: { at: 0.9, squash: 2, top: "sky", sky: SKY, water: ART, sparkle: 2, clouds: true, gulls: true },
   cloudy: { at: 0.9, squash: 2, top: "sky", sky: SKY_GRAY, water: CLOUDY, sparkle: 0.3, clouds: true },
   rainy: { at: 0.9, squash: 2, top: "sky", sky: SKY_GRAY, water: CLOUDY, sparkle: 0, clouds: true, rain: true, ripples: 0.6 },
 };

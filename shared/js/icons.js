@@ -119,6 +119,19 @@ export const CLOUD = [
   ".ssssssss.",
 ];
 
+// 멀리 있는 작은 구름
+export const CLOUD_SMALL = [
+  ".www..",
+  "wwwwww",
+  ".ssss.",
+];
+
+// 갈매기 두 장면 (날개 올림 · 날개 펼침)
+export const GULL = [
+  ["b...b", ".b.b.", "..b.."],
+  [".....", "bb.bb", "..b.."],
+];
+
 export const setIcon = (canvas, name) => drawSprite(canvas, ICONS[name]);
 
 // 페이지 안의 <canvas data-icon="이름"> 을 모두 그린다

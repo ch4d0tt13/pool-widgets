@@ -2,7 +2,7 @@
 // 장면(scenes.js)대로 색·소품(레인·하늘·데크·공기방울·고양이)을 얹는다. 시간대마다 색 토큰이 바뀐다(tokens.css)
 import { SCENES } from "./scenes.js";
 import { spriteColors } from "./sprite.js";
-import { CAT, CLOUD } from "./icons.js";
+import { CAT, CLOUD, CLOUD_SMALL, GULL } from "./icons.js";
 import { currentPhase } from "./daylight.js";
 import { LAYER, cellCenter, loadWaterArt, layerAt } from "./water-art.js";
 
@@ -20,6 +20,7 @@ const LANE_GAP = 20; // 레인 줄 간격
 const LANE_BAND = CAT.length + 4; // 맨 아래 레인 띠: 부표 줄(2) + 1칸 + 헤엄치는 고양이 + 바닥 1칸
 const TOP_RATIO = { sky: 0.5, deck: 0.35 }; // 위쪽 띠가 차지하는 비율
 const DECK_TILE = 8;
+const SKY_BLEND = 2; // 하늘 색 띠 사이를 도트로 섞는 줄 수
 const PHASE_CHECK_MS = 60 * 1000; // 시간대는 1분마다 다시 본다
 
 const hexToRgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
@@ -123,7 +124,15 @@ export function startPool(canvas, sceneName = "shallow") {
   function bandColor(x, y) {
     if (y >= top - 2) return y === top - 1 ? C.tile : C.coping; // 수영장 가장자리 돌과 그림자
     if (scene.top === "deck") return x % DECK_TILE === 0 || y % DECK_TILE === 0 ? C.grout : C.deck;
-    return sky[Math.min(sky.length - 1, Math.floor((y / (top - 2)) * sky.length))];
+    // 하늘: 색 띠 사이 경계 두 줄은 체크무늬(첫 줄)·성긴 점(둘째 줄)으로 섞어 그러데이션처럼
+    const pos = (y / (top - 2)) * sky.length;
+    const band = Math.min(sky.length - 1, Math.floor(pos));
+    const into = (pos - band) * ((top - 2) / sky.length); // 띠 안에서 몇 번째 줄인지
+    if (band > 0 && into < SKY_BLEND) {
+      const mixed = into < 1 ? (x + y) % 2 === 0 : x % 2 === 0 && y % 2 === 0;
+      if (mixed) return sky[band - 1];
+    }
+    return sky[band];
   }
 
   // (c, y) 칸의 색. 일렁임은 prepareSway, 바닥은 buildFloor에서 미리 계산해 둔 값을 쓴다
@@ -175,13 +184,39 @@ export function startPool(canvas, sceneName = "shallow") {
     });
   }
 
-  // 하늘의 구름: 서로 다른 높이·속도로 천천히 흘러간다
+  // 하늘의 구름: 멀리 작은 구름은 천천히, 가까운 큰 구름은 빠르게 흘러간다
   function drawClouds(t) {
-    const cw = CLOUD[0].length;
+    const clouds = [
+      { rows: CLOUD_SMALL, speed: 0.6, at: 0.15, offset: 11 },
+      { rows: CLOUD_SMALL, speed: 0.8, at: 0.45, offset: 71 },
+      { rows: CLOUD, speed: 1.5, at: 0.05, offset: 0 },
+      { rows: CLOUD, speed: 2.2, at: 0.55, offset: 43 },
+    ];
+    for (const { rows, speed, at, offset } of clouds) {
+      const cw = rows[0].length;
+      const x = Math.floor((t * speed + offset) % (w + cw)) - cw;
+      stamp(rows, x, 1 + Math.floor((top - 6) * at), top - 2);
+    }
+  }
+
+  // 위쪽 하늘에 얇게 흐르는 구름 줄 (밝은 하늘색 한 줄)
+  function drawStreaks(t) {
+    const light = sky[sky.length - 1];
     for (let k = 0; k < 3; k++) {
-      const x = Math.floor((t * (1.5 + k) + k * 37) % (w + cw)) - cw;
-      const y = 2 + Math.floor(((top - 6) * k) / 3);
-      stamp(CLOUD, x, y, top - 2);
+      const len = 6 + k * 4;
+      const x0 = Math.floor((t * (0.3 + k * 0.2) + k * 53) % (w + len)) - len;
+      const y = 1 + Math.floor(((top - 4) * k) / 6);
+      for (let x = x0; x < x0 + len; x++) if ((x - x0) % 5 !== 4) setPixel(x, y, light);
+    }
+  }
+
+  // 맑은 낮 하늘의 갈매기: 날갯짓하며 천천히 지나간다
+  function drawGulls(t) {
+    for (let k = 0; k < 2; k++) {
+      const frame = GULL[Math.floor(t * 2.5 + k) % 2];
+      const x = Math.floor((t * (2 + k) + k * 61) % (w + 40)) - 5;
+      const y = 2 + Math.floor((top - 8) * (0.3 + k * 0.25)) + Math.round(Math.sin(t + k));
+      stamp(frame, x, y, top - 2);
     }
   }
 
@@ -277,7 +312,9 @@ export function startPool(canvas, sceneName = "shallow") {
       }
     }
     if (!still && art) drawSparkles(t);
+    if (scene.top === "sky") drawStreaks(still ? 10 : t);
     if (scene.clouds) drawClouds(still ? 10 : t);
+    if (scene.gulls && !phase?.night) drawGulls(still ? 10 : t);
     if (!still && scene.rain) drawRain(t);
     if (!still && scene.bubbles) drawBubbles();
     if (!still && scene.ripples) drawRipples();
