@@ -151,10 +151,10 @@ body {
   transition: transform var(--press) steps(1);
 }
 
-/* 좁은 자리용 작은 아이콘 버튼 (아이콘 7칸 + 위아래 1칸) */
+/* 좁은 자리용 작은 아이콘 버튼 (5×5 아이콘 .icon--small + 둘레 1칸) */
 .icon-btn--small {
-  width: calc(var(--px) * 9);
-  height: calc(var(--px) * 9);
+  width: calc(var(--px) * 7);
+  height: calc(var(--px) * 7);
 }
 
 .icon-btn--main {

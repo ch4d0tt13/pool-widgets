@@ -47,7 +47,7 @@ export function startPomodoro(ring) {
     const label = running() ? "멈춤" : leftMs < total ? "계속" : "시작";
     toggleBtn.setAttribute("aria-label", label);
     toggleBtn.title = label;
-    setIcon(toggleIcon, running() ? "pause" : "play");
+    setIcon(toggleIcon, running() ? "pause-small" : "play-small");
     return left;
   }
 
@@ -108,7 +108,7 @@ export function startPomodoro(ring) {
     soundOn = !soundOn;
     soundBtn.setAttribute("aria-pressed", String(soundOn));
     soundBtn.title = soundOn ? "물소리 끄기" : "물소리 켜기";
-    setIcon(soundIcon, soundOn ? "sound-on" : "sound-off");
+    setIcon(soundIcon, soundOn ? "sound-on-small" : "sound-off-small");
     syncSound();
   });
 

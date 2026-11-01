@@ -18,7 +18,8 @@ export function createRing(canvas) {
     // 큰 튜브는 가운데 묶음과 같은 배율(--tube-zoom)로 한 칸을 키워서 선 굵기가 서로 맞는다
     const box = canvas.parentElement;
     const cell = px * (parseInt(styles.getPropertyValue("--tube-zoom"), 10) || 1);
-    const n = Math.max(8, Math.floor(Math.min(box.clientWidth, box.clientHeight) / cell));
+    // 칸 수는 짝수로: 홀수면 원의 위·아래·양옆 끝에 한 칸씩 튀어나온다
+    const n = Math.max(8, Math.floor(Math.min(box.clientWidth, box.clientHeight) / cell / 2) * 2);
     canvas.width = canvas.height = n;
     canvas.style.width = canvas.style.height = `${n * cell}px`;
 

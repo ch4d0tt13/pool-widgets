@@ -10,6 +10,11 @@ export const ICONS = {
   "heart-empty-small": [".r.r.", "r.r.r", "r...r", ".r.r.", "..r.."],
   "fish-small": [".....", ".ii.i", "i.iii", ".ii.i", "....."],
   "pin-small": [".rrr.", "rwrrr", "rrrrr", ".rrr.", "..k.."],
+  "play-small": [".i...", ".ii..", ".iii.", ".ii..", ".i..."],
+  "pause-small": [".i.i.", ".i.i.", ".i.i.", ".i.i.", ".i.i."],
+  "restart-small": [".ii.i", "i..ii", "i....", "i...i", ".iii."],
+  "sound-on-small": [".i...", "ii.i.", "ii..i", "ii.i.", ".i..."],
+  "sound-off-small": [".i...", "iir.r", "ii.r.", "iir.r", ".i..."], // 5칸에 ×를 띄울 자리가 없어 빨간 ×로 스피커와 구분
   play: [
     ".i.....",
     ".ii....",
