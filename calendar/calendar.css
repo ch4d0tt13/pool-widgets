@@ -118,7 +118,7 @@
 .is-big .calendar__weekday,
 .is-big .calendar__day { background: var(--white); }
 
-/* 칸 위아래 여백 1칸, 막대 사이 틈 1칸 (calendar.js의 DAY_PAD·BAR_STEP과 맞춘다) */
+/* 칸 위아래 여백 1칸, 막대 사이 틈 1칸 (calendar.js의 DAY_PAD와 맞춘다) */
 .is-big .calendar__day {
   position: relative;
   display: flex;
@@ -129,12 +129,12 @@
   overflow: hidden;
 }
 
-/* 마감 이름 막대: 높이 5칸, 넘치면 말줄임 */
+/* 마감 이름 막대: 높이 --bar-dots칸(calendar.js도 읽는다), 넘치면 말줄임 */
 .calendar__bar,
 .calendar__more {
-  font-family: var(--font-small);
+  font-family: var(--font-mark);
   font-size: var(--size-mark);
-  line-height: calc(var(--px) * 5);
+  line-height: calc(var(--px) * var(--bar-dots));
 }
 
 .calendar__bar {

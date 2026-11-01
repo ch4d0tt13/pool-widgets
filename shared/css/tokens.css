@@ -319,7 +319,7 @@ body {
 [data-widget="stats"] { --line: var(--frame-teal); }
 [data-widget="projects"] { --line: var(--frame-orange); --accent: var(--sun-deep); }
 [data-widget="briefing"] { --line: var(--frame-wood); }
-[data-widget="pomodoro"] { --accent: var(--lane-1); }
+[data-widget="pomodoro"] { --accent: var(--lane-1); --size-caption: 12px; } /* 튜브는 --tube-zoom 배율로 통째로 키우므로 글자는 고정 */
 [data-widget="weather"] { --accent: var(--sun-deep); }
 [data-widget="dday"] {
   --accent: var(--sun);
@@ -345,11 +345,20 @@ body {
 /* 브리핑 게시판: 판자 위 쪽지 그림자 (판자 이음매보다 진한 나무색) */
 [data-widget="briefing"] { --note-shadow: #c4a57a; }
 
-/* 탁상 달력: 칸 안 마감 이름 막대 글자는 창 크기와 상관없이 고정 (9 계열) */
+/* 탁상 달력: 칸 안 마감 이름 막대 글자는 창 크기와 상관없이 고정. 뒷판 타일 두 색 */
 [data-widget="calendar"] {
-  --size-mark: 10px;
+  --size-mark: 10px; /* 마감 이름 막대: 9 계열 10px, 높이 5칸 */
+  --font-mark: var(--font-small);
+  --bar-dots: 5;
   --desk-tile: var(--frame-violet-soft); /* 뒷판 타일 무늬 두 색 */
   --desk-tile-2: var(--white);
+}
+
+/* 넉넉한 달력 칸: 막대를 한 단계 크게 (11 계열 12px, 높이 6칸) */
+[data-widget="calendar"] .is-roomy {
+  --size-mark: 12px;
+  --font-mark: var(--font-text);
+  --bar-dots: 6;
 }
 
 /* 창 없는 물건의 시간대 색: 튜브·선반·물탱크 유리·쪽지 그림자·달력 뒷판처럼 물건 겉면만 바꾼다.

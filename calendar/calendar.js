@@ -9,7 +9,7 @@ const REFRESH_MS = 30 * 60 * 1000;
 
 // 칸 단위 (calendar.css와 맞춘다)
 const BAR_MIN_WIDTH = 20; // 막대를 넣을 날짜 칸의 최소 너비
-const BAR_STEP = 6; // 막대 한 줄: 높이 5칸 + 틈 1칸
+const ROOMY_WIDTH = 26; // 막대를 한 단계 크게(is-roomy) 할 날짜 칸 너비
 const DAY_PAD = 2; // 날짜 칸 위아래 여백 1칸씩
 
 export function startCalendar() {
@@ -22,12 +22,17 @@ export function startCalendar() {
 
   const blanks = (n) => Array.from({ length: n }, () => el("span", "calendar__day"));
 
-  // 칸이 넉넉하면 마감 이름을 막대로 넣는다. 들어갈 줄 수는 넉넉한 배치로 바꿔 놓고 첫 날짜 칸을 재서 정한다
+  // 칸이 넉넉하면 마감 이름을 막대로 넣는다. 들어갈 줄 수는 넉넉한 배치로 바꿔 놓고 첫 날짜 칸을 재서 정한다.
+  // 칸이 더 넓으면 막대도 한 단계 크게 하되, 그러면 한 줄도 안 들어갈 때는 보통 막대로
   function fillBars(due) {
     board.classList.add("is-big");
     const num = board.querySelector(".calendar__num");
     const cell = num.parentElement;
-    const fit = Math.floor((cell.clientHeight - num.offsetHeight - DAY_PAD * px) / (BAR_STEP * px));
+    const step = () => parseInt(getComputedStyle(board).getPropertyValue("--bar-dots"), 10) + 1; // 막대 높이 + 틈 1칸
+    const fits = () => Math.floor((cell.clientHeight - num.offsetHeight - DAY_PAD * px) / (step() * px));
+    board.classList.toggle("is-roomy", cell.clientWidth >= ROOMY_WIDTH * px);
+    if (fits() < 1) board.classList.remove("is-roomy");
+    const fit = fits();
     const big = cell.clientWidth >= BAR_MIN_WIDTH * px && fit >= 1;
     board.classList.toggle("is-big", big);
     if (!big) return;

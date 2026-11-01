@@ -14,11 +14,13 @@ export function createRing(canvas) {
   let mode = "focus";
 
   function draw() {
-    // 튜브 칸 수는 자리 크기에 맞추고, 화면에는 도트 칸의 정수배로 띄운다
+    // 튜브 칸 수는 자리 크기에 맞추고, 화면에는 도트 칸의 정수배로 띄운다.
+    // 큰 튜브는 가운데 묶음과 같은 배율(--tube-zoom)로 한 칸을 키워서 선 굵기가 서로 맞는다
     const box = canvas.parentElement;
-    const n = Math.max(8, Math.floor(Math.min(box.clientWidth, box.clientHeight) / px));
+    const cell = px * (parseInt(styles.getPropertyValue("--tube-zoom"), 10) || 1);
+    const n = Math.max(8, Math.floor(Math.min(box.clientWidth, box.clientHeight) / cell));
     canvas.width = canvas.height = n;
-    canvas.style.width = canvas.style.height = `${n * px}px`;
+    canvas.style.width = canvas.style.height = `${n * cell}px`;
 
     const color = {
       line: token("--line"),
@@ -32,26 +34,32 @@ export function createRing(canvas) {
     const half = n / 2;
     const outer = half - 0.5;
     const inner = outer * (1 - THICK);
+    const hole = inner - 1; // 구멍 속 물의 반지름 (바로 바깥 한 칸이 안쪽 테두리)
+    const mid = (inner + outer) / 2; // 튜브 몸통 가운데 줄
+    // 칸 가운데가 반지름 r 원 안에 있는지
+    const inside = (r, x, y) => Math.hypot(x + 0.5 - half, y + 0.5 - half) <= r;
+    // 원 안이면서 상하좌우 한 칸이 원 밖인 칸: 선이 대각선에서도 두 칸으로 겹치지 않고 늘 한 칸 두께다
+    const rim = (r, x, y) => inside(r, x, y) && !(inside(r, x - 1, y) && inside(r, x + 1, y) && inside(r, x, y - 1) && inside(r, x, y + 1));
+    // 원 밖이면서 상하좌우 한 칸이 원 안인 칸 (구멍을 두르는 한 칸 두께 선)
+    const around = (r, x, y) => !inside(r, x, y) && (inside(r, x - 1, y) || inside(r, x + 1, y) || inside(r, x, y - 1) || inside(r, x, y + 1));
     ctx.clearRect(0, 0, n, n);
     for (let y = 0; y < n; y++) {
       for (let x = 0; x < n; x++) {
+        if (!inside(outer, x, y)) continue;
         const dx = x + 0.5 - half;
         const dy = y + 0.5 - half;
-        const d = Math.hypot(dx, dy);
-        if (d > outer) continue;
         let fill;
-        if (d < inner - 1) {
-          // 구멍 속 물: 왼쪽 위에 반짝이는 한 칸 줄
-          fill = d > inner - 2 && dx < 0 && dy < 0 ? color.shine : color.hole;
-        } else if (d < inner || d > outer - 1) {
+        if (inside(hole, x, y)) {
+          // 구멍 속 물: 왼쪽 위 가장자리에 반짝이는 한 칸 줄
+          fill = rim(hole, x, y) && dx < 0 && dy < 0 ? color.shine : color.hole;
+        } else if (rim(outer, x, y) || around(hole, x, y)) {
           fill = color.line; // 튜브 안팎 테두리
         } else {
           const turn = (Math.atan2(dx, -dy) / (2 * Math.PI) + 1) % 1; // 맨 위에서 시계 방향 0 → 1
           const white = Math.floor(turn * STRIPES) % 2 === 1;
           const done = turn < progress;
           // 튜브 몸통 가운데 줄, 왼쪽 위에 하얀 반짝임 (통통해 보이게)
-          const mid = Math.abs(d - (inner + outer) / 2) < 1;
-          if (mid && turn > SHINE[0] && turn < SHINE[1]) fill = color.shine;
+          if (rim(mid, x, y) && turn > SHINE[0] && turn < SHINE[1]) fill = color.shine;
           else fill = done ? (white ? color.white : color.stripe) : white ? color.empty : color.emptyStripe;
         }
         ctx.fillStyle = fill;

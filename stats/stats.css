@@ -24,7 +24,7 @@
   position: relative;
   display: flex;
   flex-direction: column-reverse;
-  width: clamp(calc(var(--px) * 8), round(down, 6vw, var(--px)), calc(var(--px) * 12)); /* 가로로 넓으면 굵게, 늘 도트 칸 단위 */
+  width: clamp(calc(var(--px) * 8), round(down, 8vw, var(--px)), calc(var(--px) * 20)); /* 가로로 넓으면 굵게(요일 칸의 2/3쯤까지), 늘 도트 칸 단위 */
   min-height: 0;
   background: var(--tank-glass);
   box-shadow: var(--pixel-border);

@@ -1,5 +1,6 @@
 /* 창 없이 통통한 물놀이 튜브 하나: 가운데 구멍(물)에 남은 시간과 버튼, 위쪽엔 단계 꼬리표 */
 .tube {
+  container-type: size; /* 튜브 자리 크기에 따라 가운데 묶음·꼬리표를 정수 배율로 키운다 (아래 @container) */
   display: grid;
   place-items: center;
   height: 100%;
@@ -28,10 +29,13 @@
   top: var(--space-1);
   left: 50%;
   translate: -50% 0;
+  transform-origin: top;
+  scale: var(--tube-zoom);
 }
 
 .tube__center {
   position: relative;
+  scale: var(--tube-zoom);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,4 +53,15 @@
 .tube__controls {
   display: flex;
   gap: var(--gap-box-tight);
+}
+
+/* 큰 튜브: 구멍이 넉넉하면 숫자·버튼·꼬리표를 통째로 2배·3배로 (도트가 고르게 커지도록 정수 배율만) */
+.tube { --tube-zoom: 1; }
+
+@container (min-width: 360px) and (min-height: 360px) {
+  .tube__ring { --tube-zoom: 2; }
+}
+
+@container (min-width: 540px) and (min-height: 540px) {
+  .tube__ring { --tube-zoom: 3; }
 }
