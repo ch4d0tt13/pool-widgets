@@ -26,6 +26,7 @@
   position: relative;
   display: grid;
   gap: var(--space-1);
+  grid-template-rows: auto minmax(0, 1fr) auto; /* 게시판보다 길어지면 가운데 줄 묶음만 줄어든다 */
   width: min(100%, var(--note-width));
   max-height: 100%;
   padding: var(--space-3) var(--space-3) var(--space-2);
@@ -49,22 +50,25 @@
 
 .note .caption { justify-self: start; }
 
+/* 긴 줄은 줄바꿈해서 쪽지가 아래로 길어진다. 게시판에 다 안 들어가면
+   briefing.js가 들어가는 줄 수(--note-lines)를 재서 거기까지만 보이고 끝에 말줄임 */
 .note__lines {
-  display: grid;
-  gap: var(--space-1);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--note-lines, none);
   min-width: 0;
-  font-family: var(--font-note);
-  font-size: var(--size-note);
+  min-height: 0;
+  overflow: hidden;
+  font-family: var(--font-small);
+  font-size: var(--size-small);
   line-height: 1.5;
   list-style: none;
   color: var(--ink-soft);
 }
 
-/* 한 줄씩, 넘치면 말줄임 */
 .note__lines li {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  word-break: keep-all;
+  overflow-wrap: anywhere; /* 메일 주소처럼 띄어쓰기 없는 긴 글자도 쪽지 안에서 끊는다 */
 }
 
 .note__lines li::before {
@@ -78,8 +82,8 @@
 .note__footer {
   justify-self: end;
   padding: 0 var(--space-1);
-  font-family: var(--font-note);
-  font-size: var(--size-note);
+  font-family: var(--font-small);
+  font-size: var(--size-small);
   background: var(--gingham);
 }
 

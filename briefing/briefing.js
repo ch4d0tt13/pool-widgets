@@ -17,6 +17,15 @@ export function startBriefing() {
   const lines = $("[data-lines]");
   const footer = $("[data-footer]");
 
+  // 게시판 높이에 줄이 다 안 들어가면 들어가는 줄 수만큼만 보이게 한다 (재기 전에 한 번 풀어서 늘어날 자리도 잰다)
+  function fitLines() {
+    lines.style.removeProperty("--note-lines");
+    if (lines.scrollHeight <= lines.clientHeight) return;
+    const lineHeight = parseFloat(getComputedStyle(lines).lineHeight);
+    lines.style.setProperty("--note-lines", Math.max(1, Math.floor(lines.clientHeight / lineHeight)));
+  }
+  new ResizeObserver(fitLines).observe(link.parentElement);
+
   function render(briefing) {
     if (!briefing) {
       meta.textContent = "아직 브리핑이 없어요";
@@ -32,6 +41,7 @@ export function startBriefing() {
       }),
     );
     footer.textContent = briefing.footer;
+    fitLines();
   }
 
   async function update() {
