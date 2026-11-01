@@ -1,4 +1,5 @@
 // 위젯 공통 시작: 창 제목 표시줄을 붙이고, 본문에 물 장면을 깔고, 픽셀 아이콘을 그리고, 툴팁을 켠다
+// 창이 아닌 모양(게시판·선반·튜브 등)의 위젯은 .window 없이 부르고, 장면을 주지 않으면 물 장면도 없다
 import { startPool } from "./pool.js";
 import { paintIcons } from "./icons.js";
 import { startTooltips } from "./tooltip.js";
@@ -20,14 +21,18 @@ function mountWindow(win) {
 
 export function startWidget(scene) {
   const win = document.querySelector(".window");
-  mountWindow(win);
+  if (win) mountWindow(win);
 
-  const canvas = document.createElement("canvas");
-  canvas.className = "pool";
-  canvas.setAttribute("aria-hidden", "true");
-  win.querySelector(".window__body").prepend(canvas);
+  let pool = null;
+  if (scene) {
+    const canvas = document.createElement("canvas");
+    canvas.className = "pool";
+    canvas.setAttribute("aria-hidden", "true");
+    document.querySelector("[data-pool]").prepend(canvas);
+    pool = startPool(canvas, scene);
+  }
 
   paintIcons();
   startTooltips();
-  return startPool(canvas, scene);
+  return pool;
 }
