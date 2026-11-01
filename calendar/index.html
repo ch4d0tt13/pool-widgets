@@ -8,11 +8,14 @@
   <link rel="stylesheet" href="calendar.css">
 </head>
 <body data-widget="calendar">
-  <main class="window window--mosaic" data-title="달력.txt">
-    <div class="window__body calendar" data-pool>
-      <p class="caption" data-month></p>
-      <div class="calendar__board" data-grid aria-label="이번 달 달력"></div>
-      <p class="caption caption--plain" data-status hidden></p>
+  <main class="desk">
+    <div class="desk__back">
+      <section class="desk__page">
+        <span class="desk__rings" aria-hidden="true"></span>
+        <p class="caption" data-month></p>
+        <div class="calendar__board" data-grid aria-label="이번 달 달력"></div>
+        <p class="caption caption--plain" data-status hidden></p>
+      </section>
     </div>
   </main>
 
@@ -20,7 +23,8 @@
     import { startWidget } from "../shared/js/widget.js";
     import { startCalendar } from "./calendar.js";
 
-    startWidget("mosaic");
+    // 창 대신 스프링 탁상 달력 (물 장면 없음)
+    startWidget();
     startCalendar();
   </script>
 </body>
