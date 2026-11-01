@@ -387,13 +387,11 @@ export function startPool(canvas, sceneName = "shallow") {
     }
   }
 
-  let last = 0;
-  function loop(ms) {
-    if (ms - last >= 1000 / FPS) {
-      draw(ms / 1000);
-      last = ms;
-    }
-    requestAnimationFrame(loop);
+  // 1초에 FPS번만 깨운다 (requestAnimationFrame은 화면 주사율로 계속 깨워서 GPU가 쉬지 못한다).
+  // 탭이 숨겨졌을 때와, 바탕화면 앱이 가려진 창의 <html>에 data-rest를 붙였을 때는 마지막 그림 그대로 쉰다
+  function loop() {
+    if (!document.hidden && !document.documentElement.hasAttribute("data-rest")) draw(now());
+    setTimeout(loop, 1000 / FPS);
   }
 
   updatePhase();
@@ -408,7 +406,7 @@ export function startPool(canvas, sceneName = "shallow") {
     layout();
     draw(now());
   }).observe(canvas);
-  if (!still) requestAnimationFrame(loop);
+  if (!still) loop();
 
   return { setScene, setCatProgress, splash };
 }
