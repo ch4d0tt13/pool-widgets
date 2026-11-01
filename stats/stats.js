@@ -1,4 +1,4 @@
-// 이번 주 기록: 월~일 날마다 끝낸 집중 횟수와 정리한 인박스 자료 수를 물탱크 수위로 (이 기기에 남긴 기록, records.js)
+// 이번 주 기록: 월~일 날마다 끝낸 집중 횟수와 정리한 인박스 자료 수를 선반 위 물탱크 수위로 (이 기기에 남긴 기록, records.js)
 import { $, el } from "../shared/js/dom.js";
 import { counts, dayKey } from "../shared/js/records.js";
 import { onAnnounce, refreshWhileVisible } from "../shared/js/live.js";
@@ -16,6 +16,7 @@ function weekDays(now = new Date()) {
 
 export function startStats() {
   const chart = $("[data-chart]");
+  const shelf = $("[data-days]"); // 선반 앞면의 요일
   const totals = { focus: $("[data-total-focus]"), tidy: $("[data-total-tidy]") };
 
   function render() {
@@ -26,8 +27,7 @@ export function startStats() {
     const max = Math.max(1, ...days.map((_, i) => data.focus[i] + data.tidy[i]));
 
     chart.replaceChildren(
-      ...days.map((day, i) => {
-        const col = el("div", day === today ? "stats__day is-today" : "stats__day");
+      ...days.map((_, i) => {
         const tank = el("div", "stats__tank");
         tank.title = `집중 ${data.focus[i]} · 정리 ${data.tidy[i]}`;
         for (const s of STACK) {
@@ -37,10 +37,10 @@ export function startStats() {
           water.style.height = `${(n / max) * 100}%`;
           tank.append(water);
         }
-        col.append(tank, el("span", "stats__label", LABELS[i]));
-        return col;
+        return tank;
       }),
     );
+    shelf.replaceChildren(...days.map((day, i) => el("span", day === today ? "stats__label is-today" : "stats__label", LABELS[i])));
 
     for (const s of SERIES) totals[s].textContent = data[s].reduce((a, b) => a + b, 0);
     chart.setAttribute("aria-label", `이번 주 집중 ${totals.focus.textContent}회, 정리 ${totals.tidy.textContent}개`);

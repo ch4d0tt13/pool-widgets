@@ -8,13 +8,14 @@
   <link rel="stylesheet" href="stats.css">
 </head>
 <body data-widget="stats">
-  <main class="window window--chart" data-title="기록.txt">
-    <div class="window__body stats" data-pool>
-      <div class="stats__totals">
-        <p class="caption stats__total is-focus"><span>집중 <span data-total-focus>0</span>회</span></p>
-        <p class="caption stats__total is-tidy"><span>정리 <span data-total-tidy>0</span>개</span></p>
-      </div>
-      <div class="stats__chart" data-chart role="img"></div>
+  <main class="stats">
+    <div class="stats__chart" data-chart role="img"></div>
+    <div class="stats__shelf" data-days aria-hidden="true"></div>
+    <div class="stats__tag">
+      <p class="caption caption--plain">
+        <span class="stats__total is-focus">집중 <span data-total-focus>0</span>회</span>
+        <span class="stats__total is-tidy">정리 <span data-total-tidy>0</span>개</span>
+      </p>
     </div>
   </main>
 
@@ -22,7 +23,8 @@
     import { startWidget } from "../shared/js/widget.js";
     import { startStats } from "./stats.js";
 
-    startWidget("shimmer");
+    // 창 틀·물 장면 없이 선반과 물탱크만 (노션 바탕 위에 바로 놓인다)
+    startWidget();
     startStats();
   </script>
 </body>
