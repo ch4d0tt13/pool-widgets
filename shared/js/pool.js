@@ -3,7 +3,7 @@
 import { SCENES } from "./scenes.js";
 import { spriteColors } from "./sprite.js";
 import { CAT, CLOUD, CLOUD_SMALL, GULL } from "./icons.js";
-import { currentPhase } from "./daylight.js";
+import { watchPhase } from "./daylight.js";
 import { LAYER, cellCenter, loadWaterArt, layerAt } from "./water-art.js";
 
 const FPS = 12;
@@ -17,11 +17,10 @@ const SWAY = {
 const SHADOW_OFFSET = [4, 5]; // 그늘은 빛 그물과 같은 무늬를 이만큼 비켜 바닥에 드리운다 (빛은 왼쪽 위에서)
 const SPARKLE_AREA = 300; // 이 넓이(칸)마다 반짝임 하나 (장면의 sparkle로 곱한다)
 const LANE_GAP = 20; // 레인 줄 간격
-const LANE_BAND = CAT.length + 4; // 맨 아래 레인 띠: 부표 줄(2) + 1칸 + 헤엄치는 고양이 + 바닥 1칸
+const LANE_BOTTOM = 4; // 맨 아래 부표 줄은 바닥에서 이만큼 위 (위로 LANE_GAP마다 한 줄씩)
 const TOP_RATIO = { sky: 0.5, deck: 0.35 }; // 위쪽 띠가 차지하는 비율
 const DECK_TILE = 8;
 const SKY_BLEND = 2; // 하늘 색 띠 사이를 도트로 섞는 줄 수
-const PHASE_CHECK_MS = 60 * 1000; // 시간대는 1분마다 다시 본다
 
 const hexToRgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
 
@@ -38,12 +37,10 @@ export function startPool(canvas, sceneName = "shallow") {
   let palette; // 물 그림 색 { tones: [[바탕, 그늘], ...], rim, light }
   let sky;
   let particles = []; // 공기방울 또는 파문
-  let catProgress = 0; // 레인 고양이 위치 (0~1)
   let w = 0;
   let h = 0;
   let top = 0; // 위쪽 띠 높이
-  let lowestLane = 0; // 맨 아래 부표 줄의 물 높이 (그 아래에서 고양이가 헤엄친다)
-  let laneTop = 0; // 레인 부표 줄을 그리기 시작하는 물 높이 (scene.lanes가 수면 전체면 0)
+  let lowestLane = 0; // 맨 아래 부표 줄의 물 높이
   let image = null;
   let phase = null; // 지금 시간대 (daylight.js)
   let art = null; // 물 그림 (읽기 전에는 파랑 단색)
@@ -58,8 +55,7 @@ export function startPool(canvas, sceneName = "shallow") {
     w = Math.max(1, Math.ceil(canvas.clientWidth / px));
     h = Math.max(1, Math.ceil(canvas.clientHeight / px));
     top = scene.top ? Math.round(h * TOP_RATIO[scene.top]) : 0;
-    lowestLane = h - top - LANE_BAND;
-    laneTop = scene.lanes === true ? 0 : lowestLane - LANE_GAP * ((scene.lanes ?? 0) - 1) - 1;
+    lowestLane = h - top - LANE_BOTTOM;
     canvas.width = w;
     canvas.height = h;
     image = ctx.createImageData(w, h);
@@ -138,7 +134,7 @@ export function startPool(canvas, sceneName = "shallow") {
     const r = y - top;
 
     // 레인 부표 줄 (두 칸 두께, 빨강·하양 번갈아). 맨 아래 줄부터 위로 일정 간격
-    if (scene.lanes && r >= laneTop) {
+    if (scene.lanes) {
       const row = (((r + sway.lane[c] - lowestLane) % LANE_GAP) + LANE_GAP) % LANE_GAP;
       if (row === 0 || row === 1) {
         return Math.floor(c / 3) % 4 < 2 ? C.lane1 : C.lane2;
@@ -280,14 +276,10 @@ export function startPool(canvas, sceneName = "shallow") {
     }
   }
 
-  // 튜브 고양이: 떠다니거나(drift) 맨 아래 부표 줄 밑을 진행만큼 헤엄쳐 간다(lane)
+  // 튜브 고양이: 물 아래쪽을 둥실 떠다닌다
   function drawCat(t) {
     const cw = CAT[0].length;
     const bob = Math.round(Math.sin(t * 2));
-    if (scene.cat === "lane") {
-      stamp(CAT, Math.round(catProgress * (w - cw)), top + lowestLane + 3 + bob);
-      return;
-    }
     const x0 = Math.floor((t * 3) % (w + cw)) - cw;
     stamp(CAT, x0, Math.round(top + (h - top) * 0.75) - CAT.length + bob);
   }
@@ -326,17 +318,6 @@ export function startPool(canvas, sceneName = "shallow") {
     }
   }
 
-  // 시간대(새벽·노을·밤)는 문서의 data-phase로 물 장면과 물 위 숫자의 토큰 색을 통째로 바꾼다 (tokens.css)
-  function updatePhase() {
-    phase = currentPhase();
-    const root = document.documentElement;
-    if (phase) root.dataset.phase = phase.name;
-    else delete root.dataset.phase;
-    if (!scene) return;
-    readColors();
-    draw(now());
-  }
-
   function readColors() {
     C = {
       tile: color("--water-tile"),
@@ -365,10 +346,6 @@ export function startPool(canvas, sceneName = "shallow") {
     draw(now());
   }
 
-  function setCatProgress(value) {
-    catProgress = Math.min(1, Math.max(0, value));
-  }
-
   // 물장구: 창 아래쪽 가운데에 파문을 한꺼번에 일으킨다 (파문이 있는 장면에서만)
   function splash() {
     if (!scene.ripples) return;
@@ -388,8 +365,13 @@ export function startPool(canvas, sceneName = "shallow") {
     setTimeout(loop, 1000 / FPS);
   }
 
-  updatePhase();
-  setInterval(updatePhase, PHASE_CHECK_MS);
+  // 시간대(새벽·노을·밤)가 바뀌면 tokens.css의 시간대 색을 다시 읽어 칠한다 (data-phase는 daylight.js가 붙인다)
+  watchPhase((next) => {
+    phase = next;
+    if (!scene) return;
+    readColors();
+    draw(now());
+  });
   setScene(sceneName);
   loadWaterArt().then((loaded) => {
     art = loaded;
@@ -402,5 +384,5 @@ export function startPool(canvas, sceneName = "shallow") {
   }).observe(canvas);
   if (!still) loop();
 
-  return { setScene, setCatProgress, splash };
+  return { setScene, splash };
 }

@@ -1,3 +1,5 @@
+import { watchPhase } from "../shared/js/daylight.js";
+
 // 집중 튜브: 물놀이 튜브가 맨 위부터 시계 방향으로 동그랗게 채워진다. 아직 안 지난 쪽은 옅게, 가운데 구멍엔 물
 const STRIPES = 12; // 튜브 줄무늬 칸 수
 const THICK = 0.42; // 튜브 두께 (바깥 반지름에 대한 비): 통통하게
@@ -59,6 +61,7 @@ export function createRing(canvas) {
   }
 
   new ResizeObserver(draw).observe(canvas.parentElement);
+  watchPhase(draw); // 시간대가 바뀌면 튜브 색도 다시
 
   return {
     setProgress(value) {

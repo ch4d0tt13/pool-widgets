@@ -1,8 +1,9 @@
-// 위젯 공통 시작: 창 제목 표시줄을 붙이고, 본문에 물 장면을 깔고, 픽셀 아이콘을 그리고, 툴팁을 켠다
+// 위젯 공통 시작: 시간대를 붙이고, 창 제목 표시줄을 붙이고, 본문에 물 장면을 깔고, 픽셀 아이콘을 그리고, 툴팁을 켠다
 // 창이 아닌 모양(게시판·선반·튜브 등)의 위젯은 .window 없이 부르고, 장면을 주지 않으면 물 장면도 없다
 import { startPool } from "./pool.js";
 import { paintIcons } from "./icons.js";
 import { startTooltips } from "./tooltip.js";
+import { watchPhase } from "./daylight.js";
 
 // <main class="window" data-title="..."><div class="window__body">…</div></main>
 // → 제목 표시줄 + 안쪽 둥근 틀로 감싼다
@@ -20,6 +21,7 @@ function mountWindow(win) {
 }
 
 export function startWidget(scene) {
+  watchPhase(); // 문서에 시간대(data-phase)를 붙인다: 창 없는 위젯도 시간대 색을 받는다
   const win = document.querySelector(".window");
   if (win) mountWindow(win);
 

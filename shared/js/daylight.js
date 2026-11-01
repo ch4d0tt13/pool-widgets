@@ -12,3 +12,30 @@ export function currentPhase() {
   const h = hour < 5 ? hour + 24 : hour;
   return PHASES.find((p) => h >= p.from && h < p.to) ?? null;
 }
+
+// 문서(<html>)에 data-phase를 붙여 두고 1분마다 다시 본다. 물 장면이 없는 위젯도 tokens.css의 시간대 색을 받는다.
+// 캔버스처럼 토큰 색을 읽어 그리는 쪽은 fn을 넘기면 시간대가 바뀔 때마다(처음 한 번 포함) 다시 부른다
+const CHECK_MS = 60 * 1000;
+const listeners = [];
+let phase;
+
+function applyPhase() {
+  const next = currentPhase();
+  const root = document.documentElement;
+  if (next) root.dataset.phase = next.name;
+  else delete root.dataset.phase;
+  const changed = next?.name !== phase?.name;
+  phase = next;
+  if (changed) listeners.forEach((fn) => fn(phase));
+}
+
+export function watchPhase(fn) {
+  if (phase === undefined) {
+    applyPhase();
+    setInterval(applyPhase, CHECK_MS);
+  }
+  if (fn) {
+    listeners.push(fn);
+    fn(phase);
+  }
+}

@@ -160,8 +160,9 @@
   --float: 2.4s;
 }
 
-/* 시간대 색: pool.js가 문서에 data-phase를 붙이면 물 장면 색을 통째로 바꾼다 (창 틀·상자 안 글자는 그대로) */
-:root[data-phase="dawn"] .pool {
+/* 시간대 색: daylight.js가 문서에 data-phase를 붙이면 물 장면 색을 통째로 바꾼다 (창 틀·상자 안 글자는 그대로).
+   브리핑 게시판 판자와 프로젝트 수영장 틀 타일도 물 장면의 데크·타일과 같은 색을 따른다 */
+:root[data-phase="dawn"] :is(.pool, .board__face, .basin) {
   --rose-1: #e7a9d6;
   --rose-1-shade: #d58dc4;
   --rose-2: #edbbe0;
@@ -205,7 +206,7 @@
   --cloud-shade: #e4c6dc;
 }
 
-:root[data-phase="sunset"] .pool {
+:root[data-phase="sunset"] :is(.pool, .board__face, .basin) {
   --rose-1: #e98fa4;
   --rose-1-shade: #d6738d;
   --rose-2: #f0a5b3;
@@ -249,7 +250,7 @@
   --cloud-shade: #e8a6a2;
 }
 
-:root[data-phase="night"] .pool {
+:root[data-phase="night"] :is(.pool, .board__face, .basin) {
   --rose-1: #6a3f6e;
   --rose-1-shade: #55305b;
   --rose-2: #7a4b7c;
@@ -295,8 +296,8 @@
   --lane-2: #b8c4d8;
 }
 
-/* 밤에는 물 위 큰 숫자를 밝게 (짙은 남색 물 위에서도 읽히게) */
-:root[data-phase="night"] .display {
+/* 밤에는 물 위 큰 숫자(튜브 구멍 속 남은 시간 포함)를 밝게 (짙은 남색 물 위에서도 읽히게) */
+:root[data-phase="night"] :is(.display, .tube__time) {
   --ink-strong: var(--white);
   --ink-soft: var(--water-1);
   --shadow-text: var(--px) var(--px) 0 var(--deep-4);
@@ -345,4 +346,49 @@ body {
 [data-widget="briefing"] { --note-shadow: #c4a57a; }
 
 /* 탁상 달력: 칸 안 마감 이름 막대 글자는 창 크기와 상관없이 고정 (9 계열) */
-[data-widget="calendar"] { --size-mark: 10px; }
+[data-widget="calendar"] {
+  --size-mark: 10px;
+  --desk-tile: var(--frame-violet-soft); /* 뒷판 타일 무늬 두 색 */
+  --desk-tile-2: var(--white);
+}
+
+/* 창 없는 물건의 시간대 색: 튜브·선반·물탱크 유리·쪽지 그림자·달력 뒷판처럼 물건 겉면만 바꾼다.
+   틀 색(--line)과 글자가 있는 쪽지·종이·이름표는 그대로 */
+:root[data-phase="dawn"] [data-widget] {
+  --tube-empty: #f4ecf4;
+  --tube-empty-stripe: #e2d4e6;
+  --tube-hole: #adbfee;
+  --tank-glass: #f1f0ff;
+  --shelf-top: #d2e4e6;
+  --note-shadow: #c9a8a4;
+  --tile-grout: #c8cfee;
+  --desk-tile: #e8d6f0;
+  --desk-tile-2: #fff4f8;
+}
+
+:root[data-phase="sunset"] [data-widget] {
+  --tube-empty: #fbe8dc;
+  --tube-empty-stripe: #efcfc0;
+  --tube-hole: #8a9fd2;
+  --tank-glass: #fff0e6;
+  --shelf-top: #d8e2cc;
+  --note-shadow: #b98a66;
+  --tile-grout: #e2c0b8;
+  --desk-tile: #e6c8e0;
+  --desk-tile-2: #fff0e4;
+}
+
+:root[data-phase="night"] [data-widget] {
+  --tube-empty: #3d4f6e;
+  --tube-empty-stripe: #314260;
+  --tube-hole: #275a86;
+  --tank-glass: #1f3d58;
+  --shelf-top: #4f8f88;
+  --shelf-front: #2a6f68;
+  --note-shadow: #2a2e44;
+  --tile-grout: #3c5a7a;
+  --ladder: #9aa8c0;
+  --ladder-shade: #4a5670;
+  --desk-tile: #45407a;
+  --desk-tile-2: #34305e;
+}

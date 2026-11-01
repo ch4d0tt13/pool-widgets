@@ -14,7 +14,7 @@
   flex: 1;
   min-width: 0;
   padding: var(--space-4) var(--space-2) calc(var(--space-2) + var(--px) * 3);
-  background: repeating-conic-gradient(var(--frame-violet-soft) 0 25%, var(--white) 0 50%) 0 0 / var(--space-2) var(--space-2);
+  background: repeating-conic-gradient(var(--desk-tile) 0 25%, var(--desk-tile-2) 0 50%) 0 0 / var(--space-2) var(--space-2);
   clip-path: var(--corner-inner);
 }
 
