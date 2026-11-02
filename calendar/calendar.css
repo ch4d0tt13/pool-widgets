@@ -75,6 +75,14 @@
 
 .calendar__weekday.is-sun { color: var(--lane-1); }
 
+/* 넉넉한 칸: 날짜·요일도 마감 막대(12px)와 같은 11 계열로 한 단계만 크게 */
+.calendar__board.is-roomy {
+  font-family: var(--font-digit);
+  font-size: var(--size-mark);
+}
+
+.is-roomy .calendar__weekday { font-family: var(--font-text); }
+
 .calendar__day { display: grid; }
 
 /* 숫자 높이는 글꼴 높이 그대로 (갈무리9는 글자 크기의 1.2배): 숫자 아래 끝이 정수 자리에 와서 점을 바로 밑에 둘 수 있다 */

@@ -350,6 +350,8 @@ body {
 
 /* 탁상 달력: 칸 안 마감 이름 막대 글자는 창 크기와 상관없이 고정. 뒷판 타일 두 색 */
 [data-widget="calendar"] {
+  --size-caption: 12px; /* 달력은 창이 커져도 글자를 키우지 않는다 (사용자: 너무 크다) */
+  --size-small: 10px;
   --size-mark: 10px; /* 마감 이름 막대: 9 계열 10px, 높이 5칸 */
   --font-mark: var(--font-small);
   --bar-dots: 5;
@@ -357,7 +359,7 @@ body {
   --desk-tile-2: var(--white);
 }
 
-/* 넉넉한 달력 칸: 막대를 한 단계 크게 (11 계열 12px, 높이 6칸) */
+/* 넉넉한 달력 칸: 막대·날짜를 한 단계 크게 (11 계열 12px, 막대 높이 6칸) */
 [data-widget="calendar"] .is-roomy {
   --size-mark: 12px;
   --font-mark: var(--font-text);
