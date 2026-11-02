@@ -319,13 +319,20 @@ body {
 [data-widget="stats"] { --line: var(--frame-teal); }
 [data-widget="projects"] { --line: var(--frame-orange); --accent: var(--sun-deep); }
 [data-widget="briefing"] { --line: var(--frame-wood); }
-[data-widget="pomodoro"] { --accent: var(--lane-1); --size-caption: 12px; } /* 튜브는 --tube-zoom 배율로 통째로 키우므로 글자는 고정 */
+[data-widget="pomodoro"] { --accent: var(--lane-1); }
 [data-widget="weather"] { --accent: var(--sun-deep); }
 [data-widget="dday"] {
   --accent: var(--sun);
   --ink-strong: var(--white);
   --ink-soft: var(--water-1);
   --shadow-text: var(--px) var(--px) 0 var(--deep-4);
+}
+
+/* 글자 위주인 물건 모양 위젯은 창이 커져도 글자를 키우지 않는다 (사용자: 달력·프로젝트 글자가 너무 크다).
+   큰 숫자를 보여 주는 창 위젯(시계·날씨·마감)과 인박스는 그대로 창을 따라간다. 튜브는 --tube-zoom 배율로 통째로 키운다 */
+:is([data-widget="memo"], [data-widget="pomodoro"], [data-widget="stats"], [data-widget="projects"], [data-widget="briefing"], [data-widget="calendar"]) {
+  --size-caption: 12px;
+  --size-small: 10px;
 }
 
 /* 창 대신 물건 모양인 위젯의 색 */
@@ -337,8 +344,6 @@ body {
 
 /* 프로젝트: 하얀 타일(--coping)로 두른 작은 수영장과 사다리 */
 [data-widget="projects"] {
-  --size-caption: 12px; /* 프로젝트는 창이 커져도 글자를 키우지 않는다 (사용자: 너무 크다) */
-  --size-small: 10px;
   --tile-grout: #b7dbe8;
   --ladder: #dbe6ec;
   --ladder-shade: #7f98a8;
@@ -352,8 +357,6 @@ body {
 
 /* 탁상 달력: 칸 안 마감 이름 막대 글자는 창 크기와 상관없이 고정. 뒷판 타일 두 색 */
 [data-widget="calendar"] {
-  --size-caption: 12px; /* 달력은 창이 커져도 글자를 키우지 않는다 (사용자: 너무 크다) */
-  --size-small: 10px;
   --size-mark: 10px; /* 마감 이름 막대: 9 계열 10px, 높이 5칸 */
   --font-mark: var(--font-small);
   --bar-dots: 5;
