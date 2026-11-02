@@ -143,11 +143,18 @@
   z-index: 1;
 }
 
+/* 마감일 알약과 날짜가 한 버튼: 누르면 아래에 날짜 칸이 열린다 */
 .proj__due {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-self: start; /* 카드 폭만큼 늘어나지 않게 */
   gap: var(--gap-box-tight);
+  padding: 0;
+  font: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
 }
 
 /* 마감까지 남은 날 알약: 가까울수록 진하게 */
@@ -178,8 +185,6 @@
   color: var(--ink-soft);
 }
 
-.proj__edit { margin-left: auto; }
-
 .proj__editor {
   display: flex;
   flex-wrap: wrap;
@@ -202,6 +207,7 @@
 }
 
 .proj__link:focus-visible,
+.proj__due:focus-visible,
 .proj__input:focus-visible {
   outline: var(--px) solid var(--accent);
   outline-offset: var(--px);

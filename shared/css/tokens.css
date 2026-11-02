@@ -337,6 +337,8 @@ body {
 
 /* 프로젝트: 하얀 타일(--coping)로 두른 작은 수영장과 사다리 */
 [data-widget="projects"] {
+  --size-caption: 12px; /* 프로젝트는 창이 커져도 글자를 키우지 않는다 (사용자: 너무 크다) */
+  --size-small: 10px;
   --tile-grout: #b7dbe8;
   --ladder: #dbe6ec;
   --ladder-shade: #7f98a8;

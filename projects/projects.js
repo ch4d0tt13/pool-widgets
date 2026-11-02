@@ -1,5 +1,5 @@
 // 프로젝트 카드: 보관 안 한 프로젝트를 마감일 가까운 순서로, 누르면 노션 페이지를 새 탭으로.
-// 카드에서 마감일을 정하거나 지우면 D-day·달력 위젯도 바로 다시 본다
+// 마감일 알약(「마감일 없음」·「D-3 11/6」)을 누르면 날짜 칸이 열리고, 정하거나 지우면 D-day·달력 위젯도 바로 다시 본다
 import { $, el, showText } from "../shared/js/dom.js";
 import { api, hasKey } from "../shared/js/api.js";
 import { announce, refreshWhileVisible } from "../shared/js/live.js";
@@ -67,10 +67,6 @@ export function startProjects() {
     const link = el("a", "proj__link", project.name);
     Object.assign(link, { href: project.url, target: "_blank", rel: "noopener" });
 
-    const due = el("div", "proj__due");
-    due.append(el("span", `proj__pill ${tone}`, text));
-    if (project.date) due.append(el("span", "proj__date", shortDate(project.date)));
-
     const editor = el("div", "proj__editor");
     editor.hidden = editing !== project.id;
     const input = el("input", "proj__input");
@@ -82,13 +78,15 @@ export function startProjects() {
       ...(project.date ? [button("btn btn--small btn--ghost", "지우기", () => save(project, null, li))] : []),
     );
 
-    const edit = button("btn btn--small btn--ghost proj__edit", "마감일", () => {
+    const due = button("proj__due", "", () => {
       editing = editor.hidden ? project.id : null;
       render();
       if (editing) grid.querySelector(".proj__editor:not([hidden]) input")?.focus();
     });
-    edit.setAttribute("aria-expanded", String(!editor.hidden));
-    due.append(edit);
+    due.append(el("span", `proj__pill ${tone}`, text));
+    if (project.date) due.append(el("span", "proj__date", shortDate(project.date)));
+    due.title = project.date ? "마감일 바꾸기" : "마감일 정하기";
+    due.setAttribute("aria-expanded", String(!editor.hidden));
 
     li.append(link, due, editor);
     return li;
