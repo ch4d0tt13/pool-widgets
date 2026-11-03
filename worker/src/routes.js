@@ -3,7 +3,7 @@ import { notion, httpError, plainText, blockText, notArchived } from "./notion.j
 
 const SECTION_LINES = 5; // 브리핑 섹션마다 보여 줄 글머리 수
 const SECTION_MAX = 6; // 보여 줄 섹션 수
-const HIDDEN_SECTIONS = /메일|조회 범위/; // 대시보드에 보내지 않는 섹션 (개인 메일, 조회 범위·제한 안내)
+const HIDDEN_SECTIONS = /조회 범위/; // 대시보드에 보내지 않는 섹션 (브리핑을 어떻게 만들었는지 적은 조회 범위·제한 안내)
 const FOOTER_MAX = 40; // 맨 끝 집계 줄로 볼 최대 길이
 const MEMO_MAX = 2000;
 const MEMO_MAX_LINES = 100; // 노션 한 번 요청의 블록 수 한도
@@ -87,8 +87,7 @@ function briefingLine(block) {
     .trim();
 }
 
-// 가장 최근 브리핑: 섹션마다 제목과 글머리 몇 줄 + 맨 끝 집계 줄.
-// 개인 메일·조회 범위 섹션은 보내지 않는다
+// 가장 최근 브리핑: 섹션마다 제목과 글머리 몇 줄 + 맨 끝 집계 줄. 조회 범위 안내 섹션은 보내지 않는다
 export async function latestBriefing(env) {
   const { results } = await notion(env, `/data_sources/${env.BRIEFING_SOURCE_ID}/query`, {
     sorts: [{ property: "날짜·시각", direction: "descending" }],
