@@ -92,18 +92,13 @@
   --tube-empty: #eef6fa;
   --tube-empty-stripe: #d6e7ef;
   --tube-hole: var(--water-2);
-  /* 프로젝트 킥판: 영역마다 다른 색 계열 (프로젝트 많은 영역부터 1번, 영역이 없으면 물빛).
-     계열 안에서 마감이 가까울수록 옅은 색 → 진한 색(-deep) 쪽으로 섞는다 */
-  --kick-area-1: #ffe2bf;
-  --kick-area-1-deep: #ffad66;
-  --kick-area-2: #e6dcff;
-  --kick-area-2-deep: #b9a2ff;
-  --kick-area-3: #d4f5e4;
-  --kick-area-3-deep: #8fdcb4;
-  --kick-area-4: #fff0a3;
-  --kick-area-4-deep: #ffd84a;
-  --kick-none: var(--water-1);
-  --kick-none-deep: #6fcdf0;
+  /* 프로젝트 킥판: 프로젝트가 가장 많은 영역(지금은 테이크엠)은 하늘색 계열(main), 나머지는 보라색 계열(other).
+     계열 안에서 마감이 가까울수록 옅은 색 → 진한 색(-deep) 쪽으로 섞는다. 시간대마다 계열이 바뀐다(아래 data-phase) */
+  --kick-main: #c9efff;
+  --kick-main-deep: #6fcdf0;
+  --kick-other: #e6dcff;
+  --kick-other-deep: #b9a2ff;
+  --kick-area-1: #ffe2bf; /* 위젯에서는 안 쓰지만 바탕화면 앱 달력이 쓴다 */
   --kick-depth-near: 30%; /* 7일 이내 */
   --kick-depth-soon: 60%; /* 3일 이내 */
   --kick-depth-urgent: 100%; /* 오늘·지남 */
@@ -384,6 +379,10 @@ body {
 /* 창 없는 물건의 시간대 색: 튜브·선반·물탱크 유리·쪽지 그림자·달력 뒷판처럼 물건 겉면만 바꾼다.
    틀 색(--line)과 글자가 있는 쪽지·종이·이름표는 그대로 */
 :root[data-phase="dawn"] [data-widget] {
+  --kick-main: #ffe0ec;
+  --kick-main-deep: #f7a1c4;
+  --kick-other: #dfe0ff;
+  --kick-other-deep: #a4acf2;
   --tube-empty: #f4ecf4;
   --tube-empty-stripe: #e2d4e6;
   --tube-hole: #adbfee;
@@ -396,6 +395,10 @@ body {
 }
 
 :root[data-phase="sunset"] [data-widget] {
+  --kick-main: #fff0a3;
+  --kick-main-deep: #ffc93a;
+  --kick-other: #ffd8cc;
+  --kick-other-deep: #ff8a73;
   --tube-empty: #fbe8dc;
   --tube-empty-stripe: #efcfc0;
   --tube-hole: #8a9fd2;
@@ -408,6 +411,10 @@ body {
 }
 
 :root[data-phase="night"] [data-widget] {
+  --kick-main: #d4e1f5;
+  --kick-main-deep: #8fa9da;
+  --kick-other: #ddd1f1;
+  --kick-other-deep: #a78ed8;
   --tube-empty: #3d4f6e;
   --tube-empty-stripe: #314260;
   --tube-hole: #275a86;

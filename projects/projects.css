@@ -90,8 +90,8 @@
   min-width: 0;
   padding: calc(var(--px) * 7) var(--space-2) var(--space-2); /* 위는 손잡이 구멍·보관 버튼 자리 */
   color: var(--navy);
-  --kick: var(--kick-none);
-  --kick-deep: var(--kick-none-deep);
+  --kick: var(--kick-other);
+  --kick-deep: var(--kick-other-deep);
   background: color-mix(in srgb, var(--kick), var(--kick-deep) var(--kick-depth, 0%));
   box-shadow: var(--pixel-border);
   animation: kick-bob var(--float) steps(2) infinite alternate;
@@ -110,11 +110,8 @@
   box-shadow: var(--pixel-border);
 }
 
-/* 킥판 색 계열은 영역마다 (projects.js가 프로젝트 많은 영역부터 번호를 매긴다). 영역이 없으면 물빛 */
-.proj.is-area-1 { --kick: var(--kick-area-1); --kick-deep: var(--kick-area-1-deep); }
-.proj.is-area-2 { --kick: var(--kick-area-2); --kick-deep: var(--kick-area-2-deep); }
-.proj.is-area-3 { --kick: var(--kick-area-3); --kick-deep: var(--kick-area-3-deep); }
-.proj.is-area-4 { --kick: var(--kick-area-4); --kick-deep: var(--kick-area-4-deep); }
+/* 킥판 색 계열: 프로젝트가 가장 많은 영역(projects.js의 is-main)은 main, 나머지는 other */
+.proj.is-main { --kick: var(--kick-main); --kick-deep: var(--kick-main-deep); }
 
 /* 계열 안에서 마감이 가까울수록 진하게 */
 .proj.is-near { --kick-depth: var(--kick-depth-near); }

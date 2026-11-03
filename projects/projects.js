@@ -1,7 +1,7 @@
 // 프로젝트 카드: 보관 안 한 프로젝트를 마감일 가까운 순서로, 누르면 노션 페이지를 새 탭으로.
 // 마감일 알약(「마감일 없음」·「D-3 11/6」)을 누르면 날짜 칸이 열리고, 킥판 오른쪽 위 구석의 작은 상자 버튼은 보관.
 // 마감일을 정하거나 지우거나 보관하면 D-day·달력 위젯도 바로 다시 본다.
-// 킥판 색 계열은 연결된 영역(첫 번째)마다 다르다: 프로젝트가 많은 영역부터 is-area-1, 2…, 영역이 없으면 is-none.
+// 킥판 색 계열: 프로젝트가 가장 많은 영역(첫 번째로 연결된 영역 기준, 지금은 테이크엠)은 is-main, 나머지는 기본 색.
 // 계열 안에서는 마감이 가까울수록 진하다 (알약과 같은 is-near·is-soon·is-today·is-over)
 import { $, el, showText } from "../shared/js/dom.js";
 import { api, hasKey } from "../shared/js/api.js";
@@ -13,7 +13,6 @@ const REFRESH_MS = 30 * 1000;
 const STATUS_MS = 3000;
 const NEAR_DAYS = 7;
 const SOON_DAYS = 3;
-const AREA_COLORS = 4; // tokens.css의 --kick-area-1~4 (넘치면 처음 색부터 다시)
 
 // 남은 날에 따라 알약 글자와 색
 function pill(date) {
@@ -27,12 +26,11 @@ function pill(date) {
 const byDeadline = (a, b) =>
   (a.date ?? "9999") < (b.date ?? "9999") ? -1 : (a.date ?? "9999") > (b.date ?? "9999") ? 1 : a.name.localeCompare(b.name, "ko");
 
-// 영역 이름 → 킥판 색 번호. 프로젝트가 많은 영역이 1번, 같으면 이름순
-function areaTones(projects) {
+// 프로젝트가 가장 많은 영역 이름 (같으면 이름순 앞)
+function mainArea(projects) {
   const count = new Map();
   for (const p of projects) if (p.areas?.[0]) count.set(p.areas[0], (count.get(p.areas[0]) ?? 0) + 1);
-  const order = [...count].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ko"));
-  return new Map(order.map(([name], i) => [name, `is-area-${(i % AREA_COLORS) + 1}`]));
+  return [...count].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ko"))[0]?.[0];
 }
 
 export function startProjects() {
@@ -86,10 +84,11 @@ export function startProjects() {
       return `「${project.name}」 보관했어요`;
     });
 
-  function card(project, tones) {
+  function card(project, main) {
     const { text, tone } = pill(project.date);
     const area = project.areas?.[0];
-    const li = el("li", `proj ${tones.get(area) ?? "is-none"} ${tone}`.trim());
+    const li = el("li", `proj ${tone}`.trim());
+    li.classList.toggle("is-main", Boolean(area) && area === main);
 
     const link = el("a", "proj__link", project.name);
     Object.assign(link, { href: project.url, target: "_blank", rel: "noopener", title: area ?? "영역 없음" });
@@ -129,8 +128,8 @@ export function startProjects() {
   }
 
   function render() {
-    const tones = areaTones(projects);
-    grid.replaceChildren(...[...projects].sort(byDeadline).map((p) => card(p, tones)));
+    const main = mainArea(projects);
+    grid.replaceChildren(...[...projects].sort(byDeadline).map((p) => card(p, main)));
     paintIcons(); // 아이콘은 화면에 붙인 뒤에 그린다
     const dated = projects.filter((p) => p.date).length;
     count.textContent = `프로젝트 ${projects.length}개 · 마감일 ${dated}개`;
