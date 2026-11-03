@@ -86,9 +86,18 @@
   color: var(--navy);
 }
 
-/* 섹션 제목 줄: 틀과 같은 나무색으로 분류 표시처럼, 앞에 작은 네모 */
+/* 섹션 제목 줄: 노션 제목처럼 크게, 틀과 같은 나무색에 앞에 작은 네모 (줄 높이는 다른 줄과 같게) */
 .note__head {
+  font-family: var(--font-text);
+  font-size: var(--size-caption);
+  line-height: calc(var(--size-small) * 1.5);
   color: var(--line);
+}
+
+/* 링크 글자(「원본」 등): 노션처럼 흐린 밑줄 (쪽지 전체가 노션 링크라 따로 누르지는 않는다) */
+.note__links {
+  color: var(--ink-faint);
+  text-decoration: underline;
 }
 
 .note__head::before {

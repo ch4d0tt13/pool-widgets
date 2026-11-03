@@ -1,4 +1,4 @@
-// 브리핑: 가장 최근 브리핑의 종류·시각(스티커), 섹션마다 제목과 글머리(조회 범위 안내는 서버가 빼고 보낸다), 집계 줄을 쪽지로 보여 주고, 누르면 노션에서 연다.
+// 브리핑: 가장 최근 브리핑의 종류·시각(스티커), 노션에 쓴 그대로 섹션마다 제목과 글머리, 집계 줄을 쪽지로 보여 주고, 누르면 노션에서 연다.
 // 제목(「날짜 저녁 브리핑」)은 스티커와 겹쳐서 보여 주지 않는다
 import { $, pad, el } from "../shared/js/dom.js";
 import { api, hasKey } from "../shared/js/api.js";
@@ -38,14 +38,15 @@ export function startBriefing() {
     link.href = briefing.url;
     meta.textContent = metaText(briefing);
     // 섹션 제목 줄과 글머리 줄을 한 목록에 (말줄임이 섹션을 넘어 이어지게).
-    // 글머리 앞쪽 굵은 글자(label)는 크고 진하게, 설명(text)은 다음 줄에
+    // 글머리 앞쪽 굵은 글자(label)는 크고 진하게, 설명(text)은 다음 줄에, 링크 글자(「원본」 등)는 끝에 흐리게
     lines.replaceChildren(
       ...briefing.sections.flatMap(({ title, items }) => [
         el("li", "note__head", title),
-        ...items.map(({ label, text }) => {
+        ...items.map(({ label, text, links = [] }) => {
           const li = el("li", "");
           if (label) li.append(el("span", "note__label", label), ...(text ? [document.createElement("br")] : []));
           li.append(text);
+          if (links.length) li.append(" ", el("span", "note__links", links.join(" · ")));
           return li;
         }),
       ]),

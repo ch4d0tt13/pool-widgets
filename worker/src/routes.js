@@ -2,8 +2,7 @@
 import { notion, httpError, plainText, blockText, notArchived } from "./notion.js";
 
 const SECTION_LINES = 5; // 브리핑 섹션마다 보여 줄 글머리 수
-const SECTION_MAX = 6; // 보여 줄 섹션 수
-const HIDDEN_SECTIONS = /조회 범위/; // 대시보드에 보내지 않는 섹션 (브리핑을 어떻게 만들었는지 적은 조회 범위·제한 안내)
+const SECTION_MAX = 8; // 보여 줄 섹션 수
 const FOOTER_MAX = 40; // 맨 끝 집계 줄로 볼 최대 길이
 const MEMO_MAX = 2000;
 const MEMO_MAX_LINES = 100; // 노션 한 번 요청의 블록 수 한도
@@ -78,20 +77,23 @@ export async function createMemo(env, body) {
 const HEADINGS = ["heading_1", "heading_2", "heading_3"];
 const LIST_ITEMS = ["bulleted_list_item", "numbered_list_item"];
 
-// 브리핑 글머리 한 줄 → { label, text }. 앞쪽 굵은 글자(「확인 필요 — Etsy 신규 로그인」)가 label, 「:」 뒤가 text.
-// 링크 글자(「원본」·「영어 계획」 등)와 출처 표시는 빼고(페이지 멘션은 남긴다), 남은 「·」 구분도 정리한다
+// 브리핑 글머리 한 줄 → { label, text, links }. 앞쪽 굵은 글자(「확인 필요 — Etsy 신규 로그인」)가 label, 「:」 뒤가 text,
+// 링크 글자(「원본」·「영어 계획」 등)는 links로 따로 (페이지 멘션은 글 안에 남긴다). 출처 표시와 남은 「·」 구분은 정리한다
 const tidy = (text) => text.replace(/\s*\[\d+\]/g, "").replace(/(\s*·\s*)+$/, "").trim();
+const isLink = (t) => t.type === "text" && t.href;
 
 function briefingLine(block) {
-  const rich = (block[block.type]?.rich_text ?? []).filter((t) => !(t.type === "text" && t.href));
+  const all = block[block.type]?.rich_text ?? [];
+  const links = all.filter(isLink).map((t) => t.plain_text.trim()).filter(Boolean);
+  const rich = all.filter((t) => !isLink(t));
   const bold = rich.findIndex((t) => !t.annotations?.bold);
   const head = bold === -1 ? rich.length : bold;
   const label = tidy(rich.slice(0, head).map((t) => t.plain_text).join("")).replace(/[:：]$/, "").trim();
   const text = tidy(rich.slice(head).map((t) => t.plain_text).join("").replace(/^\s*[:：]\s*/, ""));
-  return { label, text };
+  return { label, text, links };
 }
 
-// 가장 최근 브리핑: 섹션마다 제목과 글머리 몇 줄 + 맨 끝 집계 줄. 조회 범위 안내 섹션은 보내지 않는다
+// 가장 최근 브리핑: 노션에 쓴 그대로 섹션마다 제목과 글머리 몇 줄 + 맨 끝 집계 줄
 export async function latestBriefing(env) {
   const { results } = await notion(env, `/data_sources/${env.BRIEFING_SOURCE_ID}/query`, {
     sorts: [{ property: "날짜·시각", direction: "descending" }],
@@ -106,14 +108,14 @@ export async function latestBriefing(env) {
   for (const block of blocks) {
     if (HEADINGS.includes(block.type)) {
       const title = blockText(block);
-      current = HIDDEN_SECTIONS.test(title) ? null : { title, items: [] };
-      if (current) sections.push(current);
+      current = { title, items: [] };
+      sections.push(current);
     } else if (current && LIST_ITEMS.includes(block.type) && current.items.length < SECTION_LINES) {
       const item = briefingLine(block);
       if (item.label || item.text) current.items.push(item);
     }
   }
-  // items: { label, text } (새 위젯) · lines: 한 줄 글자 (예전 위젯·바탕화면 앱이 아직 쓸 수 있어 함께 보낸다)
+  // items: { label, text, links } (새 위젯) · lines: 한 줄 글자 (예전 위젯·바탕화면 앱이 아직 쓸 수 있어 함께 보낸다)
   const joined = ({ label, text }) => (label ? `${label}: ${text}` : text);
   const shown = sections
     .filter((s) => s.items.length)

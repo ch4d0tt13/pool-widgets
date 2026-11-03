@@ -361,6 +361,7 @@ body {
 /* 브리핑 게시판: 판자 위 쪽지 그림자 (판자 이음매보다 진한 나무색) */
 [data-widget="briefing"] {
   --note-shadow: #c4a57a;
+  --ink-faint: #8fa7b5; /* 쪽지 안 링크 글자 */
   --note-width: calc(var(--px) * 240); /* 넓은 게시판에서 쪽지가 가운데 작게 뜨지 않게 */
 }
 
