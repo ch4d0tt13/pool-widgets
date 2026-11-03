@@ -1,5 +1,5 @@
 // 프로젝트 카드: 보관 안 한 프로젝트를 마감일 가까운 순서로, 누르면 노션 페이지를 새 탭으로.
-// 마감일 알약(「마감일 없음」·「D-3 11/6」)을 누르면 날짜 칸이 열리고, 정하거나 지우면 D-day·달력 위젯도 바로 다시 본다.
+// 마감일 알약(「마감일 없음」·「D-3 11/6」)을 누르면 날짜 칸이 열리고(끝에 「보관」), 정하거나 지우거나 보관하면 D-day·달력 위젯도 바로 다시 본다.
 // 킥판 색 계열은 연결된 영역(첫 번째)마다 다르다: 프로젝트가 많은 영역부터 is-area-1, 2…, 영역이 없으면 is-none.
 // 계열 안에서는 마감이 가까울수록 진하다 (알약과 같은 is-near·is-soon·is-today·is-over)
 import { $, el, showText } from "../shared/js/dom.js";
@@ -55,21 +55,34 @@ export function startProjects() {
     return b;
   }
 
-  async function save(project, date, li) {
-    const buttons = li.querySelectorAll("button, input");
-    buttons.forEach((b) => (b.disabled = true));
+  // 서버에 바꾸고 다시 그린다 (마감일 정하기·지우기·보관 공통). done은 반영한 뒤 알릴 글을 돌려준다
+  async function change(li, path, body, done) {
+    const controls = li.querySelectorAll("button, input");
+    controls.forEach((b) => (b.disabled = true));
     try {
-      await api(`/projects/${project.id}/deadline`, { date });
-      project.date = date;
+      await api(path, body);
+      notify(done());
       editing = null;
       announce("deadlines-changed");
-      notify(date ? `「${project.name}」 마감일을 ${shortDate(date)}로 정했어요` : `「${project.name}」 마감일을 지웠어요`);
       render();
     } catch {
       notify("바꾸지 못했어요. 다시 눌러 주세요");
-      buttons.forEach((b) => (b.disabled = false));
+      controls.forEach((b) => (b.disabled = false));
     }
   }
+
+  const save = (project, date, li) =>
+    change(li, `/projects/${project.id}/deadline`, { date }, () => {
+      project.date = date;
+      return date ? `「${project.name}」 마감일을 ${shortDate(date)}로 정했어요` : `「${project.name}」 마감일을 지웠어요`;
+    });
+
+  // 보관: 목록에서 빠진다 (노션에서 「보관」을 끄면 되돌아온다)
+  const archive = (project, li) =>
+    change(li, `/projects/${project.id}/archive`, {}, () => {
+      projects = projects.filter((p) => p !== project);
+      return `「${project.name}」 보관했어요`;
+    });
 
   function card(project, tones) {
     const { text, tone } = pill(project.date);
@@ -88,6 +101,7 @@ export function startProjects() {
       input,
       button("btn btn--small", "저장", () => input.value && save(project, input.value, li)),
       ...(project.date ? [button("btn btn--small btn--ghost", "지우기", () => save(project, null, li))] : []),
+      button("btn btn--small btn--ghost proj__archive", "보관", () => archive(project, li)),
     );
 
     const due = button("proj__due", "", () => {
@@ -97,7 +111,7 @@ export function startProjects() {
     });
     due.append(el("span", `proj__pill ${tone}`, text));
     if (project.date) due.append(el("span", "proj__date", shortDate(project.date)));
-    due.title = project.date ? "마감일 바꾸기" : "마감일 정하기";
+    due.title = project.date ? "마감일 바꾸기 · 보관" : "마감일 정하기 · 보관";
     due.setAttribute("aria-expanded", String(!editor.hidden));
 
     li.append(link, due, editor);

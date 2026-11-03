@@ -1,4 +1,4 @@
-// 프로젝트 카드: 보관 안 한 프로젝트를 마감일 순서로 보여 주고, 마감일을 정하거나 지운다.
+// 프로젝트 카드: 보관 안 한 프로젝트를 마감일 순서로 보여 주고, 마감일을 정하거나 지우고, 보관한다.
 // 연결된 영역·자원 이름도 함께 보내서 위젯이 영역마다 카드 색을 나눈다
 import { notion, httpError, plainText, notArchived, pageInSource } from "./notion.js";
 import { listAreas } from "./inbox.js";
@@ -32,4 +32,11 @@ export async function setDeadline(env, pageId, body) {
   await pageInSource(env, pageId, env.PROJECT_SOURCE_ID);
   await notion(env, `/pages/${pageId}`, { properties: { 마감일: { date: date && { start: date } } } }, "PATCH");
   return { ok: true, date };
+}
+
+// 보관: 「보관」 칸을 켠다 (노션에서 끄면 되돌릴 수 있다)
+export async function archiveProject(env, pageId) {
+  await pageInSource(env, pageId, env.PROJECT_SOURCE_ID);
+  await notion(env, `/pages/${pageId}`, { properties: { 보관: { checkbox: true } } }, "PATCH");
+  return { ok: true };
 }

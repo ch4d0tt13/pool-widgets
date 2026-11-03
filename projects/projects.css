@@ -200,6 +200,8 @@
   gap: var(--gap-box-tight);
 }
 
+.proj__archive { margin-left: auto; } /* 날짜 칸 끝 오른쪽에 */
+
 .proj__input {
   min-width: 0;
   padding: 0 var(--space-1);

@@ -2,7 +2,7 @@
 // 기기끼리 합치는 기록(집중·정리 횟수, 고양이 간식)은 노션이 아니라 D1에 둔다 (records.js)
 import { listDeadlines, monthDeadlines, createMemo, latestBriefing } from "./routes.js";
 import { listInbox, listAreas, linkArea, archive, trash } from "./inbox.js";
-import { listProjects, setDeadline } from "./projects.js";
+import { listProjects, setDeadline, archiveProject } from "./projects.js";
 import { getRecords, addRecord, useSnack, importRecords } from "./records.js";
 
 function corsHeaders(request, env) {
@@ -52,9 +52,10 @@ export default {
       if (request.method === "POST" && action === "archive") return json(await archive(env, pageId), 200, cors);
       if (request.method === "POST" && action === "trash") return json(await trash(env, pageId), 200, cors);
 
-      // POST /projects/<페이지 id>/deadline
-      const [, projectId] = url.pathname.match(/^\/projects\/([^/]+)\/deadline$/) ?? [];
-      if (request.method === "POST" && projectId) return json(await setDeadline(env, projectId, await request.json()), 200, cors);
+      // POST /projects/<페이지 id>/deadline · /archive
+      const [, projectId, projectAction] = url.pathname.match(/^\/projects\/([^/]+)\/(deadline|archive)$/) ?? [];
+      if (request.method === "POST" && projectAction === "deadline") return json(await setDeadline(env, projectId, await request.json()), 200, cors);
+      if (request.method === "POST" && projectAction === "archive") return json(await archiveProject(env, projectId), 200, cors);
       return json({ error: "not found" }, 404, cors);
     } catch (err) {
       return json({ error: err.message }, err.status ?? 500, cors);
