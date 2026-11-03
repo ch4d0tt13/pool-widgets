@@ -18,15 +18,26 @@ export function startBriefing() {
   const footer = $("[data-footer]");
 
   // 게시판 높이에 줄이 다 안 들어가면 들어가는 줄 수만큼만 보이게 한다 (재기 전에 한 번 풀어서 늘어날 자리도 잰다).
-  // 줄 묶음 높이도 그 줄 수로 줄여서, 말줄임 뒤로 넘친 줄이 쪽지에 비치지 않게 한다
+  // 섹션 사이 간격이 있어서 줄마다 실제 아래 끝 위치를 재고, 줄 묶음 높이도 마지막으로 들어가는 줄 아래 끝까지로 줄인다
+  // (말줄임 뒤로 넘친 줄이 쪽지에 비치지 않게)
   function fitLines() {
     lines.style.removeProperty("--note-lines");
     lines.style.removeProperty("max-height");
     if (lines.scrollHeight <= lines.clientHeight) return;
     const lineHeight = parseFloat(getComputedStyle(lines).lineHeight);
-    const fit = Math.max(1, Math.floor(lines.clientHeight / lineHeight));
-    lines.style.setProperty("--note-lines", fit);
-    lines.style.maxHeight = `${fit * lineHeight}px`;
+    let fit = 0;
+    let bottom = lineHeight;
+    for (const li of lines.children) {
+      const top = li.offsetTop - lines.offsetTop;
+      const rows = Math.round(li.offsetHeight / lineHeight);
+      for (let row = 1; row <= rows && top + row * lineHeight <= lines.clientHeight; row++) {
+        fit++;
+        bottom = top + row * lineHeight;
+      }
+      if (top + rows * lineHeight > lines.clientHeight) break;
+    }
+    lines.style.setProperty("--note-lines", Math.max(1, fit));
+    lines.style.maxHeight = `${bottom}px`;
   }
   new ResizeObserver(fitLines).observe(link.parentElement);
 

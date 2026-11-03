@@ -73,10 +73,18 @@
   overflow-wrap: anywhere; /* 메일 주소처럼 띄어쓰기 없는 긴 글자도 쪽지 안에서 끊는다 */
 }
 
-.note__lines li:not(.note__head)::before {
-  content: "· ";
-  color: var(--accent);
+/* 줄 앞 표시: 스티커 앞 네모와 같은 2칸 픽셀 네모 (글머리는 포인트 색, 섹션 제목은 틀 색) */
+.note__lines li::before {
+  content: "";
+  display: inline-block;
+  width: var(--space-2);
+  height: var(--space-2);
+  margin-right: var(--space-2); /* 스티커(.caption)의 네모와 글자 사이와 같게 */
+  vertical-align: middle;
+  background: var(--accent);
 }
+
+.note__lines .note__head::before { background: var(--line); }
 
 /* 글머리 앞쪽 굵은 글자: 크고 진하게 (줄 높이는 다른 줄과 같게 두어 말줄임 줄 수 계산이 맞는다) */
 .note__label {
@@ -94,15 +102,13 @@
   color: var(--line);
 }
 
+/* 섹션 사이에 간격 (첫 섹션 앞은 빼고) */
+.note__head:not(:first-child) { margin-top: var(--space-2); }
+
 /* 링크 글자(「원본」 등): 노션처럼 흐린 밑줄 (쪽지 전체가 노션 링크라 따로 누르지는 않는다) */
 .note__links {
   color: var(--ink-faint);
   text-decoration: underline;
-}
-
-.note__head::before {
-  content: "▪ ";
-  color: var(--line);
 }
 
 .note__lines:empty,
