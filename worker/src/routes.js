@@ -78,13 +78,17 @@ export async function createMemo(env, body) {
 const HEADINGS = ["heading_1", "heading_2", "heading_3"];
 const LIST_ITEMS = ["bulleted_list_item", "numbered_list_item"];
 
-// 브리핑 글머리 한 줄: 링크 글자(「원본」·「영어 계획」 등)와 출처 표시는 빼고, 남은 「·」 구분도 정리한다
+// 브리핑 글머리 한 줄 → { label, text }. 앞쪽 굵은 글자(「확인 필요 — Etsy 신규 로그인」)가 label, 「:」 뒤가 text.
+// 링크 글자(「원본」·「영어 계획」 등)와 출처 표시는 빼고(페이지 멘션은 남긴다), 남은 「·」 구분도 정리한다
+const tidy = (text) => text.replace(/\s*\[\d+\]/g, "").replace(/(\s*·\s*)+$/, "").trim();
+
 function briefingLine(block) {
-  const text = (block[block.type]?.rich_text ?? []).filter((t) => !(t.type === "text" && t.href)).map((t) => t.plain_text).join(""); // 페이지 멘션은 남긴다
-  return text
-    .replace(/\s*\[\d+\]/g, "")
-    .replace(/(\s*·\s*)+$/, "")
-    .trim();
+  const rich = (block[block.type]?.rich_text ?? []).filter((t) => !(t.type === "text" && t.href));
+  const bold = rich.findIndex((t) => !t.annotations?.bold);
+  const head = bold === -1 ? rich.length : bold;
+  const label = tidy(rich.slice(0, head).map((t) => t.plain_text).join("")).replace(/[:：]$/, "").trim();
+  const text = tidy(rich.slice(head).map((t) => t.plain_text).join("").replace(/^\s*[:：]\s*/, ""));
+  return { label, text };
 }
 
 // 가장 최근 브리핑: 섹션마다 제목과 글머리 몇 줄 + 맨 끝 집계 줄. 조회 범위 안내 섹션은 보내지 않는다
@@ -102,14 +106,19 @@ export async function latestBriefing(env) {
   for (const block of blocks) {
     if (HEADINGS.includes(block.type)) {
       const title = blockText(block);
-      current = HIDDEN_SECTIONS.test(title) ? null : { title, lines: [] };
+      current = HIDDEN_SECTIONS.test(title) ? null : { title, items: [] };
       if (current) sections.push(current);
-    } else if (current && LIST_ITEMS.includes(block.type) && current.lines.length < SECTION_LINES) {
-      const line = briefingLine(block);
-      if (line) current.lines.push(line);
+    } else if (current && LIST_ITEMS.includes(block.type) && current.items.length < SECTION_LINES) {
+      const item = briefingLine(block);
+      if (item.label || item.text) current.items.push(item);
     }
   }
-  const shown = sections.filter((s) => s.lines.length).slice(0, SECTION_MAX);
+  // items: { label, text } (새 위젯) · lines: 한 줄 글자 (예전 위젯·바탕화면 앱이 아직 쓸 수 있어 함께 보낸다)
+  const joined = ({ label, text }) => (label ? `${label}: ${text}` : text);
+  const shown = sections
+    .filter((s) => s.items.length)
+    .slice(0, SECTION_MAX)
+    .map((s) => ({ ...s, lines: s.items.map(joined) }));
   const last = blocks.at(-1);
   const footer = last?.type === "paragraph" ? blockText(last) : "";
 

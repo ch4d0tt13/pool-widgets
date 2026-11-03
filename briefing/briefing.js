@@ -37,12 +37,17 @@ export function startBriefing() {
     }
     link.href = briefing.url;
     meta.textContent = metaText(briefing);
-    // 섹션 제목 줄과 글머리 줄을 한 목록에 (말줄임이 섹션을 넘어 이어지게)
-    const sections = briefing.sections ?? [{ title: "", lines: briefing.lines }];
+    // 섹션 제목 줄과 글머리 줄을 한 목록에 (말줄임이 섹션을 넘어 이어지게).
+    // 글머리 앞쪽 굵은 글자(label)는 크고 진하게, 설명(text)은 다음 줄에
     lines.replaceChildren(
-      ...sections.flatMap(({ title, lines: items }) => [
-        ...(title ? [el("li", "note__head", title)] : []),
-        ...items.map((text) => el("li", "", text)),
+      ...briefing.sections.flatMap(({ title, items }) => [
+        el("li", "note__head", title),
+        ...items.map(({ label, text }) => {
+          const li = el("li", "");
+          if (label) li.append(el("span", "note__label", label), ...(text ? [document.createElement("br")] : []));
+          li.append(text);
+          return li;
+        }),
       ]),
     );
     footer.textContent = briefing.footer;

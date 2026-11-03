@@ -78,9 +78,17 @@
   color: var(--accent);
 }
 
-/* 섹션 제목 줄: 글머리보다 진하게, 앞에 작은 네모 */
-.note__head {
+/* 글머리 앞쪽 굵은 글자: 크고 진하게 (줄 높이는 다른 줄과 같게 두어 말줄임 줄 수 계산이 맞는다) */
+.note__label {
+  font-family: var(--font-text);
+  font-size: var(--size-caption);
+  line-height: calc(var(--size-small) * 1.5);
   color: var(--navy);
+}
+
+/* 섹션 제목 줄: 틀과 같은 나무색으로 분류 표시처럼, 앞에 작은 네모 */
+.note__head {
+  color: var(--line);
 }
 
 .note__head::before {
