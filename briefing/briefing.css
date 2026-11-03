@@ -86,13 +86,8 @@
 
 .note__lines .note__head::before { background: var(--line); }
 
-/* 글머리 앞쪽 굵은 글자: 크고 진하게 (줄 높이는 다른 줄과 같게 두어 말줄임 줄 수 계산이 맞는다) */
-.note__label {
-  font-family: var(--font-text);
-  font-size: var(--size-caption);
-  line-height: calc(var(--size-small) * 1.5);
-  color: var(--navy);
-}
+/* 글머리 앞쪽 굵은 글자: 본문과 같은 크기에 진한 남색으로만 구분 (사용자: 12px은 너무 크다) */
+.note__label { color: var(--navy); }
 
 /* 섹션 제목 줄: 노션 제목처럼 크게, 틀과 같은 나무색에 앞에 작은 네모 (줄 높이는 다른 줄과 같게) */
 .note__head {
