@@ -8,11 +8,10 @@
   clip-path: var(--corner-outer);
 }
 
-/* 판자: 7칸 판자마다 1칸 이음매 */
+/* 판자: 7칸 판자마다 1칸 이음매. 쪽지는 가운데에서 판자 높이만큼 길어진다 */
 .board__face {
   display: flex;
   flex: 1;
-  align-items: center;
   justify-content: center;
   min-width: 0;
   padding: var(--space-3);
@@ -21,14 +20,13 @@
   clip-path: var(--corner-inner);
 }
 
-/* 쪽지: 넓은 판에서는 가운데에 폭을 줄여 판자가 둘레로 보이게. 그림자는 오른쪽 아래로 1칸 */
+/* 쪽지: 넓은 판에서는 가운데에 폭을 줄여 판자가 둘레로 보이게, 높이는 판자를 채운다. 그림자는 오른쪽 아래로 1칸 */
 .note {
   position: relative;
   display: grid;
   gap: var(--space-1);
-  grid-template-rows: auto minmax(0, 1fr) auto; /* 게시판보다 길어지면 가운데 줄 묶음만 줄어든다 */
+  grid-template-rows: auto minmax(0, 1fr) auto; /* 줄 묶음이 남는 높이를 갖고, 집계 줄은 쪽지 아래쪽에. 넘치면 줄 묶음만 줄어든다 */
   width: min(100%, var(--note-width));
-  max-height: 100%;
   padding: var(--space-3) var(--space-3) var(--space-2);
   color: var(--navy);
   text-decoration: none;

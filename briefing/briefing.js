@@ -17,12 +17,16 @@ export function startBriefing() {
   const lines = $("[data-lines]");
   const footer = $("[data-footer]");
 
-  // 게시판 높이에 줄이 다 안 들어가면 들어가는 줄 수만큼만 보이게 한다 (재기 전에 한 번 풀어서 늘어날 자리도 잰다)
+  // 게시판 높이에 줄이 다 안 들어가면 들어가는 줄 수만큼만 보이게 한다 (재기 전에 한 번 풀어서 늘어날 자리도 잰다).
+  // 줄 묶음 높이도 그 줄 수로 줄여서, 말줄임 뒤로 넘친 줄이 쪽지에 비치지 않게 한다
   function fitLines() {
     lines.style.removeProperty("--note-lines");
+    lines.style.removeProperty("max-height");
     if (lines.scrollHeight <= lines.clientHeight) return;
     const lineHeight = parseFloat(getComputedStyle(lines).lineHeight);
-    lines.style.setProperty("--note-lines", Math.max(1, Math.floor(lines.clientHeight / lineHeight)));
+    const fit = Math.max(1, Math.floor(lines.clientHeight / lineHeight));
+    lines.style.setProperty("--note-lines", fit);
+    lines.style.maxHeight = `${fit * lineHeight}px`;
   }
   new ResizeObserver(fitLines).observe(link.parentElement);
 

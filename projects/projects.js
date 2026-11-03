@@ -1,6 +1,7 @@
 // 프로젝트 카드: 보관 안 한 프로젝트를 마감일 가까운 순서로, 누르면 노션 페이지를 새 탭으로.
 // 마감일 알약(「마감일 없음」·「D-3 11/6」)을 누르면 날짜 칸이 열리고, 정하거나 지우면 D-day·달력 위젯도 바로 다시 본다.
-// 킥판 색은 연결된 영역(첫 번째)마다 다르다: 프로젝트가 많은 영역부터 is-area-1, 2…, 영역이 없으면 is-none. 남은 날은 알약 색으로
+// 킥판 색 계열은 연결된 영역(첫 번째)마다 다르다: 프로젝트가 많은 영역부터 is-area-1, 2…, 영역이 없으면 is-none.
+// 계열 안에서는 마감이 가까울수록 진하다 (알약과 같은 is-near·is-soon·is-today·is-over)
 import { $, el, showText } from "../shared/js/dom.js";
 import { api, hasKey } from "../shared/js/api.js";
 import { announce, refreshWhileVisible } from "../shared/js/live.js";
@@ -73,7 +74,7 @@ export function startProjects() {
   function card(project, tones) {
     const { text, tone } = pill(project.date);
     const area = project.areas?.[0];
-    const li = el("li", `proj ${tones.get(area) ?? "is-none"}`);
+    const li = el("li", `proj ${tones.get(area) ?? "is-none"} ${tone}`.trim());
 
     const link = el("a", "proj__link", project.name);
     Object.assign(link, { href: project.url, target: "_blank", rel: "noopener", title: area ?? "영역 없음" });

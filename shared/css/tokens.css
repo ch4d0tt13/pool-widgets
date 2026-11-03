@@ -92,12 +92,21 @@
   --tube-empty: #eef6fa;
   --tube-empty-stripe: #d6e7ef;
   --tube-hole: var(--water-2);
-  /* 프로젝트 킥판: 영역마다 다른 옅은 색 (프로젝트 많은 영역부터 1번), 영역이 없으면 물빛. 남은 날은 알약 색으로 */
+  /* 프로젝트 킥판: 영역마다 다른 색 계열 (프로젝트 많은 영역부터 1번, 영역이 없으면 물빛).
+     계열 안에서 마감이 가까울수록 옅은 색 → 진한 색(-deep) 쪽으로 섞는다 */
   --kick-area-1: #ffe2bf;
+  --kick-area-1-deep: #ffad66;
   --kick-area-2: #e6dcff;
+  --kick-area-2-deep: #b9a2ff;
   --kick-area-3: #d4f5e4;
+  --kick-area-3-deep: #8fdcb4;
   --kick-area-4: #fff0a3;
+  --kick-area-4-deep: #ffd84a;
   --kick-none: var(--water-1);
+  --kick-none-deep: #6fcdf0;
+  --kick-depth-near: 30%; /* 7일 이내 */
+  --kick-depth-soon: 60%; /* 3일 이내 */
+  --kick-depth-urgent: 100%; /* 오늘·지남 */
   --paper: #fffaf3;
   --gingham: #ffd3e1;
   --night-bg: #12476a;
