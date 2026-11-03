@@ -92,12 +92,12 @@
   --tube-empty: #eef6fa;
   --tube-empty-stripe: #d6e7ef;
   --tube-hole: var(--water-2);
-  /* 프로젝트 킥판: 프로젝트가 가장 많은 영역(지금은 테이크엠)은 하늘색 계열(main), 나머지는 보라색 계열(other).
+  /* 프로젝트 킥판: 프로젝트가 가장 많은 영역(지금은 테이크엠)은 하늘색 계열(main), 나머지는 민트 계열(other).
      계열 안에서 마감이 가까울수록 옅은 색 → 진한 색(-deep) 쪽으로 섞는다. 시간대마다 계열이 바뀐다(아래 data-phase) */
   --kick-main: #c9efff;
   --kick-main-deep: #6fcdf0;
-  --kick-other: #e6dcff;
-  --kick-other-deep: #b9a2ff;
+  --kick-other: #d4f5e4;
+  --kick-other-deep: #7fd8ad;
   --kick-area-1: #ffe2bf; /* 위젯에서는 안 쓰지만 바탕화면 앱 달력이 쓴다 */
   --kick-depth-near: 30%; /* 7일 이내 */
   --kick-depth-soon: 60%; /* 3일 이내 */
