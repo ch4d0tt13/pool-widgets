@@ -328,9 +328,9 @@ body {
   --shadow-text: var(--px) var(--px) 0 var(--deep-4);
 }
 
-/* 글자 위주인 물건 모양 위젯은 창이 커져도 글자를 키우지 않는다 (사용자: 달력·프로젝트 글자가 너무 크다).
-   큰 숫자를 보여 주는 창 위젯(시계·날씨·마감)과 인박스는 그대로 창을 따라간다. 튜브는 --tube-zoom 배율로 통째로 키운다 */
-:is([data-widget="memo"], [data-widget="pomodoro"], [data-widget="stats"], [data-widget="projects"], [data-widget="briefing"], [data-widget="calendar"]) {
+/* 글자 위주인 위젯은 창이 커져도 글자를 키우지 않는다 (사용자: 달력·프로젝트 글자가 너무 크다, 인박스도 고정).
+   큰 숫자를 보여 주는 창 위젯(시계·날씨·마감)은 그대로 창을 따라간다. 튜브는 --tube-zoom 배율로 통째로 키운다 */
+:is([data-widget="memo"], [data-widget="pomodoro"], [data-widget="stats"], [data-widget="projects"], [data-widget="briefing"], [data-widget="calendar"], [data-widget="inbox"]) {
   --size-caption: 12px;
   --size-small: 10px;
 }
