@@ -73,18 +73,11 @@
   overflow-wrap: anywhere; /* 메일 주소처럼 띄어쓰기 없는 긴 글자도 쪽지 안에서 끊는다 */
 }
 
-/* 줄 앞 표시: 스티커 앞 네모와 같은 2칸 픽셀 네모 (글머리는 포인트 색, 섹션 제목은 틀 색) */
-.note__lines li::before {
-  content: "";
-  display: inline-block;
-  width: var(--space-2);
-  height: var(--space-2);
-  margin-right: var(--space-2); /* 스티커(.caption)의 네모와 글자 사이와 같게 */
-  vertical-align: middle;
-  background: var(--accent);
+/* 줄 앞 아이콘 (섹션 튜브·글머리 하트, 5×5): 줄 높이(5칸)와 같아서 위에 붙이면 줄 높이가 바뀌지 않는다 */
+.note__mark {
+  margin-right: var(--space-2); /* 스티커(.caption)의 표시와 글자 사이와 같게 */
+  vertical-align: top;
 }
-
-.note__lines .note__head::before { background: var(--line); }
 
 /* 글머리 앞쪽 굵은 글자: 본문과 같은 크기에 진한 남색으로만 구분 (사용자: 12px은 너무 크다) */
 .note__label { color: var(--navy); }
