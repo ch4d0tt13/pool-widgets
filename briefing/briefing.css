@@ -73,11 +73,14 @@
   overflow-wrap: anywhere; /* 메일 주소처럼 띄어쓰기 없는 긴 글자도 쪽지 안에서 끊는다 */
 }
 
-/* 줄 앞 아이콘 (섹션 튜브·글머리 하트, 5×5): 줄 높이(5칸)와 같아서 위에 붙이면 줄 높이가 바뀌지 않는다 */
+/* 줄 앞 아이콘 (섹션 튜브 5×5·글머리 하트 3×3): 줄 높이(5칸) 안에서 위에 붙여 줄 높이가 바뀌지 않게 하고,
+   3×3 하트는 1칸 내려 줄 가운데에 */
 .note__mark {
   margin-right: var(--space-2); /* 스티커(.caption)의 표시와 글자 사이와 같게 */
   vertical-align: top;
 }
+
+.note__mark.icon--tiny { margin-top: var(--px); }
 
 /* 글머리 앞쪽 굵은 글자: 본문과 같은 크기에 진한 남색으로만 구분 (사용자: 12px은 너무 크다) */
 .note__label { color: var(--navy); }

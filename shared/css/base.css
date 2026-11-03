@@ -122,6 +122,12 @@ body {
   height: calc(var(--px) * 5);
 }
 
+/* 글 줄 앞 표시처럼 더 작은 아이콘 (3×3 그림, icons.js의 -tiny) */
+.icon--tiny {
+  width: calc(var(--px) * 3);
+  height: calc(var(--px) * 3);
+}
+
 /* 글자 버튼 */
 .btn {
   display: inline-flex;

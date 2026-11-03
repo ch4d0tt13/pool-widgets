@@ -1,5 +1,5 @@
 // 버튼·장식용 7×7 픽셀 아이콘 (i = 아이콘 글자색, r = 하트 빨강).
-// 글자 옆에 작게 쓰는 것은 5×5(-small, .icon--small), 창 제목 표시줄 버튼은 3×3. 늘 도트 1칸 = 그림 1칸으로 그린다
+// 글자 옆에 작게 쓰는 것은 5×5(-small, .icon--small), 창 제목 표시줄 버튼과 글 줄 앞 표시는 3×3(-tiny, .icon--tiny). 늘 도트 1칸 = 그림 1칸으로 그린다
 import { drawSprite } from "./sprite.js";
 
 export const ICONS = {
@@ -7,6 +7,7 @@ export const ICONS = {
   "win-max": ["iii", "i.i", "iii"],
   "win-close": ["i.i", ".i.", "i.i"],
   "heart-small": [".r.r.", "rrrrr", "rrrrr", ".rrr.", "..r.."],
+  "heart-tiny": ["r.r", "rrr", ".r."], // 글 줄 앞 작은 하트 (3×3, .icon--tiny)
   "heart-empty-small": [".r.r.", "r.r.r", "r...r", ".r.r.", "..r.."],
   "fish-small": [".....", ".ii.i", "i.iii", ".ii.i", "....."],
   "pin-small": [".rrr.", "rwrrr", "rrrrr", ".rrr.", "..k.."],

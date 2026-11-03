@@ -54,10 +54,10 @@ export function startBriefing() {
     const kindIcon = KIND_ICONS[briefing.kind];
     metaIcon.hidden = !kindIcon;
     if (kindIcon) setIcon(metaIcon, kindIcon);
-    // 섹션 제목 줄과 글머리 줄을 한 목록에 (말줄임이 섹션을 넘어 이어지게). 줄 앞은 섹션 튜브·글머리 하트.
+    // 섹션 제목 줄과 글머리 줄을 한 목록에 (말줄임이 섹션을 넘어 이어지게). 줄 앞은 섹션 튜브(5×5)·글머리 작은 하트(3×3).
     // 글머리 앞쪽 굵은 글자(label)는 진하게, 설명(text)은 다음 줄에, 링크 글자(「원본」 등)는 끝에 흐리게
-    const line = (className, icon, ...content) => {
-      const mark = el("canvas", "icon icon--small note__mark");
+    const line = (className, icon, size, ...content) => {
+      const mark = el("canvas", `icon icon--${size} note__mark`);
       mark.dataset.icon = icon;
       mark.setAttribute("aria-hidden", "true");
       const li = el("li", className);
@@ -66,11 +66,12 @@ export function startBriefing() {
     };
     lines.replaceChildren(
       ...briefing.sections.flatMap(({ title, items }) => [
-        line("note__head", "tube-small", title),
+        line("note__head", "tube-small", "small", title),
         ...items.map(({ label, text, links = [] }) =>
           line(
             "",
-            "heart-small",
+            "heart-tiny",
+            "tiny",
             ...(label ? [el("span", "note__label", label), ...(text ? [document.createElement("br")] : [])] : []),
             text,
             ...(links.length ? [" ", el("span", "note__links", links.join(" · "))] : []),
