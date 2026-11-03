@@ -1,7 +1,9 @@
 // D-day·달력 읽기·빠른 메모 쓰기·최근 브리핑 읽기
 import { notion, httpError, plainText, blockText, notArchived } from "./notion.js";
 
-const BRIEFING_LINES = 3; // 첫 섹션에서 보여 줄 줄 수
+const SECTION_LINES = 5; // 브리핑 섹션마다 보여 줄 글머리 수
+const SECTION_MAX = 6; // 보여 줄 섹션 수
+const HIDDEN_SECTIONS = /메일|조회 범위/; // 대시보드에 보내지 않는 섹션 (개인 메일, 조회 범위·제한 안내)
 const FOOTER_MAX = 40; // 맨 끝 집계 줄로 볼 최대 길이
 const MEMO_MAX = 2000;
 const MEMO_MAX_LINES = 100; // 노션 한 번 요청의 블록 수 한도
@@ -76,7 +78,17 @@ export async function createMemo(env, body) {
 const HEADINGS = ["heading_1", "heading_2", "heading_3"];
 const LIST_ITEMS = ["bulleted_list_item", "numbered_list_item"];
 
-// 가장 최근 브리핑: 첫 섹션 글머리 최대 3줄 + 맨 끝 집계 줄 (메일 등 나머지 섹션은 보내지 않는다)
+// 브리핑 글머리 한 줄: 링크 글자(「원본」·「영어 계획」 등)와 출처 표시는 빼고, 남은 「·」 구분도 정리한다
+function briefingLine(block) {
+  const text = (block[block.type]?.rich_text ?? []).filter((t) => !(t.type === "text" && t.href)).map((t) => t.plain_text).join(""); // 페이지 멘션은 남긴다
+  return text
+    .replace(/\s*\[\d+\]/g, "")
+    .replace(/(\s*·\s*)+$/, "")
+    .trim();
+}
+
+// 가장 최근 브리핑: 섹션마다 제목과 글머리 몇 줄 + 맨 끝 집계 줄.
+// 개인 메일·조회 범위 섹션은 보내지 않는다
 export async function latestBriefing(env) {
   const { results } = await notion(env, `/data_sources/${env.BRIEFING_SOURCE_ID}/query`, {
     sorts: [{ property: "날짜·시각", direction: "descending" }],
@@ -86,12 +98,19 @@ export async function latestBriefing(env) {
   if (!page) return null;
 
   const { results: blocks } = await notion(env, `/blocks/${page.id}/children?page_size=100`);
-  const first = blocks.findIndex((b) => HEADINGS.includes(b.type));
-  const section = [];
-  for (const block of blocks.slice(first + 1)) {
-    if (HEADINGS.includes(block.type) || section.length === BRIEFING_LINES) break;
-    if (LIST_ITEMS.includes(block.type)) section.push(blockText(block));
+  const sections = [];
+  let current = null;
+  for (const block of blocks) {
+    if (HEADINGS.includes(block.type)) {
+      const title = blockText(block);
+      current = HIDDEN_SECTIONS.test(title) ? null : { title, lines: [] };
+      if (current) sections.push(current);
+    } else if (current && LIST_ITEMS.includes(block.type) && current.lines.length < SECTION_LINES) {
+      const line = briefingLine(block);
+      if (line) current.lines.push(line);
+    }
   }
+  const shown = sections.filter((s) => s.lines.length).slice(0, SECTION_MAX);
   const last = blocks.at(-1);
   const footer = last?.type === "paragraph" ? blockText(last) : "";
 
@@ -100,7 +119,8 @@ export async function latestBriefing(env) {
     kind: page.properties["구분"].select?.name ?? "",
     at: page.properties["날짜·시각"].date?.start ?? page.created_time,
     url: page.url,
-    lines: section.filter(Boolean),
+    sections: shown,
+    lines: shown.flatMap((s) => s.lines), // 섹션을 모르는 예전 위젯용
     footer: footer.length <= FOOTER_MAX ? footer : "",
   };
 }

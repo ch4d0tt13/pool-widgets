@@ -73,9 +73,19 @@
   overflow-wrap: anywhere; /* 메일 주소처럼 띄어쓰기 없는 긴 글자도 쪽지 안에서 끊는다 */
 }
 
-.note__lines li::before {
+.note__lines li:not(.note__head)::before {
   content: "· ";
   color: var(--accent);
+}
+
+/* 섹션 제목 줄: 글머리보다 진하게, 앞에 작은 네모 */
+.note__head {
+  color: var(--navy);
+}
+
+.note__head::before {
+  content: "▪ ";
+  color: var(--line);
 }
 
 .note__lines:empty,
