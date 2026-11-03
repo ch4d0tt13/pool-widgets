@@ -18,6 +18,7 @@ export const ICONS = {
   "sound-off-small": [".i...", "iir.r", "ii.r.", "iir.r", ".i..."], // 5칸에 ×를 띄울 자리가 없어 빨간 ×로 스피커와 구분
   "sun-small": ["y.y.y", ".yoy.", "yoooy", ".yoy.", "y.y.y"],
   "moon-small": [".yyy.", "yy...", "yy...", "yy...", ".yyy."],
+  "archive-small": ["iiiii", ".....", "iiiii", "ii.ii", "iiiii"], // 보관 상자 (뚜껑과 손잡이 구멍 난 상자)
   "tube-small": [".grg.", "g...g", "r...r", "g...g", ".grg."], // 분홍 물놀이 튜브 (빨간 줄무늬)
   play: [
     ".i.....",

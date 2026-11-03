@@ -1,9 +1,11 @@
 // 프로젝트 카드: 보관 안 한 프로젝트를 마감일 가까운 순서로, 누르면 노션 페이지를 새 탭으로.
-// 마감일 알약(「마감일 없음」·「D-3 11/6」)을 누르면 날짜 칸이 열리고(끝에 「보관」), 정하거나 지우거나 보관하면 D-day·달력 위젯도 바로 다시 본다.
+// 마감일 알약(「마감일 없음」·「D-3 11/6」)을 누르면 날짜 칸이 열리고, 킥판 오른쪽 위 구석의 작은 상자 버튼은 보관.
+// 마감일을 정하거나 지우거나 보관하면 D-day·달력 위젯도 바로 다시 본다.
 // 킥판 색 계열은 연결된 영역(첫 번째)마다 다르다: 프로젝트가 많은 영역부터 is-area-1, 2…, 영역이 없으면 is-none.
 // 계열 안에서는 마감이 가까울수록 진하다 (알약과 같은 is-near·is-soon·is-today·is-over)
 import { $, el, showText } from "../shared/js/dom.js";
 import { api, hasKey } from "../shared/js/api.js";
+import { paintIcons } from "../shared/js/icons.js";
 import { announce, refreshWhileVisible } from "../shared/js/live.js";
 import { daysUntil, ddayLabel, shortDate } from "../shared/js/dates.js";
 
@@ -101,8 +103,16 @@ export function startProjects() {
       input,
       button("btn btn--small", "저장", () => input.value && save(project, input.value, li)),
       ...(project.date ? [button("btn btn--small btn--ghost", "지우기", () => save(project, null, li))] : []),
-      button("btn btn--small btn--ghost proj__archive", "보관", () => archive(project, li)),
     );
+
+    // 손잡이 구멍 옆 오른쪽 위 구석에 작게
+    const keep = button("icon-btn icon-btn--small proj__archive", "", () => archive(project, li));
+    const icon = el("canvas", "icon icon--small");
+    icon.dataset.icon = "archive-small";
+    icon.setAttribute("aria-hidden", "true");
+    keep.append(icon);
+    keep.title = "보관";
+    keep.setAttribute("aria-label", `${project.name} 보관`);
 
     const due = button("proj__due", "", () => {
       editing = editor.hidden ? project.id : null;
@@ -111,16 +121,17 @@ export function startProjects() {
     });
     due.append(el("span", `proj__pill ${tone}`, text));
     if (project.date) due.append(el("span", "proj__date", shortDate(project.date)));
-    due.title = project.date ? "마감일 바꾸기 · 보관" : "마감일 정하기 · 보관";
+    due.title = project.date ? "마감일 바꾸기" : "마감일 정하기";
     due.setAttribute("aria-expanded", String(!editor.hidden));
 
-    li.append(link, due, editor);
+    li.append(link, keep, due, editor);
     return li;
   }
 
   function render() {
     const tones = areaTones(projects);
     grid.replaceChildren(...[...projects].sort(byDeadline).map((p) => card(p, tones)));
+    paintIcons(); // 아이콘은 화면에 붙인 뒤에 그린다
     const dated = projects.filter((p) => p.date).length;
     count.textContent = `프로젝트 ${projects.length}개 · 마감일 ${dated}개`;
   }

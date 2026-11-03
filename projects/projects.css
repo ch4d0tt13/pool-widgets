@@ -88,7 +88,7 @@
   align-content: space-between;
   gap: var(--gap-box-tight);
   min-width: 0;
-  padding: calc(var(--px) * 5) var(--space-2) var(--space-2);
+  padding: calc(var(--px) * 7) var(--space-2) var(--space-2); /* 위는 손잡이 구멍·보관 버튼 자리 */
   color: var(--navy);
   --kick: var(--kick-none);
   --kick-deep: var(--kick-none-deep);
@@ -145,6 +145,7 @@
 }
 
 /* 링크 위로 올라와야 누를 수 있는 부분 */
+.proj__archive,
 .proj__due,
 .proj__editor {
   position: relative;
@@ -200,7 +201,14 @@
   gap: var(--gap-box-tight);
 }
 
-.proj__archive { margin-left: auto; } /* 날짜 칸 끝 오른쪽에 */
+/* 보관: 손잡이 구멍과 같은 줄, 오른쪽 위 구석의 상자 없는 작은 아이콘 버튼 */
+.proj__archive {
+  position: absolute;
+  top: 0;
+  right: var(--px);
+  background: none;
+  box-shadow: none;
+}
 
 .proj__input {
   min-width: 0;
