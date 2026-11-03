@@ -68,14 +68,24 @@
   color: var(--ink-soft);
 }
 
+/* 줄 앞 아이콘은 왼쪽 여백에 내어 걸어, 넘어간 줄·다음 줄 설명이 아이콘 뒤 글자에 맞춰 이어진다.
+   글머리 줄은 섹션 제목 글자 자리까지 들여 쓴다 (--mark: 아이콘 너비) */
 .note__lines li {
+  --mark: calc(var(--px) * 5);
+  padding-left: calc(var(--mark) + var(--space-2));
   word-break: keep-all;
   overflow-wrap: anywhere; /* 메일 주소처럼 띄어쓰기 없는 긴 글자도 쪽지 안에서 끊는다 */
+}
+
+.note__lines li:not(.note__head) {
+  --mark: calc(var(--px) * 3);
+  padding-left: calc(var(--px) * 5 + var(--space-2) + var(--mark) + var(--space-2));
 }
 
 /* 줄 앞 아이콘 (섹션 튜브 5×5·글머리 하트 3×3): 줄 높이(5칸) 안에서 위에 붙여 줄 높이가 바뀌지 않게 하고,
    3×3 하트는 1칸 내려 줄 가운데에 */
 .note__mark {
+  margin-left: calc(-1 * (var(--mark) + var(--space-2)));
   margin-right: var(--space-2); /* 스티커(.caption)의 표시와 글자 사이와 같게 */
   vertical-align: top;
 }
