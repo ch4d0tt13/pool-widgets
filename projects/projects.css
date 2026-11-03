@@ -90,7 +90,7 @@
   min-width: 0;
   padding: calc(var(--px) * 5) var(--space-2) var(--space-2);
   color: var(--navy);
-  background: var(--kick-far);
+  background: var(--kick-none);
   box-shadow: var(--pixel-border);
   animation: kick-bob var(--float) steps(2) infinite alternate;
 }
@@ -108,11 +108,11 @@
   box-shadow: var(--pixel-border);
 }
 
-.proj.is-near { background: var(--kick-near); }
-.proj.is-soon { background: var(--kick-soon); }
-.proj.is-today,
-.proj.is-over { background: var(--kick-urgent); }
-.proj.is-none { background: var(--kick-none); }
+/* 킥판 색은 영역마다 (projects.js가 프로젝트 많은 영역부터 번호를 매긴다). 영역이 없으면 물빛 */
+.proj.is-area-1 { background: var(--kick-area-1); }
+.proj.is-area-2 { background: var(--kick-area-2); }
+.proj.is-area-3 { background: var(--kick-area-3); }
+.proj.is-area-4 { background: var(--kick-area-4); }
 
 @keyframes kick-bob {
   to { transform: translateY(calc(var(--px) * -1)); }

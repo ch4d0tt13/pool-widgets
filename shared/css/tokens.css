@@ -92,11 +92,11 @@
   --tube-empty: #eef6fa;
   --tube-empty-stripe: #d6e7ef;
   --tube-hole: var(--water-2);
-  /* 프로젝트 킥판: 마감이 가까울수록 진한 색 (알약보다 옅게) */
-  --kick-far: #ffe2bf;
-  --kick-near: #fff0a3;
-  --kick-soon: #ffcf9e;
-  --kick-urgent: #ffc4c6;
+  /* 프로젝트 킥판: 영역마다 다른 옅은 색 (프로젝트 많은 영역부터 1번), 영역이 없으면 물빛. 남은 날은 알약 색으로 */
+  --kick-area-1: #ffe2bf;
+  --kick-area-2: #e6dcff;
+  --kick-area-3: #d4f5e4;
+  --kick-area-4: #fff0a3;
   --kick-none: var(--water-1);
   --paper: #fffaf3;
   --gingham: #ffd3e1;
